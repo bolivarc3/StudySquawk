@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+{% block title %}{{ post[3] }}{% endblock %}
+{% block head %}
+<script>
+    function replyon() {
+        document.getElementById("replydiv").style.display = "block";
+    }
+</script>
+{% endblock %}
+{% block heading %}
+<div id = "titlediv">
+    <h1 id = "title">
+        {{ course }}
+    </h1>
+</div>
+{% endblock %}
+{% block searchbar %}
+<li>
+    <div id = "searchbar-box">
+        <form action = "/homepage" method = "POST">
+            <input autocomplete = "yes" name = "name" class = "form" type = "text" id="tags" placeholder = "Choose a Class!">
+            <script>
+                  $( function() {
+                    var availableTags = [
+                        {% for courses in courses %}
+                            "{{ courses }}",
+                        {% endfor %}
+                    ];
+                    $( "#tags" ).autocomplete({
+                      source: availableTags
+                    });
+                    } );
+            </script>
+            <input id = "submitsearch" type = "submit">
+        </form>
+    </div>
+</li>
+{% endblock %}
+
+{% block body %}
+<div id = "postdiv">
+    <div style = "margin:auto; padding-left:2rem; ">
+        <p>{{ post[2] }}</p>
+        <p>{{ post[6] }}</p>
+    </div>
+    <div id = "postsubdiv" style = "text-align:center;">
+        <h1 id = "title">{{ post[3] }}</h1>
+    </div>
+    <div id = "postsubdiv">
+        <body>
+            <p>{{ post[4] }}</p>
+        </body>
+    </div>
+</div>
+
+<div id = "postbuttonbox" style = "margin-left:3rem;">
+    <a id = "post-button", onclick = "replyon()"><p>Create a Post!</p></a>
+</div>
+{% endblock %}
+
+{% block reply %}
+    <div id = "replydiv">
+        <form action ="/{{ course }}/post/{{ post[0] }}", id = "formcenter", method = "POST">
+            <br>
+            <br>
+            <input type = "hidden", name = "formname" value = "replyform">
+            <input class = "form", type = "text", name = "title", placeholder = "Title" >
+            <br>
+            <br>
+            <textarea id = "bodytext" id="text" name="text" rows="12" cols="50" placeholder="Body Text"></textarea>
+            <br>
+            <br>
+            <!--<label id = "uploadbutton" for="file-ip-1">Upload Image</label>
+            <input type="file" name = "images" id="file-ip-1" accept="image/*" onchange="showPreview(event);" multiple>
+            <div id = "filepreviewdiv">
+                <img id = "file-ip-1-preview">
+            </div>
+            <br> -->
+            <div>
+                <div style = "fit-content; margin:auto">
+                    <input type="submit", id = "submitbutton" value = "Submit" style = "margin-left:45%"></submit>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% for replies in replies %}
+        <div id = "postsubdiv">
+            <p>{{ replies[2] }}</p>
+            <p>{{ replies[5] }}</p>
+            <br>
+            <br>
+            <div style = "text-align:center;">
+                <h1 id = "title">{{ replies[3] }}</h1>
+            </div>
+            <br>
+            <br>
+            <p>
+                {{ replies[4] }}
+            </p>
+        </div>
+    {% endfor %}
+{% endblock %}

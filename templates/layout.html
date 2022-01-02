@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js">
+	</script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js">
+	</script>
+
+	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css"
+		rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link href="/static/images/nerdpic.png" rel="icon">
+	<link href="/static/images/logo.jpeg">
+	<link href="/static/styles.css" rel="stylesheet">
+	{% block head %}
+	{% endblock %}
+
+</head>
+
+<title> {% block title %}Studyist {% endblock %}</title>
+{% block heading %}
+{% endblock %}
+
+<div id= "navbox">
+	<div style = "margin:auto; display:flex;">
+		<a href = "/homepage"><img id = "logo" src="/static/images/logo.jpeg"></a>
+	    {% block searchbar %}
+	    {% endblock %}
+	    {% block postbutton %}
+	    {% endblock %}
+	</div>
+</div>
+<body>
+{% block body %}
+{% endblock %}
+
+{% block reply %}
+{% endblock %}
+</body>
+
+

@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block title %}Post Something!{% endblock %}
+{% block body %}
+<script>
+    function showPreview(event){
+    if(event.target.files.length > 0){
+        var src = URL.createObjectURL(event.target.files[0]);
+        var preview = document.getElementById("file-ip-1-preview");
+        preview.src = src;
+        preview.style.display = "block";
+  }
+}
+</script>
+
+
+<div class = "formdiv">
+        <form action ="/{{ course }}", id = "formcenter", method = "POST">
+            <br>
+            <br>
+            <input class = "form", type = "text", name = "title", placeholder = "Title" >
+            <br>
+            <br>
+            <textarea id = "bodytext" id="text" name="text" rows="12" cols="50" placeholder="Body Text"></textarea>
+            <br>
+            <br>
+            <!--<label id = "uploadbutton" for="file-ip-1">Upload Image</label>
+            <input type="file" name = "images" id="file-ip-1" accept="image/*" onchange="showPreview(event);" multiple>
+            <div id = "filepreviewdiv">
+                <img id = "file-ip-1-preview">
+            </div>
+            <br> -->
+            <div>
+                <div style = "fit-content; margin:auto">
+                    <input type="submit", id = "submitbutton" value = "Submit" style = "margin-left:45%"></submit>
+                </div>
+            </div>
+        </form>
+</div>
+{% endblock %}

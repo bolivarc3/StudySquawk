@@ -1,0 +1,124 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.crop {
+    height: 1000px;
+    width:100%;
+    overflow: hidden;
+}
+.crop img {
+    width:100%;
+}
+
+
+#titlediv{
+  /* Allow the centering to work */
+	margin: 0 auto;
+  background: #CFD7C7;
+  width: fit-content;
+  border: 1px;
+  float: left;
+}
+
+#divtitlegrouping { /* Allow the centering to work */
+  overflow: hidden;
+	margin: 0;
+  background:#CFD7C7 ;
+  width: 100%;
+  height: fit-content;
+  display: block;
+  padding-left: 0;
+  border: 1px;
+}
+
+#returnhome{
+  text-decoration: none;
+  padding-left: 2;
+  font-size:80;
+  color:#40798C;
+  font-family: 'Teko', sans-serif;
+  font-weight:5000;
+  display: block;
+  list-style-type: none;
+  margin:0;
+  text-align:center;
+}
+
+
+#navbox {
+	display: table;   /* Allow the centering to work */
+	margin: 0 auto;
+  background: #CFD7C7;
+  width: fit-content;
+  padding-right: 2rem;
+  border: 1px;
+  float: right;
+}
+
+
+/*Login ----------------------------------------------- */
+
+#login-item{
+  margin-top: 1rem;
+  margin-left:2rem;
+  float: right;
+  width: fit-content;
+  border-radius: 12px;
+  border: 1px solid #40798C;
+  list-style-type: none;
+  cursor: pointer;
+}
+
+#login-item:hover{
+  background-color: #e3e3e3;
+}
+
+#login-item a {
+  margin:0;
+  text-decoration: none;
+  color:#40798C;
+  display: block;
+  padding: 0.675rem;
+  font-size:16;
+  font-family: 'Teko', sans-serif;
+  font-weight:800;
+}
+/* Login -----------------------------------------------------------------*/
+/* Signup -----------------------------------------------------------------*/
+#signup-item{
+  margin-top:1rem;
+  margin-left:2rem;
+  float: left;
+  width: fit-content;
+  border-radius: 12px;
+  border: 1px solid #40798C;
+  background-color:#40798C;
+  list-style-type: none;
+  float:right;
+  cursor: pointer;
+}
+
+#signup-item:hover{
+  background-color: #376a7a;
+}
+
+#signup-item a {
+  text-decoration: none;
+  color:white;
+  display: block;
+  padding: 0.625rem;
+  font-size:16;
+  font-family: 'Teko', sans-serif;
+  font-weight:800;
+}
+
+/* Signup -----------------------------------------------------------------*/
+
+#horizontal-list li {
+		display: inline;
+}
+
+
+

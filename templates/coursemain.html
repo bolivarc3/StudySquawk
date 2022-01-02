@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<head>
+	<link href="/static/styles.css" rel="stylesheet">
+</head>
+{% extends "layout.html" %}
+{% block maintitle %} | {{ course }}{% endblock %}
+{% block title %}{{ course }}{% endblock %}
+{% block heading %}
+    <div id = "titlediv">
+        <h1 id = "title">
+            {{ course }}
+        </h1>
+    </div>
+{% endblock %}
+
+{% block searchbar %}
+<li>
+    <div id = "searchbar-box">
+        <form action = "/homepage" method = "POST">
+            <input autocomplete = "yes" name = "name" class = "form" type = "text" id="tags" placeholder = "Choose a Class!">
+            <script>
+                  $( function() {
+                    var availableTags = [
+                        {% for courses in courses %}
+                            "{{ courses }}",
+                        {% endfor %}
+                    ];
+                    $( "#tags" ).autocomplete({
+                      source: availableTags
+                    });
+                    } );
+            </script>
+            <input id = "submitsearch" type = "submit">
+        </form>
+    </div>
+</li>
+{% endblock %}
+
+{% block postbutton %}
+<li>
+    <div id = "postbuttonbox">
+        <a id = "post-button", href ="{{ course }}/postcreation"> Create a Post!</a>
+    </div>
+</li>
+{% endblock %}
+
+{% block body %}
+    {% for post in post %}
+        <!--each post is a submit button with a form -->
+        <form action = "/{{ course }}/post/{{ post[0] }}", method = "POST">
+            <input type="hidden" id="postId" name="postId" value="{{ post[0] }}">
+            <<input type="submit", id = "clickpost" value = "{{ post[3] }}"></submit>
+        </form>
+        <!--each post is a submit button with a form -->
+    {% endfor %}
+{% endblock %}

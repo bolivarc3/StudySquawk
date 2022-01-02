@@ -1,0 +1,281 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #050505;
+}
+
+p{
+    font:18px 'Teko', sans-serif;
+    text-decoration: none;
+    color:#40798C;
+    font-weight:5000;
+    list-style-type: none;
+
+}
+
+/* This is a navbox styles */
+#navbox{
+    padding-left:1rem;
+    padding-top:0.5rem;
+    padding-bottom:0.5rem;
+    background-color:#121212;
+    height:fit-content;
+    display:flex;
+
+}
+
+#navbox li{
+    display:inline-block;
+}
+
+/* This is a navbox styles */
+
+/*Searchbar information */
+#searchbar-box{
+    margin-left:1rem;
+    margin-top: 1rem;
+    padding:0;
+}
+
+.form{
+    background-color: #2c2c2c;
+    border-color: transparent;
+    border-radius: 2px;
+    height: 2.5rem;
+    width: 30rem;
+}
+
+.form::placeholder{
+    font-family: 'Teko', sans-serif;
+    color: #989898;
+    font-size:15;
+}
+input, select, textarea{
+    color: #989898;
+}
+
+.form:hover{
+    background-color: #2c2c2c;
+    border-color: white;
+    border-radius: 2px;
+    height: 2.5rem;
+    width: 30rem;
+}
+
+.form:focus{
+    font-family: 'Teko', sans-serif;
+    font-size:17;
+    background-color: #2c2c2c;
+    outline:none;
+    border-color: white;
+    border-radius: 2px;
+    height: 2.5rem;
+    width: 30rem;
+}
+#submitsearch{
+    display:none;
+    margin:0;
+    padding:0;
+}
+/*Searchbar information */
+
+
+
+#titlediv{
+    text-align:center;
+    width:100%;
+    /* Allow the centering to work */
+    padding-top:1rem;
+    background-color:#121212;
+    display: inline-block;
+}
+
+
+a{
+  text-decoration: none;
+  padding:0;
+  font-size:100;
+  color:#40798C;
+  font-family: 'Teko', sans-serif;
+  font-weight:5000;
+  list-style-type: none;
+  margin:0;
+  text-align:center;
+}
+
+#title{
+
+    text-decoration: none;
+    font-size:10;
+    color:#40798C;
+    font-family: 'Teko', sans-serif;
+    font-weight:5000;
+    list-style-type: none;
+
+
+}
+
+
+#coursenav{
+    background-color:white;
+    margin:0;
+}
+
+
+
+#coursename{
+    margin:auto;
+    text-decoration: none;
+    font-size:200;
+    color:#40798C;
+    font-family: 'Teko', sans-serif;
+    font-weight:7000;
+    list-style-type: none;
+    display: inline-block;
+}
+
+#postbuttonbox{
+    display: inline-block;
+    margin-right:4rem;
+}
+
+#post-button{
+    margin:1rem;
+    padding:.5rem;
+    margin-left:2rem;
+    float: right;
+    width: fit-content;
+    border-radius: 12px;
+    border: 1px solid #40798C;
+    list-style-type: none;
+    cursor: pointer;
+}
+
+#post-button:hover{
+    background-color: #e3e3e3;
+}
+
+#logo{
+    height:5rem;
+    width:5rem;
+    display:inline-block;
+    margin-right:2rem;
+    margin-left:2rem;
+}
+
+.formdiv{
+    width:100%;
+}
+
+#replydiv{
+    display:none;
+    width:100%;
+}
+#formcenter{
+    width:fit-content;
+    height:fit-content;
+    margin:auto;
+}
+
+#bodytext{
+    border-radius:1px;
+    background-color: #2c2c2c;
+    width:50rem;
+    height:20rem;
+}
+
+
+#submitbutton{
+    margin:auto;
+    background-color:transparent;
+    padding:.5rem;
+    width: fit-content;
+    border-radius: 12px;
+    border: 1px solid #40798C;
+    list-style-type: none;
+    cursor: pointer;
+}
+
+#submitbutton:hover{
+    margin:auto;
+    background-color:#121212;
+    padding:.5rem;
+    width: fit-content;
+    border-radius: 12px;
+    border: 1px solid #40798C;
+    list-style-type: none;
+    cursor: pointer;
+}
+
+#filepreview{
+    width:100%;
+    height: fit-content;
+    background-color:#40798C;
+}
+.form-input img {
+  width:100%;
+  display:none;
+  margin-bottom:30px;
+}
+
+#uploadbutton {
+    display:block;
+    width:45%;
+    height:45px;
+    margin-left: 25%;
+    line-height:50px;
+    text-align:center;
+    background:#40798C;
+    color:#fff;
+    font-size:15px;
+    font-family:"Open Sans",sans-serif;
+    text-transform:Uppercase;
+    font-weight:600;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+#file-ip-1{
+    display:none;
+}
+
+#file-ip-1-preview{
+    max-width: 20%;
+    height: auto;
+
+    display:none;
+}
+
+#clickpost{
+    padding:1rem;
+    background-color: #121212;
+    margin:auto;
+    margin-bottom: 5rem;
+    margin-top: 5rem;
+    width: 90%;
+    height: fit-content;
+    border:3px solid #40798C;
+    border-radius:5px;
+}
+
+#postdiv{
+    padding:1rem;
+    margin:auto;
+    margin-bottom: 5rem;
+    margin-top: 5rem;
+    width: 90%;
+    height: fit-content;
+    border:3px solid #40798C;
+    border-radius:5px;
+}
+
+#postsubdiv{
+    padding:1rem;
+    margin:auto;
+    margin-bottom:3rem;
+    width: 90%;
+    height: fit-content;
+    border:3px solid #121212;
+    border-radius:5px;
+}
+
