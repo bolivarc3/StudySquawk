@@ -1,5 +1,4 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for
-from flask_session import Session
 from datetime import datetime
 from werkzeug.utils import secure_filename
 import re
@@ -32,7 +31,6 @@ def after_request(response):
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
 
 
 @app.route("/homepage/apology", methods= ["GET", "POST"])
