@@ -62,6 +62,7 @@ but I made this project similar to other platforms but specifically targeted at 
 I will release it.
 
 >future
+
 I am planning to have it have a feed. Also to organize the post by certain catagory. I also
 want to publisize it and maybe make it so that it can connect schools and schools can compete with
 each other. I want this website to be the center of education and drive within students. the future of
