@@ -46,11 +46,13 @@
 
 {% block body %}
     {% for post in post %}
+    <div style = "margin:auto; text-align:center;">
         <!--each post is a submit button with a form -->
         <form action = "/{{ course }}/post/{{ post[0] }}", method = "POST">
             <input type="hidden" id="postId" name="postId" value="{{ post[0] }}">
             <input type="submit", id = "clickpost" value = "{{ post[3] }}"></submit>
         </form>
         <!--each post is a submit button with a form -->
+    </div>
     {% endfor %}
 {% endblock %}
