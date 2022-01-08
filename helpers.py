@@ -23,7 +23,7 @@ def login_required(f):
 
 def connectdb(db):
     #input is name of db
-    connect = sqlite3.connect(db)
+    connect = sqlite3.connect("databases/" + db)
     cursor = connect.cursor()
     list = [cursor,connect]
     #returns db information
