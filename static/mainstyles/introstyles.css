@@ -61,7 +61,7 @@ html, body {
 /*Login ----------------------------------------------- */
 
 #login-item{
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   margin-left:2rem;
   float: right;
   width: fit-content;
@@ -88,7 +88,7 @@ html, body {
 /* Login -----------------------------------------------------------------*/
 /* Signup -----------------------------------------------------------------*/
 #signup-item{
-  margin-top:1rem;
+  margin-top:1.5rem;
   margin-left:2rem;
   float: left;
   width: fit-content;
