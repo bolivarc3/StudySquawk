@@ -1,13 +1,7 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for
-from datetime import datetime
-from werkzeug.utils import secure_filename
-import re
-import os
-import sqlite3
-from functools import wraps
-from string import Template
-from datetime import datetime
 from helpers import login_required, grabclasses, checkclass, check, connectdb
+from datetime import datetime
+import sqlite3
 
 
 UPLOAD_FOLDER = '/studyist/userimages'
