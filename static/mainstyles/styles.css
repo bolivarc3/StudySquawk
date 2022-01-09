@@ -44,6 +44,44 @@ p{
 }
 /*Searchbar information */
 
+/*Form information including search bar*/
+.form{
+    background-color: #2c2c2c;
+    border-color: transparent;
+    border-radius: 2px;
+    height: 2.5rem;
+    width: 30rem;
+}
+
+.form::placeholder{
+    font-family: 'Teko', sans-serif;
+    color: #989898;
+    font-size:15;
+}
+input, select, textarea{
+    color: #989898;
+}
+
+.form:hover{
+    background-color: #2c2c2c;
+    border-color: white;
+    border-radius: 2px;
+    height: 2.5rem;
+    width: 30rem;
+}
+
+.form:focus{
+    font-family: 'Teko', sans-serif;
+    font-size:17;
+    background-color: #2c2c2c;
+    outline:none;
+    border-color: white;
+    border-radius: 2px;
+    height: 2.5rem;
+    width: 30rem;
+}
+/*Form information including search bar*/
+
 
 
 #titlediv{
