@@ -1,14 +1,16 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from helpers import login_required, grabclasses, checkclass, check, connectdb
+from werkzeug.utils import secure_filename
+import os
 from datetime import datetime
 import sqlite3
 
-
-UPLOAD_FOLDER = '/studyist/userimages'
+UPLOAD_FOLDER = '/Studyist/userimages'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 app.secret_key = "super secret key"
 
 # Ensure templates are auto-reloaded
@@ -155,6 +157,9 @@ def studyist():
     else:
         return render_template("homepage.html", courses = courses)
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/<course>', methods=["GET", "POST"])
 def course(course):
@@ -171,7 +176,26 @@ def course(course):
     checkclass(course, courses)
 
     if request.method == "POST":
-
+        print("ye")
+        #check if the post request has the file part
+        if 'file' not in request.files:
+            print("not going here")
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            print("does not detect the file")
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            print("everything should be going as it should be. :(")
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return 0
+        
+        print("heeeheheheh")
         #gathers information for database entry
         title = request.form.get("title")
         title = str(title)
@@ -187,12 +211,13 @@ def course(course):
             error = "No input to the post"
             return render_template('apology.html', error = error)
 
+        print("dhdhdhdhdhdhhdhhS")
         #connects to the post db
         dbinfo = connectdb("posts.db")
         postcursor = dbinfo[0]
         postconnect = dbinfo[1]
         #fetches all of the post names and creates unique id's for each
-        postcursor.execute("SELECT * FROM posts");
+        postcursor.execute("SELECT * FROM posts")
         posts = postcursor.fetchall()
         postslength = len(posts)
         print(postslength)

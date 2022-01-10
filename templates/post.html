@@ -17,7 +17,7 @@
 
 
 <div class = "formdiv">
-        <form action ="/{{ course }}", id = "formcenter", method = "POST">
+        <form action ="/{{ course }}", id = "formcenter", method = "POST" enctype=multipart/form-data>
             <br>
             <br>
             <input class = "form", type = "text", name = "title", placeholder = "Title" >
@@ -26,11 +26,8 @@
             <textarea id = "bodytext" id="text" name="text" rows="12" cols="50" placeholder="Body Text"></textarea>
             <br>
             <br>
-            <label id = "uploadbutton" for="file-ip-1">Upload Image</label>
-            <input type="file" name = "images" id="file-ip-1" accept="image/*" onchange="showPreview(event);" multiple>
-            <div id = "filepreviewdiv">
-                <img id = "file-ip-1-preview">
-            </div>
+            <label id = "uploadbutton" for="file-ip-1" value= "Upload">Upload Image</label>
+            <input type="file" name = "file" id="file-ip-1" accept="image/*" onchange="showPreview(event);" multiple>
             <br> -->
             <div>
                 <div style = "fit-content; margin:auto">
