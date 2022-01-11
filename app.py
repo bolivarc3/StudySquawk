@@ -53,14 +53,14 @@ def index():
         if password == "" or username == "" or email == "":
             formsubmission = False
             flash("Sign Up Form missing an element")
-            return redirect(request.url)
+            return redirect(url_for('index'))
 
         #if password does not match confirmation of password
         if password != confirmation:
             formsubmission = False
             print("hello")
             flash("Confirmation Password and Password do not match")
-            return redirect(request.url)
+            return redirect(url_for('index'))
 
         #checks if email is writen correctly
         emailvalidation = check(email)
@@ -68,7 +68,7 @@ def index():
             formsubmission = False
             error = "invalid email address"
             flash("invalid email address")
-            return redirect(request.url)
+            return redirect(url_for('index'))
 
         #goes to function that connects db
         dbinfo = connectdb("userinfo.db")
@@ -84,7 +84,7 @@ def index():
             print("yo")
             error = "invalid email address"
             flash("email already has been used")
-            return redirect(request.url)
+            return redirect(url_for('index'))
 
         #checks if username is already in the system | cant be 2 of same username
         userinfocursor.execute("SELECT username FROM users WHERE username = ?", (username, ));
@@ -95,7 +95,7 @@ def index():
             print("yo")
             error = "invalid email address"
             flash("username already has been used")
-            return redirect(request.url)
+            return redirect(url_for('index'))
 
         # after checks, insert into db
         dbinfo = connectdb("userinfo.db")
@@ -186,16 +186,13 @@ def course(course):
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file.filename == '':
-            print("does not detect the file")
             flash('No selected file')
             return redirect(request.url)
         if file and allowed_file(file.filename):
-            print("everything should be going as it should be. :(")
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return 0
-        
-        print("heeeheheheh")
+
         #gathers information for database entry
         title = request.form.get("title")
         title = str(title)

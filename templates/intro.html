@@ -38,18 +38,13 @@
 <!-- Navigation Bar -->
 <div id = "divtitlegrouping">
     {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <!-- Do something with the message -->
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                  <span>{{ message }}</span>
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-
-            {% endfor %}
-        {% endif %}
+      {% if messages %}
+        <ul class=flashes>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
     {% endwith %}
     <div id = "navbox">
         <ul id = "horizontal-list">
