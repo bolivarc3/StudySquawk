@@ -116,19 +116,19 @@ def index():
             userinfoconnect = dbinfo[1]
             email = request.form.get("email")
             password = request.form.get("password")
-            userinfocursor.execute("SELECT * FROM users WHERE email = ? ", (email, ));
+            userinfocursor.execute("SELECT * FROM users WHERE email = ? ", (email, ))
             fetchedemail = userinfocursor.fetchone()
 
             if fetchedemail == None:
                 flash("Email and User not found")
                 return render_template("intro.html")
-            userinfocursor.execute("SELECT * FROM users WHERE email = ? AND password = ?", (email, password, ));
-            password = userinfocursor.fetchone()
+            userinfocursor.execute("SELECT * FROM users WHERE email = ? AND password = ?", (email, password, ))
+            fetchpassword = userinfocursor.fetchone()
 
-            if password == None:
+            if fetchpassword == None:
                 flash("Password is Incorrect")
                 return render_template("intro.html")
-            userinfocursor.execute("SELECT username FROM users WHERE email = ? AND password = ?", (email, password, ));
+            userinfocursor.execute("SELECT username FROM users WHERE email = ? AND password = ?", (email, password, ))
             username = userinfocursor.fetchone()
             userinfoconnect.close()
 
@@ -153,8 +153,8 @@ def studyist():
         course = request.form.get("name")
         courseavailible = checkclass(course, courses)
         if courseavailible == False:
-            error = "Class is not availible. Select Class from Options"
-            return render_template('apology.html', error = error)
+            flash('Class is not availible. Select Class from Options')
+            return render_template('homepage.html')
         print(courses)
         #checks if the course requested is the same as one in the array
         return redirect(url_for('course', course = course))

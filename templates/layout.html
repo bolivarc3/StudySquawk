@@ -17,9 +17,15 @@
 {% block heading %}
 {% endblock %}
 
-{% for message in get_flashed_messages() %}
-        <p>{{ message }}</p>
-{% endfor %}
+{% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>{{message}}</strong>
+          </div>
+        {% endfor %}
+      {% endif %}
+{% endwith %}
 
 <div id= "navbox">
 
