@@ -41,7 +41,9 @@
       {% if messages %}
         <ul class=flashes>
         {% for message in messages %}
-          <li>{{ message }}</li>
+         <div class="alert alert-danger" role="alert">
+              {{message}}
+        </div>
         {% endfor %}
         </ul>
       {% endif %}
@@ -96,7 +98,7 @@
     <div id = form-group onclick = "loginon(); event.cancelBubble=true;">
 
         <h1> Login </h1>
-        <form id = loginform action="/login" method="POST">
+        <form id = loginform action="/" method="POST">
             <input type="hidden" name="form-name" value="loginform">
             <div class="form-element">
                 <input autocomplete="off" autofocus class="form-control" name="email" placeholder=" Email" type="text">

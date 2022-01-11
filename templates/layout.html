@@ -17,19 +17,12 @@
 {% block heading %}
 {% endblock %}
 
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-{% block body %}{% endblock %}
+{% for message in get_flashed_messages() %}
+        <p>{{ message }}</p>
+{% endfor %}
 
 <div id= "navbox">
-	
+
 	<div style = "margin:auto; display:flex;">
 		<a href = "/homepage"><img id = "logo" src="/static/images/logo.jpeg"></a>
 		<li>

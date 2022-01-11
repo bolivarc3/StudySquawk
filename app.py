@@ -44,99 +44,104 @@ def index():
     if request.method == "POST":
 
         #Get password/confirmation information
-        email = request.form.get("email")
-        username = request.form.get("username")
-        password = request.form.get("password")
-        confirmation = request.form.get("confirmation")
+        form = request.form.get("form-name")
+        if form == "signupform":
+            email = request.form.get("email")
+            username = request.form.get("username")
+            password = request.form.get("password")
+            confirmation = request.form.get("confirmation")
 
-        #if information not filled in
-        if password == "" or username == "" or email == "":
-            formsubmission = False
-            flash("Sign Up Form missing an element")
-            return redirect(url_for('index'))
+            #if information not filled in
+            if password == "" or username == "" or email == "":
+                formsubmission = False
+                flash('Sign Up Form missing an element')
+                return render_template("intro.html")
 
-        #if password does not match confirmation of password
-        if password != confirmation:
-            formsubmission = False
-            print("hello")
-            flash("Confirmation Password and Password do not match")
-            return redirect(url_for('index'))
+            #if password does not match confirmation of password
+            if password != confirmation:
+                formsubmission = False
+                print("hello")
+                flash('Confirmation Password and Password do not match')
+                return render_template("intro.html")
 
-        #checks if email is writen correctly
-        emailvalidation = check(email)
-        if emailvalidation == "invalid":
-            formsubmission = False
-            error = "invalid email address"
-            flash("invalid email address")
-            return redirect(url_for('index'))
+            #checks if email is writen correctly
+            emailvalidation = check(email)
+            if emailvalidation == "invalid":
+                formsubmission = False
+                error = "invalid email address"
+                flash('invalid email address')
+                return render_template("intro.html")
 
-        #goes to function that connects db
-        dbinfo = connectdb("userinfo.db")
-        #seperate list into db objects
-        userinfocursor = dbinfo[0]
-        userinfoconnect = dbinfo[1]
+            #goes to function that connects db
+            dbinfo = connectdb("userinfo.db")
+            #seperate list into db objects
+            userinfocursor = dbinfo[0]
+            userinfoconnect = dbinfo[1]
 
-        #checks if email is already in the system | cant be 2 of the same email
-        userinfocursor.execute("SELECT email FROM users WHERE email = ?", (email, ));
-        stored_email = userinfocursor.fetchone()
-        print(stored_email)
-        if stored_email != None:
-            print("yo")
-            error = "invalid email address"
-            flash("email already has been used")
-            return redirect(url_for('index'))
+            #checks if email is already in the system | cant be 2 of the same email
+            userinfocursor.execute("SELECT email FROM users WHERE email = ?", (email, ));
+            stored_email = userinfocursor.fetchone()
+            print(stored_email)
+            if stored_email != None:
+                print("yo")
+                error = "invalid email address"
+                flash('email already has been used')
+                return redirect(url_for('index'))
 
-        #checks if username is already in the system | cant be 2 of same username
-        userinfocursor.execute("SELECT username FROM users WHERE username = ?", (username, ));
-        stored_username = userinfocursor.fetchone()
-        userinfoconnect.close()
-        print(stored_username)
-        if stored_username != None:
-            print("yo")
-            error = "invalid email address"
-            flash("username already has been used")
-            return redirect(url_for('index'))
+            #checks if username is already in the system | cant be 2 of same username
+            userinfocursor.execute("SELECT username FROM users WHERE username = ?", (username, ));
+            stored_username = userinfocursor.fetchone()
+            userinfoconnect.close()
+            print(stored_username)
+            if stored_username != None:
+                print("yo")
+                error = "invalid email address"
+                flash("username already has been used")
+                return redirect(url_for('index'))
 
-        # after checks, insert into db
-        dbinfo = connectdb("userinfo.db")
-        userinfodb = dbinfo[0]
-        userinfoconnect = dbinfo[1]
-        userinfodb.execute("INSERT INTO users VALUES (?, ?, ?)", (username, password, email));
-        userinfoconnect.commit()
-        userinfoconnect.close()
-        return redirect("/")
+            # after checks, insert into db
+            dbinfo = connectdb("userinfo.db")
+            userinfodb = dbinfo[0]
+            userinfoconnect = dbinfo[1]
+            userinfodb.execute("INSERT INTO users VALUES (?, ?, ?)", (username, password, email));
+            userinfoconnect.commit()
+            userinfoconnect.close()
+            return redirect("/")
+
+        if form == "loginform":
+            #connects to db and checks if account is valid
+            session.clear()
+            dbinfo = connectdb("userinfo.db")
+            userinfocursor = dbinfo[0]
+            userinfoconnect = dbinfo[1]
+            email = request.form.get("email")
+            password = request.form.get("password")
+            userinfocursor.execute("SELECT * FROM users WHERE email = ? ", (email, ));
+            fetchedemail = userinfocursor.fetchone()
+
+            if fetchedemail == None:
+                flash("Email and User not found")
+                return render_template("intro.html")
+            userinfocursor.execute("SELECT * FROM users WHERE email = ? AND password = ?", (email, password, ));
+            password = userinfocursor.fetchone()
+
+            if password == None:
+                flash("Password is Incorrect")
+                return render_template("intro.html")
+            userinfocursor.execute("SELECT username FROM users WHERE email = ? AND password = ?", (email, password, ));
+            username = userinfocursor.fetchone()
+            userinfoconnect.close()
+
+            #login successful redirects to homepage with feed
+            username = username[0]
+            session["user_id"] = username
+            return redirect("homepage")
+
+
+
 
     else:
         return render_template("intro.html")
-
-
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-
-    #connects to db and checks if account is valid
-    session.clear()
-    dbinfo = connectdb("userinfo.db")
-    userinfocursor = dbinfo[0]
-    userinfoconnect = dbinfo[1]
-    email = request.form.get("email")
-    password = request.form.get("password")
-    userinfocursor.execute("SELECT * FROM users WHERE email = ? AND password = ?", (email, password, ));
-    user = userinfocursor.fetchone()
-    userinfocursor.execute("SELECT username FROM users WHERE email = ? AND password = ?", (email, password, ));
-    username = userinfocursor.fetchone()
-    userinfoconnect.close()
-
-    #if the user is not found, the password or username must be incorrect
-    #redirect back to index page
-    if user == None:
-        flash("username or password is incorrect or no user is found")
-        return redirect("/")
-    else:
-    #login successful redirects to homepage with feed
-        username = username[0]
-        session["user_id"] = username
-        return redirect("homepage")
 
 
 @app.route("/homepage", methods=["GET", "POST"])
