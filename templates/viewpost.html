@@ -1,3 +1,6 @@
+<head>
+    <link href="/static/mainstyles/poststyles.css" rel="stylesheet">
+</head>
 {% extends "layout.html" %}
 {% block title %}{{ post[3] }}{% endblock %}
 {% block head %}
@@ -13,28 +16,6 @@
         {{ course }}
     </h1>
 </div>
-{% endblock %}
-{% block searchbar %}
-<li>
-    <div id = "searchbar-box">
-        <form action = "/homepage" method = "POST">
-            <input autocomplete = "yes" name = "name" class = "form" type = "text" id="tags" placeholder = "Choose a Class!">
-            <script>
-                  $( function() {
-                    var availableTags = [
-                        {% for courses in courses %}
-                            "{{ courses }}",
-                        {% endfor %}
-                    ];
-                    $( "#tags" ).autocomplete({
-                      source: availableTags
-                    });
-                    } );
-            </script>
-            <input id = "submitsearch" type = "submit">
-        </form>
-    </div>
-</li>
 {% endblock %}
 
 {% block body %}

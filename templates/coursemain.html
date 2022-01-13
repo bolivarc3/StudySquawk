@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<head>
+    <link href="/static/mainstyles/coursemain.css" rel="stylesheet">
+</head>
 {% extends "layout.html" %}
 {% block maintitle %} | {{ course }}{% endblock %}
 {% block title %}{{ course }}{% endblock %}
@@ -43,8 +46,11 @@
 
 {% block body %}
     {% for post in post %}
-    <div style = "margin:auto; text-align:center;">
+    <div class = "postdiv">
         <!--each post is a submit button with a form -->
+        <h2>
+            {{ course }}
+        </h2>
         <form action = "/{{ course }}/post/{{ post[0] }}", method = "POST">
             <input type="hidden" id="postId" name="postId" value="{{ post[0] }}">
             <input type="submit", id = "clickpost" value = "{{ post[3] }}"></submit>
