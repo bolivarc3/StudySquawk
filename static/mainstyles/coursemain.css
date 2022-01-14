@@ -10,3 +10,23 @@
     border:3px solid #40798C;
     border-radius:5px;
 }
+
+
+.postbuttonform{
+    margin:0;
+    padding:0;
+    height:fit-content;
+
+}
+
+#clickpost{
+    margin:0%;
+    text-align: left;
+    background-color: #121212;
+    width: 90%;
+    height: fit-content;
+}
+
+#postId{
+    height:0rem;
+}
