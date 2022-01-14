@@ -21,17 +21,17 @@
 {% block body %}
 <div id = "postdiv">
     <div style = "margin:auto; padding-left:2rem; ">
-        <p>{{ post[2] }}</p>
-        <p>{{ post[6] }}</p>
+        <p>{{ post["class"] }}</p>
+        <p>{{ post["timedate"] }}</p>
     </div>
     <div id = "postsubdiv" style = "text-align:center;">
         <h1 id = "title">
-            {{ post[3] }}
+            {{ post["title"] }}
         </h1>
     </div>
     <div id = "postsubdiv">
         <body>
-            <p>{{ post[4] }}</p>
+            <p>{{ post["body"] }}</p>
         </body>
     </div>
 </div>
