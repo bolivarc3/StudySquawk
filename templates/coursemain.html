@@ -23,15 +23,17 @@
 
 {% block body %}
     {% for post in post %}
-        <div class = "postdiv" type="submit" value = "{{ post[3] }}" onclick="document.forms[0].submit({{ post[3] }})">
+        <div class = "postdiv" type="submit" value = "{{ post[3] }}" onClick="document.forms['post-form'].submit();">
             <!--each post is a submit button with a form -->
-            <form class = "postbuttonform", action = "/{{ course }}/post/{{ post[0] }}", method = "POST">
-                <h2>
-                    {{ course }}
-                </h2>
+            <form name = "post-form", class = "postbuttonform", action = "/{{ course }}/post/{{ post[0] }}", method = "POST">
                 <input type="hidden" id="postId" name="postId" value="{{ post[0] }}">
-                <input type="submit", id = "clickpost" value = "{{ post[3] }}">
             </form>
+            <h5>
+                {{ course }}
+            </h5>
+            <h3>
+                {{ post[3] }}
+            </h3>
             <!--each post is a submit button with a form -->
         </div>
     {% endfor %}
