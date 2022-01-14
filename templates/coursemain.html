@@ -13,29 +13,6 @@
     </div>
 {% endblock %}
 
-{% block searchbar %}
-<li>
-    <div id = "searchbar-box">
-        <form action = "/homepage" method = "POST">
-            <input autocomplete = "yes" name = "name" class = "form" type = "text" id="tags" placeholder = "Choose a Class!">
-            <script>
-                  $( function() {
-                    var availableTags = [
-                        {% for courses in courses %}
-                            "{{ courses }}",
-                        {% endfor %}
-                    ];
-                    $( "#tags" ).autocomplete({
-                      source: availableTags
-                    });
-                    } );
-            </script>
-            <input id = "submitsearch" type = "submit">
-        </form>
-    </div>
-</li>
-{% endblock %}
-
 {% block postbutton %}
 <li>
     <div id = "postbuttonbox">
@@ -46,16 +23,16 @@
 
 {% block body %}
     {% for post in post %}
-    <div class = "postdiv">
-        <!--each post is a submit button with a form -->
-        <h2>
-            {{ course }}
-        </h2>
-        <form action = "/{{ course }}/post/{{ post[0] }}", method = "POST">
-            <input type="hidden" id="postId" name="postId" value="{{ post[0] }}">
-            <input type="submit", id = "clickpost" value = "{{ post[3] }}"></submit>
-        </form>
-        <!--each post is a submit button with a form -->
-    </div>
+        <div class = "postdiv" type="submit" value = "{{ post[3] }}" onclick="document.forms[0].submit({{ post[3] }})">
+            <!--each post is a submit button with a form -->
+            <form class = "postbuttonform", action = "/{{ course }}/post/{{ post[0] }}", method = "POST">
+                <h2>
+                    {{ course }}
+                </h2>
+                <input type="hidden" id="postId" name="postId" value="{{ post[0] }}">
+                <input type="submit", id = "clickpost" value = "{{ post[3] }}">
+            </form>
+            <!--each post is a submit button with a form -->
+        </div>
     {% endfor %}
 {% endblock %}
