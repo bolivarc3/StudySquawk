@@ -2,7 +2,7 @@
     <link href="/static/mainstyles/viewpoststyles.css" rel="stylesheet">
 </head>
 {% extends "layout.html" %}
-{% block title %}{{ post[3] }}{% endblock %}
+{% block title %}{{ post["title"] }}{% endblock %}
 {% block head %}
 <script>
     function replyon() {
@@ -12,9 +12,11 @@
 {% endblock %}
 {% block heading %}
 <div id = "titlediv">
-    <h1 style = "color:#40798C;">
-        {{ course }}
-    </h1>
+    <a href = "/{{ course }}" style = "text-decoration: none;">
+        <h1 style = "color:#40798C;">
+            {{ course }}
+        </h1>
+    </a>
 </div>
 {% endblock %}
 
@@ -43,7 +45,7 @@
 
 {% block reply %}
     <div id = "replydiv">
-        <form action ="/{{ course }}/post/{{ post[0] }}", id = "formcenter", method = "POST">
+        <form action ="/{{ course }}/post/{{ post["id"] }}", id = "formcenter", method = "POST">
             <br>
             <br>
             <input type = "hidden", name = "formname" value = "replyform">
@@ -69,17 +71,17 @@
 
     {% for replies in replies %}
         <div id = "postsubdiv">
-            <p>{{ replies[2] }}</p>
-            <p>{{ replies[5] }}</p>
+            <p>{{ replies["username"] }}</p>
+            <p>{{ replies["timedate"] }}</p>
             <br>
             <br>
             <div style = "text-align:center;">
-                <h1 id = "title">{{ replies[3] }}</h1>
+                <h1 id = "title">{{ replies["title"] }}</h1>
             </div>
             <br>
             <br>
             <p>
-                {{ replies[4] }}
+                {{ replies["body"] }}
             </p>
         </div>
     {% endfor %}

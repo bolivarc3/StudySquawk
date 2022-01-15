@@ -308,6 +308,18 @@ def viewpost(course, postid):
     replyconnect = dbinfo[1]
     replycursor.execute("SELECT * FROM replies WHERE postid = ?", (postid,));
     replies = replycursor.fetchall()
+    print(len(replies))
+    for i in range(len(replies)):
+        replies[i] = {"id": replies[i][0],
+                      "class": replies[i][1],
+                      "username": replies[i][2],
+                      "title": replies [i][3],
+                      "body": replies[i][4],
+                      "timedate": replies[i][5]
+        }
+
+    print(replies)
+
     post = {"id": post[0],
             "class": post[1],
             "username": post[2],
@@ -316,7 +328,7 @@ def viewpost(course, postid):
             "images" : post[5],
             "timedate" : post[6]
     }
-    print(post)
+
     return render_template("viewpost.html", postid = postid, post = post, courses = courses, course = course, replies = replies, )
 
 
