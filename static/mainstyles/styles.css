@@ -18,7 +18,7 @@ p{
     padding-left:1rem;
     padding-top:0.5rem;
     padding-bottom:0.5rem;
-    background-color:#121212;
+    background-color:#161b22;
     height:fit-content;
     display:flex;
 
@@ -89,7 +89,7 @@ input, select, textarea{
     width:100%;
     /* Allow the centering to work */
     padding-top:1rem;
-    background-color:#121212;
+    background-color:#161b22;
     display: inline-block;
 }
 
@@ -181,3 +181,11 @@ a{
     border-radius:5px;
 }
 
+#title{
+    color:#40798C;
+    font-family: 'Teko', sans-serif;
+    font-weight:5000;
+    list-style-type: none;
+
+
+}
