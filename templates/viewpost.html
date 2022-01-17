@@ -1,14 +1,11 @@
-<head>
-    <link href="/static/mainstyles/viewpoststyles.css" rel="stylesheet">
-</head>
+
 {% extends "layout.html" %}
 {% block title %}{{ post["title"] }}{% endblock %}
 {% block head %}
-<script>
-    function replyon() {
-        document.getElementById("replydiv").style.display = "block";
-    }
-</script>
+<head>
+    <link href="/static/mainstyles/viewpoststyles.css" rel="stylesheet">
+    <script src= "/static/inputchecker.js"></script>
+</head>
 {% endblock %}
 {% block heading %}
 <div id = "titlediv">
