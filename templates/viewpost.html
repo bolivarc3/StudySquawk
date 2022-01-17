@@ -38,7 +38,7 @@
     <div id = "postsubdiv">
         <div id = "replydiv">
             <h4 id = "title" style = "margin-top:1rem">Comment as {{ session_user_id }}</h4>
-            <form action ="/{{ course }}/post/{{ post["id"] }}, id = "replyform", method = "POST">
+            <form action ="/{{ course }}/post/{{ post["id"] }}", id = "replyform", method = "POST">
                 <br>
                 <br>
                 <input type = "hidden", name = "formname" value = "replyform">
