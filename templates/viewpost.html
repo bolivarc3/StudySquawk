@@ -21,68 +21,55 @@
 {% endblock %}
 
 {% block body %}
-<div id = "postdiv">
-    <div style = "margin:auto; padding-left:2rem; ">
+<div id = "postsubdiv">
+    <diV style = "padding:1rem; background-color:#161b22;">
         <p>{{ post["class"] }}</p>
         <p>{{ post["timedate"] }}</p>
-    </div>
-    <div id = "postsubdiv" style = "text-align:center;">
         <h1 id = "title">
             {{ post["title"] }}
         </h1>
-    </div>
-    <div id = "postsubdiv">
-        <body>
-            <p>{{ post["body"] }}</p>
-        </body>
+    </diV>
+    <hr class="solid">
+    <div id = "bodytext">
+        <p>{{ post["body"] }}</p>
     </div>
 </div>
 
-<div id = "postbuttonbox" style = "margin-left:3rem;">
-    <a id = "post-button", onclick = "replyon()"><p>Create a Post!</p></a>
-</div>
 {% endblock %}
 
 {% block reply %}
-    <div id = "replydiv">
-        <form action ="/{{ course }}/post/{{ post["id"] }}", id = "formcenter", method = "POST">
-            <br>
-            <br>
-            <input type = "hidden", name = "formname" value = "replyform">
-            <input class = "form", type = "text", name = "title", placeholder = "Title" >
-            <br>
-            <br>
-            <textarea id = "bodytext" id="text" name="text" rows="12" cols="50" placeholder="Body Text"></textarea>
-            <br>
-            <br>
-            <!--<label id = "uploadbutton" for="file-ip-1">Upload Image</label>
-            <input type="file" name = "images" id="file-ip-1" accept="image/*" onchange="showPreview(event);" multiple>
-            <div id = "filepreviewdiv">
-                <img id = "file-ip-1-preview">
-            </div>
-            <br> -->
-            <div>
-                <div style = "fit-content; margin:auto">
-                    <input type="submit", id = "submitbutton" value = "Submit" style = "margin-left:45%"></submit>
+    <div id = "postsubdiv">
+        <div id = "replydiv">
+            <form action ="/{{ course }}/post/{{ post["id"] }}", id = "formcenter", method = "POST">
+                <br>
+                <br>
+                <input type = "hidden", name = "formname" value = "replyform">
+                <textarea id = "bodytext" id="text" name="text" rows="6" cols="120" placeholder="Body Text"></textarea>
+                <br>
+                <br>
+                <!--<label id = "uploadbutton" for="file-ip-1">Upload Image</label>
+                <input type="file" name = "images" id="file-ip-1" accept="image/*" onchange="showPreview(event);" multiple>
+                <div id = "filepreviewdiv">
+                    <img id = "file-ip-1-preview">
                 </div>
-            </div>
-        </form>
-    </div>
-
-    {% for replies in replies %}
-        <div id = "postsubdiv">
-            <p>{{ replies["username"] }}</p>
-            <p>{{ replies["timedate"] }}</p>
-            <br>
-            <br>
-            <div style = "text-align:center;">
-                <h1 id = "title">{{ replies["title"] }}</h1>
-            </div>
-            <br>
-            <br>
-            <p>
-                {{ replies["body"] }}
-            </p>
+                <br> -->
+                <div>
+                    <div style = "fit-content; margin:auto">
+                        <input type="submit", id = "submitbutton" value = "Submit" style = "margin-left:45%"></submit>
+                    </div>
+                </div>
+            </form>
         </div>
-    {% endfor %}
+        <br>
+        <hr class="solid">
+        {% for replies in replies %}
+            <div id = "postsubdiv">
+                <p>{{ replies["username"] }}</p>
+                <p>{{ replies["timedate"] }}</p>
+                <p>
+                    {{ replies["body"] }}
+                </p>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

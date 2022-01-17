@@ -147,6 +147,10 @@ a{
     background-color: #e3e3e3;
 }
 
+#post-button:active{
+    background-color: #505050;
+}
+
 #logo{
     height:5rem;
     width:5rem;
@@ -158,30 +162,6 @@ a{
 }
 
 
-#replydiv{
-    display:none;
-    width:100%;
-}
-
-#bodytext{
-    border-radius:1px;
-    background-color: #2c2c2c;
-    width:50rem;
-    height:20rem;
-}
-
-
-
-
-#postsubdiv{
-    padding:1rem;
-    margin:3rem;
-    margin-bottom:3rem;
-    width: 90%;
-    height: fit-content;
-    border:3px solid #121212;
-    border-radius:5px;
-}
 
 #title{
     color:#40798C;
