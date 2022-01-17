@@ -329,7 +329,8 @@ def viewpost(course, postid):
             "timedate" : post[6]
     }
 
-    return render_template("viewpost.html", postid = postid, post = post, courses = courses, course = course, replies = replies, )
+    session_user_id = session["user_id"]
+    return render_template("viewpost.html", postid = postid, post = post, courses = courses, course = course, replies = replies, session_user_id = session_user_id, )
 
 
 

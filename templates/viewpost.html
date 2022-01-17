@@ -40,11 +40,12 @@
 {% block reply %}
     <div id = "postsubdiv">
         <div id = "replydiv">
-            <form action ="/{{ course }}/post/{{ post["id"] }}", id = "formcenter", method = "POST">
+            <h4 id = "title" style = "margin-top:1rem">Comment as {{ session_user_id }}</h4>
+            <form action ="/{{ course }}/post/{{ post["id"] }}, id = "replyform", method = "POST">
                 <br>
                 <br>
                 <input type = "hidden", name = "formname" value = "replyform">
-                <textarea id = "bodytext" id="text" name="text" rows="6" cols="120" placeholder="Body Text"></textarea>
+                <textarea id = "inputbodytext" id="text" name="text" rows="6" cols="120" placeholder="Body Text"></textarea>
                 <br>
                 <br>
                 <!--<label id = "uploadbutton" for="file-ip-1">Upload Image</label>
@@ -63,13 +64,14 @@
         <br>
         <hr class="solid">
         {% for replies in replies %}
-            <div id = "postsubdiv">
-                <p>{{ replies["username"] }}</p>
-                <p>{{ replies["timedate"] }}</p>
-                <p>
-                    {{ replies["body"] }}
-                </p>
-            </div>
+        <div style = "padding:1rem">
+            <p>{{ replies["username"] }}</p>
+            <p>{{ replies["timedate"] }}</p>
+            <p>
+                {{ replies["body"] }}
+            </p>
+        </div>
+        <hr class="solid">
         {% endfor %}
     </div>
 {% endblock %}

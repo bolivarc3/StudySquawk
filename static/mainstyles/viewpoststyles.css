@@ -11,8 +11,14 @@ form{
     margin:auto;
 }
 
+#inputbodytext{
+    border:3px solid #3d3d3d;
+    background-color: transparent;
+    padding:1rem;
+
+}
+
 #bodytext{
-    border-radius:1px;
     background-color: transparent;
     padding:1rem;
 
@@ -47,5 +53,10 @@ form{
 hr.solid {
     margin:0;
     border-top: 3px solid #3d3d3d;
+}
+
+#replyform{
+    height: fit-content;
+    margin:0;
 }
 
