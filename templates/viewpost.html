@@ -4,7 +4,7 @@
 {% block head %}
 <head>
     <link href="/static/mainstyles/viewpoststyles.css" rel="stylesheet">
-    <script src= "/static/scripts/inputchecker.js"></script>
+    <script type = "text/javascript" src= "/static/scripts/viewpostscript.js"></script>
 </head>
 {% endblock %}
 {% block heading %}
@@ -42,7 +42,7 @@
                 <br>
                 <br>
                 <input type = "hidden", name = "formname" value = "replyform">
-                <textarea id = "inputbodytext" id="text" name="text" rows="6" cols="120" placeholder="Body Text"></textarea>
+                <textarea id = "inputbodytext" name="text" rows="6" cols="120" onkeyup = "checktext()" onchange="checktext()" placeholder="Body Text"></textarea>
                 <br>
                 <br>
                 <!--<label id = "uploadbutton" for="file-ip-1">Upload Image</label>
@@ -53,7 +53,7 @@
                 <br> -->
                 <div>
                     <div style = "fit-content; margin:auto">
-                        <input type="submit", id = "submitbutton" value = "Submit" style = "margin-left:45%"></submit>
+                        <input type="submit" id = "submitbutton" class = "disabled" value = "Submit" style = "margin-left:45%" ></submit>
                     </div>
                 </div>
             </form>
