@@ -12,9 +12,9 @@ form{
 }
 
 #inputbodytext{
+    padding:1rem;
     border:3px solid #3d3d3d;
     background-color: transparent;
-    padding:1rem;
     width: 100%;
 
 }
@@ -26,6 +26,7 @@ form{
 }
 
 #replydiv{
+    padding:1rem;
     width:fit-content;
     margin:auto;
 }
