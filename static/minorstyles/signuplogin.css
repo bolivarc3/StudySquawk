@@ -35,11 +35,70 @@
 }
 
 
+/*Login ----------------------------------------------- */
+
+#login-item{
+  margin-top: 1.5rem;
+  margin-left:2rem;
+  float: right;
+  width: fit-content;
+  border-radius: 12px;
+  border: 1px solid #40798C;
+  list-style-type: none;
+  cursor: pointer;
+}
+
+#login-item:hover{
+  background-color: #e3e3e3;
+}
+
+#login-item a {
+  margin:0;
+  text-decoration: none;
+  color:#40798C;
+  display: block;
+  padding: 0.675rem;
+  font-size:16;
+  font-family: 'Teko', sans-serif;
+  font-weight:800;
+}
+/* Login -----------------------------------------------------------------*/
+/* Signup -----------------------------------------------------------------*/
+#signup-item{
+  margin-top:1.5rem;
+  margin-left:2rem;
+  float: left;
+  width: fit-content;
+  border-radius: 12px;
+  border: 1px solid #40798C;
+  background-color:#40798C;
+  list-style-type: none;
+  float:right;
+  cursor: pointer;
+}
+
+#signup-item:hover{
+  background-color: #376a7a;
+}
+
+#signup-item a {
+  text-decoration: none;
+  color:white;
+  display: block;
+  padding: 0.625rem;
+  font-size:16;
+  font-family: 'Teko', sans-serif;
+  font-weight:800;
+}
+
+/* Signup -----------------------------------------------------------------*/
+
 #form-group{
     margin:auto;
+    padding:1rem;
     text-align:center;
     background-color:white;
-    width: 50rem;
+    width: 40rem;
     border:10px solid #d6d6d6;
     border-radius: 12px;
 }
@@ -48,7 +107,7 @@
 .form-element{
     margin:auto;
     padding:1rem;
-    width: fit-content;
+    width: 20rem;
 }
 
 .form-control{
