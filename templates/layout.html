@@ -34,19 +34,19 @@
 		<li>
 			<div id = "searchbar-box">
 				<form action = "/homepage" method = "POST">
-					<input autocomplete = "yes" name = "name" class = "form" type = "text" id="tags" placeholder = "Choose a Class!">
-					<script>
-						  $( function() {
-							var availableTags = [
-								{% for courses in courses %}
-									"{{ courses }}",
-								{% endfor %}
-							];
-							$( "#tags" ).autocomplete({
-							  source: availableTags
-							});
-							} );
-					</script>
+					<input autocomplete = "no" name = "name" class = "form" type = "text" id="tags" placeholder = "Choose a Class!" onkeyup = "autocomplete()">
+						<div id="result"></div
+						<script type="text/javascript" src = "static/scripts/introscript.js"></script>
+						 // $( function() {
+							// var availableTags = [
+							// 	{% for courses in courses %}
+							// 		"{{ courses }}",
+							// 	{% endfor %}
+							// ];
+							// $( "#tags" ).autocomplete({
+							//   source: availableTags
+							// });
+							// } );
 					<input id = "submitsearch" type = "submit">
 				</form>
 			</div>
