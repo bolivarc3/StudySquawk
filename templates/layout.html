@@ -8,6 +8,8 @@
 	<link href="/static/images/nerdpic.png" rel="icon">
 	<link href="/static/images/logo.jpeg">
 	<link href="/static/mainstyles/styles.css" rel="stylesheet">
+	<link rel="stylesheet" href = "/static/minorstyles/autoComplete.css">
+	<script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.6/dist/autoComplete.min.js"></script>
 	{% block head %}
 	{% endblock %}
 
@@ -33,21 +35,58 @@
 		<a href = "/homepage"><img id = "logo" src="/static/images/logo.png"></a>
 		<li>
 			<div id = "searchbar-box">
-				<form action = "/homepage" method = "POST">
-					<input autocomplete = "no" name = "name" class = "form" type = "text" id="tags" placeholder = "Choose a Class!" onkeyup = "autocomplete()">
-						<div id="result"></div
-						<script type="text/javascript" src = "static/scripts/introscript.js"></script>
-						 // $( function() {
-							// var availableTags = [
-							// 	{% for courses in courses %}
-							// 		"{{ courses }}",
-							// 	{% endfor %}
-							// ];
-							// $( "#tags" ).autocomplete({
-							//   source: availableTags
-							// });
-							// } );
-					<input id = "submitsearch" type = "submit">
+				<form action = "/homepage" method = "POST" id = "searchform">
+					<div class = "autoComplete_wrapper">
+						<input  dir="ltr" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" name = "name" class = "form" type="text" id="autoComplete" placeholder = "Choose a Class!">
+						<input id = "submitsearch" type = "submit">
+					</div>
+						<script>
+							document.getElementById("autoComplete").addEventListener("keyup", function(event) {
+								if (event.keyCode === 13) {
+									document.getElementById("searchform").submit(); 
+								}
+							});
+
+							var courses = [
+									{% for courses in courses %}
+										"{{ courses }}",
+									{% endfor %}
+								];
+							const autoCompleteJS = new autoComplete({
+								selector: "#autoComplete",
+								placeHolder: "Search for Food...",
+								data: {
+									src: courses,
+									cache: true,
+								},
+								resultsList: {
+									element: (list, data) => {
+										if (!data.results.length) {
+											// Create "No Results" message element
+											const message = document.createElement("div");
+											// Add class to the created element
+											message.setAttribute("class", "no_result");
+											// Add message text content
+											message.innerHTML = `<span>Found No Results for "${data.query}"</span>`;
+											// Append message element to the results list
+											list.prepend(message);
+										}
+									},
+									noResults: true,
+								},
+								resultItem: {
+									highlight: true
+								},
+								events: {
+									input: {
+										selection: (event) => {
+											const selection = event.detail.selection.value;
+											autoCompleteJS.input.value = selection;
+										}
+									}
+								}
+							});
+						</script>
 				</form>
 			</div>
 		</li>
