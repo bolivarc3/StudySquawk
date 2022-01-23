@@ -1,5 +1,6 @@
 <head>
     <link href="/static/mainstyles/poststyles.css" rel="stylesheet">
+    <script type = "text/javascript" src = "/static/scripts/postscript.js"></script>
 </head>
 {% extends "layout.html" %}
 {% block title %}Post Something!{% endblock %}
@@ -14,16 +15,6 @@
     </div>
 {% endblock %}
 {% block body %}
-<script>
-    function showPreview(event){
-    if(event.target.files.length > 0){
-        var src = URL.createObjectURL(event.target.files[0]);
-        var preview = document.getElementById("file-ip-1-preview");
-        preview.src = src;
-        preview.style.display = "block";
-  }
-}
-</script>
 
 
 <div class = "formdiv">
@@ -39,8 +30,14 @@
             <label id = "uploadbutton" for="file-ip-1" value= "Upload">Upload Image</label>
             <input type="file" name = "file" id="file-ip-1" accept="image/*" onchange="showPreview(event);" multiple>
             <br>
+            <div id = "filesviewdiv">
+                <ul id = "horizontal-list">
+
+                </ul>
+            </div>
+            <br>
             <div>
-                <div style = "fit-content; margin:auto">
+                <div style = "margin:auto">
                     <input type="submit", id = "submitbutton" value = "Submit" style = "margin-left:45%"></submit>
                 </div>
             </div>
