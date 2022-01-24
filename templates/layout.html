@@ -43,7 +43,7 @@
 						<script>
 							document.getElementById("autoComplete").addEventListener("keyup", function(event) {
 								if (event.keyCode === 13) {
-									document.getElementById("searchform").submit(); 
+									document.getElementById("searchform").submit();
 								}
 							});
 
@@ -54,7 +54,6 @@
 								];
 							const autoCompleteJS = new autoComplete({
 								selector: "#autoComplete",
-								placeHolder: "Search for Food...",
 								data: {
 									src: courses,
 									cache: true,

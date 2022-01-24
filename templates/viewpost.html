@@ -30,6 +30,10 @@
     <div id = "bodytext">
         <p>{{ post["body"] }}</p>
     </div>
+    {% for images in images %}
+        <link href="/static/userimages/{{ post["id"] }}/{{ images["imageid"] }}">
+        <img src = "/static/userimages/{{ post["id"] }}/{{ images["imageid"] }}">
+    {% endfor %}
 </div>
 
 {% endblock %}

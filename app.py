@@ -1,5 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from helpers import login_required, grabclasses, checkclass, check, connectdb
+import stat
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
@@ -181,7 +182,20 @@ def course(course):
     checkclass(course, courses)
 
     if request.method == "POST":
-        print("ye")
+        #gathers information for database entry
+        title = request.form.get("title")
+        title = str(title)
+        body = request.form.get("text")
+        body = str(body)
+        username = session["user_id"]
+        now = datetime.now()
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
+        #if there is no inputs, return an error
+        if title == "" or body == "":
+            error = "No input to the post"
+            return render_template('apology.html', error = error)
+
         #check if the post request has the file part
         if 'file' not in request.files:
             print("not going here")
@@ -191,26 +205,47 @@ def course(course):
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return 0
 
-        #gathers information for database entry
-        title = request.form.get("title")
-        title = str(title)
-        body = request.form.get("text")
-        body = str(body)
-        username = session["user_id"]
-        images = "NULL"
-        now = datetime.now()
-        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+            #grabs the postid
+            dbinfo = connectdb("posts.db")
+            postcursor = dbinfo[0]
+            postconnect = dbinfo[1]
+            #fetches all of the post names and creates unique id's for each
+            postcursor.execute("SELECT * FROM posts")
+            posts = postcursor.fetchall()
+            postslength = len(posts)
+            print(postslength)
+            id = postslength + 1
+            #grabs the postid
 
-        #if there is no inputs, return an error
-        if title == "" or body == "":
-            error = "No input to the post"
-            return render_template('apology.html', error = error)
+            #gives permission to parent path
+            parentpath = os.getcwd()
+            print(parentpath)
+            os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+            os.chmod('/home/ubuntu/Studyist/static', stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+            #gives permission to parent path
 
-        print("dhdhdhdhdhdhhdhhS")
+            #makes a new folder for the images. This makes it so that it can conserve it's name
+            imgpath = "static/userimages/" + str(id)
+            os.makedirs(imgpath)
+
+            #makes a new upload folder
+            UPLOAD_FOLDER = imgpath
+            app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+            files = request.files.getlist("file")
+
+            #for every file, it will save it
+            images = []
+            for file in files:
+                filename = secure_filename(file.filename)
+                dbinfo = connectdb("posts.db")
+                postcursor = dbinfo[0]
+                postconnect = dbinfo[1]
+                postcursor.execute("INSERT INTO images VALUES (?, ?)", (id, file.filename));
+                postconnect.commit()
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+
+
         #connects to the post db
         dbinfo = connectdb("posts.db")
         postcursor = dbinfo[0]
@@ -221,9 +256,8 @@ def course(course):
         postslength = len(posts)
         print(postslength)
         id = postslength + 1
-
         #inserts into db
-        postcursor.execute("INSERT INTO posts VALUES (?, ?, ?, ?, ?, ?, ?)", (id, course, username, title, body, images, dt_string));
+        postcursor.execute("INSERT INTO posts VALUES (?, ?, ?, ?, ?, ?)", (id, course, username, title, body, dt_string));
         postconnect.commit()
         postconnect.close()
 
@@ -278,7 +312,7 @@ def viewpost(course, postid):
             images = "NULL"
 
             #inserts into db
-            replycursor.execute("INSERT INTO replies VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, course, username, title, body, dt_string, postid, images));
+            replycursor.execute("INSERT INTO replies VALUES (?, ?, ?, ?, ?, ?, ?)", (id, course, username, title, body, dt_string, postid ));
             replyconnect.commit()
             replyconnect.close()
 
@@ -287,15 +321,18 @@ def viewpost(course, postid):
     courses = grabclasses()
     #convert postid into integer
 
-    #connect and check if the post db has a post id of that number
     dbinfo = connectdb("posts.db")
     postcursor = dbinfo[0]
     postconnect = dbinfo[1]
     postcursor.execute("SELECT * FROM posts WHERE id = ?", (postid, ));
     post = postcursor.fetchone()
     postconnect.close()
-
-
+    dbinfo = connectdb("posts.db")
+    postcursor = dbinfo[0]
+    postconnect = dbinfo[1]
+    postcursor.execute("SELECT * FROM images WHERE postid = ?", (postid, ));
+    images = postcursor.fetchall()
+    postconnect.close()
 
     #if not, return apology
     if post == None:
@@ -320,17 +357,20 @@ def viewpost(course, postid):
 
     print(replies)
 
+    #connect and check if the post db has a post id of that number
+    postconnect.close()
     post = {"id": post[0],
             "class": post[1],
             "username": post[2],
             "title": post[3],
             "body": post[4],
-            "images" : post[5],
-            "timedate" : post[6]
+            "timedate" : post[5]
     }
+    for i in range(len(images)):
+        images[i] = {"imageid": images[i][1]}
 
     session_user_id = session["user_id"]
-    return render_template("viewpost.html", postid = postid, post = post, courses = courses, course = course, replies = replies, session_user_id = session_user_id, )
+    return render_template("viewpost.html", postid = postid, images = images, post = post, courses = courses, course = course, replies = replies, session_user_id = session_user_id, )
 
 
 
