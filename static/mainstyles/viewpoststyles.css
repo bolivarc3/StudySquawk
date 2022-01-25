@@ -14,6 +14,7 @@ form{
 #inputbodytext{
     padding:1rem;
     border:3px solid #3d3d3d;
+    float:left;
     background-color: transparent;
     width: 100%;
 

@@ -17,11 +17,6 @@ app.secret_key = "super secret key"
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
-@app.template_test("image")
-def is_none(obj):
-    return obj is None
-
-
 # Ensure responses aren't cached
 @app.after_request
 def after_request(response):
