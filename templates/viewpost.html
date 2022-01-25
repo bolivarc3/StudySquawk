@@ -32,7 +32,7 @@
     </div>
     {% for images in images %}
         <link href="/static/userimages/{{ post["id"] }}/{{ images["imageid"] }}">
-        <img src = "/static/userimages/{{ post["id"] }}/{{ images["imageid"] }}">
+        <img style = "width:100%"src = "/static/userimages/{{ post["id"] }}/{{ images["imageid"] }}">
     {% endfor %}
 </div>
 
@@ -42,19 +42,21 @@
     <div id = "postsubdiv">
         <div id = "replydiv">
             <h4 id = "title" style = "margin-top:1rem">Comment as {{ session_user_id }}</h4>
-            <form action ="/{{ course }}/post/{{ post["id"] }}", id = "replyform", method = "POST">
+            <form action ="/{{ course }}/post/{{ post["id"] }}", id = "replyform", method = "POST" enctype=multipart/form-data>
                 <br>
                 <br>
                 <input type = "hidden", name = "formname" value = "replyform">
                 <textarea id = "inputbodytext" name="text" rows="6" cols="120" onkeyup = "checktext()" onchange="checktext()" placeholder="Body Text"></textarea>
                 <br>
                 <br>
-                <!--<label id = "uploadbutton" for="file-ip-1">Upload Image</label>
-                <input type="file" name = "images" id="file-ip-1" accept="image/*" onchange="showPreview(event);" multiple>
-                <div id = "filepreviewdiv">
-                    <img id = "file-ip-1-preview">
+                <label id = "uploadbutton" for="file-ip-1" value= "Upload">Upload Image</label>
+                <input type="file" name = "file" id="file-ip-1" accept="image/*" onchange="showPreview(event);" multiple>
+                <br>
+                <div id = "filesviewdiv">
+                    <ul id = "horizontal-list">
+
+                    </ul>
                 </div>
-                <br> -->
                 <div>
                     <div style = "fit-content; margin:auto">
                         <input type="submit" id = "submitbutton" class = "disabled" value = "Submit" style = "margin-left:45%" ></submit>
@@ -70,6 +72,13 @@
             <p>{{ replies["timedate"] }}</p>
             <p>
                 {{ replies["body"] }}
+                    {% for replyimages in replyimages %}
+                    {% if replies["id"] == replyimages["replyid"] %}
+                        <link href="/static/userimagesreplies/{{ replies["id"] }}/{{ replyimages["replyimageid"] }}">
+                        <img style = "width:100%", src = "/static/userimages-replies/{{ replies["id"] }}/{{ replyimages["replyimageid"] }}">
+                    {% endif %}
+                {% endfor %}
+                </ul>
             </p>
         </div>
         <hr class="solid">

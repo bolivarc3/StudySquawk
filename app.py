@@ -17,6 +17,10 @@ app.secret_key = "super secret key"
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
+@app.template_test("image")
+def is_none(obj):
+    return obj is None
+
 
 # Ensure responses aren't cached
 @app.after_request
@@ -316,6 +320,42 @@ def viewpost(course, postid):
             replyconnect.commit()
             replyconnect.close()
 
+            if 'file' not in request.files:
+                print("not going here")
+                flash('No file part')
+                return redirect(request.url)
+            file = request.files['file']
+            # If the user does not select a file, the browser submits an
+            # empty file without a filename.
+            if file and allowed_file(file.filename):
+
+                #gives permission to parent path
+                parentpath = os.getcwd()
+                print(parentpath)
+                os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+                os.chmod('/home/ubuntu/Studyist/static', stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+                #gives permission to parent path
+
+                #makes a new folder for the images. This makes it so that it can conserve it's name
+                imgpath = "static/userimages-replies/" + str(id)
+                os.makedirs(imgpath)
+
+                #makes a new upload folder
+                UPLOAD_FOLDER = imgpath
+                app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+                files = request.files.getlist("file")
+
+                #for every file, it will save it
+                images = []
+                for file in files:
+                    filename = secure_filename(file.filename)
+                    dbinfo = connectdb("posts.db")
+                    replycursor = dbinfo[0]
+                    replyconnect = dbinfo[1]
+                    replycursor.execute("INSERT INTO replyimages VALUES (?, ?, ?)", (id, file.filename, postid));
+                    replyconnect.commit()
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+
         return redirect(url_for('viewpost', course = course, postid = postid))
     #grab all of the courses
     courses = grabclasses()
@@ -345,9 +385,17 @@ def viewpost(course, postid):
     replyconnect = dbinfo[1]
     replycursor.execute("SELECT * FROM replies WHERE postid = ?", (postid,));
     replies = replycursor.fetchall()
+
+    replycursor.execute("SELECT * FROM replyimages WHERE postid = ?", (postid,));
+    replyimages = replycursor.fetchall()
     print(len(replies))
+    for i in range(len(replyimages)):
+                    replyimages[i] = {"replyid": int(replyimages[i][0]),
+                        "replyimageid": replyimages[i][1],
+                        "postid": replyimages[i][2]
+                    }
     for i in range(len(replies)):
-        replies[i] = {"id": replies[i][0],
+        replies[i] = {"id": int(replies[i][0]),
                       "class": replies[i][1],
                       "username": replies[i][2],
                       "title": replies [i][3],
@@ -367,10 +415,13 @@ def viewpost(course, postid):
             "timedate" : post[5]
     }
     for i in range(len(images)):
-        images[i] = {"imageid": images[i][1]}
+        images[i] = {"imageid": images[i][1]
+
+        }
+
 
     session_user_id = session["user_id"]
-    return render_template("viewpost.html", postid = postid, images = images, post = post, courses = courses, course = course, replies = replies, session_user_id = session_user_id, )
+    return render_template("viewpost.html", postid = postid, images = images, replyimages = replyimages, post = post, courses = courses, course = course, replies = replies, session_user_id = session_user_id, )
 
 
 

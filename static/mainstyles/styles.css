@@ -173,3 +173,39 @@ a{
 }
 
 
+
+
+
+
+
+.imagecontainer{
+    width:100px;
+    height:100px;
+    max-width:100px;
+    max-height:100px;
+    background-size: cover;
+}
+
+.imagecontainer img{
+    width:100px;
+    height:100px;
+    object-fit: cover;
+}
+
+#filesviewdiv{
+    display: table;
+    width:100%;
+    height:fit-content;
+}
+
+ul#horizontal-list {
+	min-width: 696px;
+	list-style: none;
+	padding-top: 20px;
+}
+
+#horizontal-list li{
+    display: inline;
+    float:left;
+}
+
