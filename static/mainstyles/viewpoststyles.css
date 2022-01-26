@@ -14,7 +14,6 @@ form{
 #inputbodytext{
     padding:1rem;
     border:3px solid #3d3d3d;
-    float:left;
     background-color: transparent;
     width: 100%;
 
@@ -64,3 +63,51 @@ hr.solid {
     margin:0;
 }
 
+
+#uploadbutton {
+    display:block;
+    width:45%;
+    height:45px;
+    margin-left: 25%;
+    line-height:50px;
+    text-align:center;
+    background:#40798C;
+    color:#fff;
+    font-size:15px;
+    font-family:"Open Sans",sans-serif;
+    text-transform:Uppercase;
+    font-weight:600;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+
+.form-input img {
+    width:100%;
+    display:none;
+    margin-bottom:30px;
+  }
+  
+  #file-ip-1{
+      display:none;
+  }
+  
+  #file-ip-1-preview{
+      max-width: 20%;
+      height: auto;
+  
+      display:none;
+  }
+  
+  .filepreview{
+      width:100%;
+      height: fit-content;
+      background-color:#40798C;
+  }
+
+
+#viewimagediv{
+    display:block;
+    width:50%;
+    margin:auto;
+}

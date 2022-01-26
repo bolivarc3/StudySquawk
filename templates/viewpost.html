@@ -49,8 +49,11 @@
                 <textarea id = "inputbodytext" name="text" rows="6" cols="120" onkeyup = "checktext()" onchange="checktext()" placeholder="Body Text"></textarea>
                 <br>
                 <br>
-                <label id = "uploadbutton" for="file-ip-1" value= "Upload">Upload Image</label>
+                <div>
+                    <label id = "uploadbutton" for="file-ip-1" value= "Upload">Upload Image</label>
+                </div>
                 <input type="file" name = "file" id="file-ip-1" accept="image/*" onchange="showPreview(event);" multiple>
+                <br>
                 <br>
                 <div id = "filesviewdiv">
                     <ul id = "horizontal-list">
@@ -58,7 +61,7 @@
                     </ul>
                 </div>
                 <div>
-                    <div style = "fit-content; margin:auto">
+                    <div style = "margin:auto">
                         <input type="submit" id = "submitbutton" class = "disabled" value = "Submit" style = "margin-left:45%" ></submit>
                     </div>
                 </div>
@@ -72,13 +75,15 @@
             <p>{{ replies["timedate"] }}</p>
             <p>
                 {{ replies["body"] }}
-                    {% for replyimages in replyimages %}
+                <br>
+                {% for replyimages in replyimages %}
                     {% if replies["id"] == replyimages["replyid"] %}
+                    <div style = "width:100%; margin-bottom:1rem;">
                         <link href="/static/userimagesreplies/{{ replies["id"] }}/{{ replyimages["replyimageid"] }}">
-                        <img style = "width:100%", src = "/static/userimages-replies/{{ replies["id"] }}/{{ replyimages["replyimageid"] }}">
+                        <img id = "viewimagediv" src = "/static/userimages-replies/{{ replies["id"] }}/{{ replyimages["replyimageid"] }}">
+                    </div>
                     {% endif %}
                 {% endfor %}
-                </ul>
             </p>
         </div>
         <hr class="solid">
