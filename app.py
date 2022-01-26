@@ -221,7 +221,8 @@ def course(course):
             parentpath = os.getcwd()
             print(parentpath)
             os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-            os.chmod('/home/ubuntu/Studyist/static', stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+            path = parentpath + str('/static')
+            os.chmod(path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
             #gives permission to parent path
 
             #makes a new folder for the images. This makes it so that it can conserve it's name

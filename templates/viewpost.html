@@ -31,8 +31,10 @@
         <p>{{ post["body"] }}</p>
     </div>
     {% for images in images %}
+    <div style = "width:100%; margin-bottom:1rem;">
         <link href="/static/userimages/{{ post["id"] }}/{{ images["imageid"] }}">
-        <img style = "width:100%"src = "/static/userimages/{{ post["id"] }}/{{ images["imageid"] }}">
+        <img id = "imagesets" src = "/static/userimages/{{ post["id"] }}/{{ images["imageid"] }}">
+    </div>
     {% endfor %}
 </div>
 
@@ -80,7 +82,7 @@
                     {% if replies["id"] == replyimages["replyid"] %}
                     <div style = "width:100%; margin-bottom:1rem;">
                         <link href="/static/userimagesreplies/{{ replies["id"] }}/{{ replyimages["replyimageid"] }}">
-                        <img id = "viewimagediv" src = "/static/userimages-replies/{{ replies["id"] }}/{{ replyimages["replyimageid"] }}">
+                        <img id = "imagesets" src = "/static/userimages-replies/{{ replies["id"] }}/{{ replyimages["replyimageid"] }}">
                     </div>
                     {% endif %}
                 {% endfor %}

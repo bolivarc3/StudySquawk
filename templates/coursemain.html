@@ -23,9 +23,9 @@
 
 {% block body %}
     {% for post in post %}
-        <div class = "postdiv" type="submit" value = "{{ post[3] }}" onClick="document.forms['post-form'].submit();">
+        <div class = "postdiv" type="submit" value = "{{ post[3] }}" onClick="document.forms['post-form{{ post[3] }}'].submit();">
             <!--each post is a submit button with a form -->
-            <form name = "post-form", class = "postbuttonform", action = "/{{ course }}/post/{{ post[0] }}", method = "POST">
+            <form name = "post-form{{ post[3] }}", class = "postbuttonform", action = "/{{ course }}/post/{{ post[0] }}", method = "POST">
                 <input type="hidden" id="postId" name="postId" value="{{ post[0] }}">
             </form>
             <h5>
