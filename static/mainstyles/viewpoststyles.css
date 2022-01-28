@@ -87,18 +87,18 @@ hr.solid {
     display:none;
     margin-bottom:30px;
   }
-  
+
   #file-ip-1{
       display:none;
   }
-  
+
   #file-ip-1-preview{
       max-width: 20%;
       height: auto;
-  
+
       display:none;
   }
-  
+
   .filepreview{
       width:100%;
       height: fit-content;
@@ -110,4 +110,13 @@ hr.solid {
     display:block;
     width:50%;
     margin:auto;
+}
+
+
+#filesdiv{
+     width: fit-content;
+     display: inline-block;
+}
+#filesdiv a{
+     text-decoration:none;
 }

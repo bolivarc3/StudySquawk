@@ -334,28 +334,40 @@ def viewpost(course, postid):
                 return redirect(request.url)
             file = request.files['file']
             # If the user does not select a file, the browser submits an
-            # empty file without a filename.
-            if file and allowed_file(file.filename):
+            # empty file without a filename
 
-                #gives permission to parent path
-                parentpath = os.getcwd()
-                print(parentpath)
-                os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-                os.chmod('/home/ubuntu/Studyist/static', stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-                #gives permission to parent path
+            #gives permission to parent path
+            parentpath = os.getcwd()
+            print(parentpath)
+            os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+            os.chmod('/home/ubuntu/Studyist/static', stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+            #gives permission to parent path
 
-                #makes a new folder for the images. This makes it so that it can conserve it's name
-                imgpath = "static/userimages-replies/" + str(id)
-                os.makedirs(imgpath)
+            #makes a new folder for the images. This makes it so that it can conserve it's name
+            imgpath = "static/userimages-replies/" + str(id)
+            os.makedirs(imgpath)
 
-                #makes a new upload folder
-                UPLOAD_FOLDER = imgpath
-                app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-                files = request.files.getlist("file")
+            #makes a new upload folder
+            UPLOAD_FOLDER = imgpath
+            app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+            files = request.files.getlist("file")
 
-                #for every file, it will save it
-                images = []
-                for file in files:
+            #for every file, it will save it
+            images = []
+            for file in files:
+
+                split_tup = os.path.splitext(file.filename)
+                print(split_tup)
+
+                # extract the file name and extension
+                file_name = split_tup[0]
+                file_extension = split_tup[1]
+                print(file_name)
+                print(file_extension)
+
+                imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
+
+                if file_extension in imagefileextensions:
                     filename = secure_filename(file.filename)
                     dbinfo = connectdb("posts.db")
                     replycursor = dbinfo[0]
@@ -363,6 +375,15 @@ def viewpost(course, postid):
                     replycursor.execute("INSERT INTO replyimages VALUES (?, ?, ?)", (id, file.filename, postid));
                     replyconnect.commit()
                     file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+                else:
+                    filename = secure_filename(file.filename)
+                    dbinfo = connectdb("posts.db")
+                    replycursor = dbinfo[0]
+                    replyconnect = dbinfo[1]
+                    replycursor.execute("INSERT INTO replyfiles VALUES (?, ?, ?)", (id, file.filename, postid));
+                    replyconnect.commit()
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+                replyconnect.close()
 
         return redirect(url_for('viewpost', course = course, postid = postid))
     #grab all of the courses
@@ -398,6 +419,9 @@ def viewpost(course, postid):
 
     replycursor.execute("SELECT * FROM replyimages WHERE postid = ?", (postid,));
     replyimages = replycursor.fetchall()
+
+    replycursor.execute("SELECT * FROM replyfiles WHERE postid = ?", (postid,));
+    replyfiles = replycursor.fetchall()
     replyconnect.close()
     print(len(replies))
     for i in range(len(replyimages)):
@@ -405,6 +429,13 @@ def viewpost(course, postid):
                         "replyimageid": replyimages[i][1],
                         "postid": replyimages[i][2]
                     }
+
+    for i in range(len(replyfiles)):
+                    replyfiles[i] = {"replyid": int(replyfiles[i][0]),
+                        "replyfileid": replyfiles[i][1],
+                        "postid": replyfiles[i][2]
+                    }
+
     for i in range(len(replies)):
         replies[i] = {"id": int(replies[i][0]),
                       "class": replies[i][1],
@@ -437,7 +468,7 @@ def viewpost(course, postid):
 
 
     session_user_id = session["user_id"]
-    return render_template("viewpost.html", postid = postid, images = images, files = files, replyimages = replyimages, post = post, courses = courses, course = course, replies = replies, session_user_id = session_user_id, )
+    return render_template("viewpost.html", postid = postid, images = images, files = files, replyfiles = replyfiles, replyimages = replyimages, post = post, courses = courses, course = course, replies = replies, session_user_id = session_user_id, )
 
 
 
