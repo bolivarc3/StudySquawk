@@ -120,3 +120,15 @@ hr.solid {
 #filesdiv a{
      text-decoration:none;
 }
+
+#imagediv{
+    width:100%;
+    margin:auto;
+}
+
+#imagediv img{
+    display:block;
+    margin:auto;
+    margin-bottom:2rem;
+    width:60%;
+}
