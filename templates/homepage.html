@@ -1,1 +1,18 @@
 {% extends "layout.html" %}
+{% block body %}
+    {% for post in post %}
+        <div class = "postdiv" type="submit" value = "{{ post[3] }}" onClick="document.forms['post-form{{ post[3] }}'].submit();">
+            <!--each post is a submit button with a form -->
+            <form name = "post-form{{ post[3] }}", class = "postbuttonform", action = "/{{ post[1] }}/post/{{ post[0] }}", method = "POST">
+                <input type="hidden" id="postId" name="postId" value="{{ post[0] }}">
+            </form>
+            <h5>
+                {{ post[1] }}
+            </h5>
+            <h3>
+                {{ post[3] }}
+            </h3>
+            <!--each post is a submit button with a form -->
+        </div>
+    {% endfor %}
+{% endblock %}

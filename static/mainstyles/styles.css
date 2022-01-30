@@ -209,3 +209,35 @@ ul#horizontal-list {
     float:left;
 }
 
+.postdiv{
+    padding:1rem;
+    margin:auto;
+    margin-bottom: 5rem;
+    margin-top: 5rem;
+    width: 90%;
+    height: fit-content;
+    background-color: #121212;
+    color:#40798C;
+    border:3px solid #2c2c2c;
+    border-radius:5px;
+}
+
+
+.postbuttonform{
+    margin:0;
+    padding:0;
+    height:fit-content;
+
+}
+
+#clickpost{
+    margin:0%;
+    text-align: left;
+    background-color: #121212;
+    width: 90%;
+    height: fit-content;
+}
+
+#postId{
+    height:0rem;
+}

@@ -158,7 +158,13 @@ def studyist():
         return redirect(url_for('course', course = course))
 
     else:
-        return render_template("homepage.html", courses = courses)
+        #grabs info from database adn shows post ont the feed page
+        dbinfo = connectdb("posts.db")
+        postcursor = dbinfo[0]
+        postconnect = dbinfo[1]
+        postcursor.execute("SELECT * FROM posts ORDER BY timedate DESC;");
+        posts = postcursor.fetchall()
+        return render_template("homepage.html", courses = courses, post = posts)
 
 
 @app.route('/<course>', methods=["GET", "POST"])
@@ -167,6 +173,7 @@ def course(course):
     #grabs the classes and checks if class is a class in db
     courses = grabclasses()
     courseavailible = checkclass(course, courses)
+    
     #if the class is not in the list, it will render an apology
     if courseavailible == False:
         error = "Class is not availible. Select Class from Options"
@@ -239,7 +246,6 @@ def course(course):
             print(file_extension)
 
             imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
-
             if file_extension in imagefileextensions:
                 filename = secure_filename(file.filename)
                 dbinfo = connectdb("posts.db")
@@ -344,11 +350,11 @@ def viewpost(course, postid):
             #gives permission to parent path
 
             #makes a new folder for the images. This makes it so that it can conserve it's name
-            imgpath = "static/userimages-replies/" + str(id)
-            os.makedirs(imgpath)
+            filepath = "static/userfiles-replies/" + str(id)
+            os.makedirs(filepath)
 
             #makes a new upload folder
-            UPLOAD_FOLDER = imgpath
+            UPLOAD_FOLDER = filepath
             app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
             files = request.files.getlist("file")
 

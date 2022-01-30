@@ -65,7 +65,7 @@
                 <textarea id = "inputbodytext" name="text" rows="6" cols="120" onkeyup = "checktext()" onchange="checktext()" placeholder="Body Text"></textarea>
                 <br>
                 <br>
-                <label id = "uploadbutton" for="file-ip-1" value= "Upload">Upload Image</label>
+                <label id = "uploadbutton" for="file-ip-1" value= "Upload">Upload Files and Images</label>
                 <input type="file" name = "file" id="file-ip-1" onchange="showPreview(event);" multiple>
                 <br>
                 <div id = "filesviewdiv">
@@ -90,8 +90,8 @@
                 {{ replies["body"] }}
                     {% for replyimages in replyimages %}
                         {% if replies["id"] == replyimages["replyid"] %}
-                            <link href="/static/userimagesreplies/{{ replies["id"] }}/{{ replyimages["replyimageid"] }}">
-                            <img style = "width:100%", src = "/static/userimages-replies/{{ replies["id"] }}/{{ replyimages["replyimageid"] }}">
+                            <link href="/static/userfilesreplies/{{ replies["id"] }}/{{ replyimages["replyimageid"] }}">
+                            <img style = "width:100%", src = "/static/userfiles-replies/{{ replies["id"] }}/{{ replyimages["replyimageid"] }}">
                             <link href="/static/userfiles/{{ post["id"] }}/{{ files["replyfileid"] }}">
                             <a href="/static/userfiles/{{ post["id"] }}/{{ replyfiles["replyfileid"] }}">{{ replyfiles["replyfileid"] }}</a>
                         {% endif %}
