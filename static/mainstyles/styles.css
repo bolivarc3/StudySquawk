@@ -243,6 +243,8 @@ ul#horizontal-list {
 }
 
 
+
+/*tab bars*/
 #tabbar{
     background-color: #161B22;
     position: relative;
@@ -251,21 +253,34 @@ ul#horizontal-list {
 }
 
 #tabssticktobottom{
+    font-size: 0;
     margin:auto;
     width:fit-content;
     bottom: 0;
 }
 
-#tabssticktobottom div{
+#tab{
+    font-size: 20px;
+    color: #40798C;
     display: inline-block;
-    margin:auto;
+    margin-left: 0%;
+    margin-right: 0%;
+    border-radius: 1rem 1rem 0rem 0rem;
+    padding: .5rem 6rem .5rem 6rem;
 }
 
-#tab{
-    display: inline-block;
-    margin:auto;
-    padding: .5rem 2rem .5rem 2rem;
-    border-radius:  5px 5px 1px 1px;
+.activetab{
+    background-color: #0D1117;
+    border: 1px solid;
+    border-color: transparent transparent #40798C transparent;
+    border-bottom-color: #40798C ;
+}
+
+.disabledtab{
+    background-color: #161B22;
+    border: 1px solid;
+    border-color: #2C2C2C transparent transparent transparent;
+
 }
 
 
