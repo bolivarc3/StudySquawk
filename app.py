@@ -220,9 +220,10 @@ def course(course):
 
         #gives permission to parent path
         parentpath = os.getcwd()
+        parentpath = str(parentpath) + '/static'
         print(parentpath)
         os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-        os.chmod('/home/ubuntu/Studyist/static', stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+        os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
         #gives permission to parent path
 
         #makes a new folder for the images. This makes it so that it can conserve it's name
@@ -344,9 +345,9 @@ def viewpost(course, postid):
 
             #gives permission to parent path
             parentpath = os.getcwd()
-            print(parentpath)
+            parentpath = str(parentpath) + '/static'
             os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-            os.chmod('/home/ubuntu/Studyist/static', stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+            os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
             #gives permission to parent path
 
             #makes a new folder for the images. This makes it so that it can conserve it's name
