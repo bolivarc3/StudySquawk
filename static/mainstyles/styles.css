@@ -259,7 +259,7 @@ ul#horizontal-list {
     bottom: 0;
 }
 
-#tab{
+.tab{
     font-size: 20px;
     color: #40798C;
     display: inline-block;
@@ -269,17 +269,24 @@ ul#horizontal-list {
     padding: .5rem 6rem .5rem 6rem;
 }
 
-.activetab{
+#activetab{
     background-color: #0D1117;
     border: 1px solid;
     border-color: transparent transparent #40798C transparent;
     border-bottom-color: #40798C ;
 }
 
-.disabledtab{
+#disabledtab{
     background-color: #161B22;
     border: 1px solid;
     border-color: #2C2C2C transparent transparent transparent;
+
+}
+
+#disabledtab:hover{
+    background-color: #30363D;
+    border: 1px solid;
+    border-color: #908E97 #908E97 transparent #908E97;
 
 }
 
