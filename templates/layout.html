@@ -47,12 +47,13 @@
 									document.getElementById("searchform").submit();
 								}
 							});
-
-							var courses = [
-									{% for courses in courses %}
-										"{{ courses }}",
-									{% endfor %}
-								];
+							var courses = getData()
+							async function getData(){
+    							const response = await fetch('/getcourses')
+    							var courses = await response.json()
+    							console.log(courses);
+								return courses
+							}
 							const autoCompleteJS = new autoComplete({
 								selector: "#autoComplete",
 								data: {

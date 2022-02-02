@@ -486,7 +486,7 @@ def viewpost(course, postid):
 
 
 
-@app.route('/api', methods=["GET", "POST"])
+@app.route('/getcourses', methods=["GET", "POST"])
 def api():
-    hello = jsonify("test: 123")
-    return(hello)
+    courses = jsonify(grabclasses())
+    return(courses)
