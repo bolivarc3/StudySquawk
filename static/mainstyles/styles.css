@@ -295,3 +295,7 @@ hr.solid {
     margin:0;
     border-top: 1px solid #3d3d3d;
 }
+
+#bodydiv{
+    display: block;
+}

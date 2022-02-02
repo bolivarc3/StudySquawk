@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
+<div id = "bodydiv">
     {% for post in post %}
         <div class = "postdiv" type="submit" value = "{{ post[3] }}" onClick="document.forms['post-form{{ post[3] }}'].submit();">
             <!--each post is a submit button with a form -->
@@ -19,4 +20,5 @@
             <!--each post is a submit button with a form -->
         </div>
     {% endfor %}
+</div>
 {% endblock %}
