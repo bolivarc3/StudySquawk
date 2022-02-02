@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, session, url_for
+from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
 from helpers import login_required, grabclasses, checkclass, check, connectdb
 import stat
 from werkzeug.utils import secure_filename
@@ -37,6 +37,7 @@ def apology(error):
 #the intro homepage for the user
 @app.route("/", methods=["GET", "POST"])
 def index():
+
     session.clear()
     # if the form is submitted
     if request.method == "POST":
@@ -80,6 +81,7 @@ def index():
             userinfocursor.execute("SELECT email FROM users WHERE email = ?", (email, ));
             stored_email = userinfocursor.fetchone()
             print(stored_email)
+
             if stored_email != None:
                 print("yo")
                 error = "invalid email address"
@@ -91,6 +93,7 @@ def index():
             stored_username = userinfocursor.fetchone()
             userinfoconnect.close()
             print(stored_username)
+
             if stored_username != None:
                 print("yo")
                 error = "invalid email address"
@@ -134,10 +137,6 @@ def index():
             username = username[0]
             session["user_id"] = username
             return redirect("homepage")
-
-
-
-
     else:
         return render_template("intro.html")
 
@@ -145,6 +144,7 @@ def index():
 @app.route("/homepage", methods=["GET", "POST"])
 @login_required
 def studyist():
+
     courses = grabclasses()
     if request.method == "POST":
         #looks in the classes db to find all of the classes
@@ -177,7 +177,8 @@ def course(course):
     #if the class is not in the list, it will render an apology
     if courseavailible == False:
         error = "Class is not availible. Select Class from Options"
-        return render_template('apology.html', error = error)
+        flash('No file part')
+        return redirect(request.url)
     #if there is a post request, it will redirect to a page where you can post
     # else it will render the course page requested
     checkclass(course, courses)
@@ -194,8 +195,8 @@ def course(course):
 
         #if there is no inputs, return an error
         if title == "" or body == "":
-            error = "No input to the post"
-            return render_template('apology.html', error = error)
+            flash('No input to the post')
+            return redirect(request.url)
 
         #check if the post request has the file part
         if 'file' not in request.files:
@@ -300,10 +301,13 @@ def post(course):
 
 @app.route('/<course>/post/<postid>', methods=["GET", "POST"])
 def viewpost(course, postid):
+
     postid = int(postid)
+
     if request.method == "POST":
         formname = request.form.get("formname")
         formname = str(formname)
+
         if formname == "replyform":
             title = request.form.get("title")
             title = str(title)
@@ -316,7 +320,8 @@ def viewpost(course, postid):
 
             if title == "" or body == "":
                 error = "No input to the post"
-                return render_template('apology.html', error = error)
+                flash('No input to the post')
+                return redirect(request.url)
 
             #connects to the post db
             dbinfo = connectdb("posts.db")
@@ -362,7 +367,6 @@ def viewpost(course, postid):
             #for every file, it will save it
             images = []
             for file in files:
-
                 split_tup = os.path.splitext(file.filename)
                 print(split_tup)
 
@@ -393,10 +397,10 @@ def viewpost(course, postid):
                 replyconnect.close()
 
         return redirect(url_for('viewpost', course = course, postid = postid))
+
+
     #grab all of the courses
     courses = grabclasses()
-    #convert postid into integer
-
     dbinfo = connectdb("posts.db")
     postcursor = dbinfo[0]
     postconnect = dbinfo[1]
@@ -414,8 +418,8 @@ def viewpost(course, postid):
 
     #if not, return apology
     if post == None:
-        error = "post not availible"
-        return render_template('apology.html', error = error)
+        flash('post not availible')
+        return redirect(request.url)
 
 
     dbinfo = connectdb("posts.db")
@@ -483,5 +487,6 @@ def viewpost(course, postid):
 
 
 @app.route('/api', methods=["GET", "POST"])
-def api(request, response):
-    return("yooyoyooyoyoapi")
+def api():
+    hello = jsonify("test: 123")
+    return(hello)
