@@ -479,3 +479,9 @@ def viewpost(course, postid):
 
 
 
+
+
+
+@app.route('/api', methods=["GET", "POST"])
+def api(request, response):
+    return("yooyoyooyoyoapi")
