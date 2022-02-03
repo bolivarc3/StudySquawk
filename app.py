@@ -361,34 +361,35 @@ def viewpost(course, postid):
             #for every file, it will save it
             images = []
             for file in files:
-                split_tup = os.path.splitext(file.filename)
-                print(split_tup)
+                if file.filename != "":
+                    split_tup = os.path.splitext(file.filename)
+                    print(split_tup)
 
-                # extract the file name and extension
-                file_name = split_tup[0]
-                file_extension = split_tup[1]
-                print(file_name)
-                print(file_extension)
+                    # extract the file name and extension
+                    file_name = split_tup[0]
+                    file_extension = split_tup[1]
+                    print(file_name)
+                    print(file_extension)
 
-                imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
+                    imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
 
-                if file_extension in imagefileextensions:
-                    filename = secure_filename(file.filename)
-                    dbinfo = connectdb("posts.db")
-                    replycursor = dbinfo[0]
-                    replyconnect = dbinfo[1]
-                    replycursor.execute("INSERT INTO replyimages VALUES (?, ?, ?)", (id, file.filename, postid));
-                    replyconnect.commit()
-                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-                else:
-                    filename = secure_filename(file.filename)
-                    dbinfo = connectdb("posts.db")
-                    replycursor = dbinfo[0]
-                    replyconnect = dbinfo[1]
-                    replycursor.execute("INSERT INTO replyfiles VALUES (?, ?, ?)", (id, file.filename, postid));
-                    replyconnect.commit()
-                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-                replyconnect.close()
+                    if file_extension in imagefileextensions:
+                        filename = secure_filename(file.filename)
+                        dbinfo = connectdb("posts.db")
+                        replycursor = dbinfo[0]
+                        replyconnect = dbinfo[1]
+                        replycursor.execute("INSERT INTO replyimages VALUES (?, ?, ?)", (id, file.filename, postid));
+                        replyconnect.commit()
+                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+                    else:
+                        filename = secure_filename(file.filename)
+                        dbinfo = connectdb("posts.db")
+                        replycursor = dbinfo[0]
+                        replyconnect = dbinfo[1]
+                        replycursor.execute("INSERT INTO replyfiles VALUES (?, ?, ?)", (id, file.filename, postid));
+                        replyconnect.commit()
+                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+                    replyconnect.close()
 
         return redirect(url_for('viewpost', course = course, postid = postid))
 
