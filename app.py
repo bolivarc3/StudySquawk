@@ -229,42 +229,36 @@ def course(course):
 
         #makes a new folder for the images. This makes it so that it can conserve it's name
         filespath = "static/userfiles/" + str(id)
+        print(filespath)
         os.makedirs(filespath)
         #makes a new upload folder
         UPLOAD_FOLDER = filespath
         app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
         files = request.files.getlist("file")
-
-        #for every file, it will save it
-        images = []
         for file in files:
-            split_tup = os.path.splitext(file.filename)
-            print(split_tup)
+            if file.filename != "":
+                split_tup = os.path.splitext(file.filename)
 
-            # extract the file name and extension
-            file_name = split_tup[0]
-            file_extension = split_tup[1]
-            print(file_name)
-            print(file_extension)
-
-            imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
-            if file_extension in imagefileextensions:
-                filename = secure_filename(file.filename)
-                dbinfo = connectdb("posts.db")
-                postcursor = dbinfo[0]
-                postconnect = dbinfo[1]
-                postcursor.execute("INSERT INTO images VALUES (?, ?)", (id, file.filename));
-                postconnect.commit()
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-            else:
-                filename = secure_filename(file.filename)
-                dbinfo = connectdb("posts.db")
-                postcursor = dbinfo[0]
-                postconnect = dbinfo[1]
-                postcursor.execute("INSERT INTO files VALUES (?, ?)", (id, file.filename));
-                postconnect.commit()
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-
+                # extract the file name and extension
+                file_name = split_tup[0]
+                file_extension = split_tup[1]
+                imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
+                if file_extension in imagefileextensions:
+                    filename = secure_filename(file.filename)
+                    dbinfo = connectdb("posts.db")
+                    postcursor = dbinfo[0]
+                    postconnect = dbinfo[1]
+                    postcursor.execute("INSERT INTO images VALUES (?, ?)", (id, file.filename));
+                    postconnect.commit()
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+                else:
+                    filename = secure_filename(file.filename)
+                    dbinfo = connectdb("posts.db")
+                    postcursor = dbinfo[0]
+                    postconnect = dbinfo[1]
+                    postcursor.execute("INSERT INTO files VALUES (?, ?)", (id, file.filename));
+                    postconnect.commit()
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
 
         #connects to the post db
         dbinfo = connectdb("posts.db")
