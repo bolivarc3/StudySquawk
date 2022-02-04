@@ -162,8 +162,9 @@ def studyist():
         dbinfo = connectdb("posts.db")
         postcursor = dbinfo[0]
         postconnect = dbinfo[1]
-        postcursor.execute("SELECT * FROM posts ORDER BY timedate DESC;");
+        postcursor.execute("SELECT * FROM posts ORDER BY timedate DESC;")
         posts = postcursor.fetchall()
+        print(posts)
         return render_template("homepage.html", courses = courses, post = posts)
 
 
