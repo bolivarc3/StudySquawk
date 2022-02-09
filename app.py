@@ -1,5 +1,5 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
-from helpers import login_required, grabclasses, checkclass, check, connectdb
+from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference
 import stat
 from werkzeug.utils import secure_filename
 import os
@@ -162,7 +162,7 @@ def studyist():
         dbinfo = connectdb("posts.db")
         postcursor = dbinfo[0]
         postconnect = dbinfo[1]
-        postcursor.execute("SELECT * FROM posts ORDER BY timedate DESC;")
+        postcursor.execute("SELECT * FROM posts ORDER BY date,time DESC;")
         posts = postcursor.fetchall()
         print(posts)
         return render_template("homepage.html", courses = courses, post = posts)
@@ -174,7 +174,7 @@ def course(course):
     #grabs the classes and checks if class is a class in db
     courses = grabclasses()
     courseavailible = checkclass(course, courses)
-    
+
     #if the class is not in the list, it will render an apology
     if courseavailible == False:
         error = "Class is not availible. Select Class from Options"
@@ -191,8 +191,12 @@ def course(course):
         body = request.form.get("text")
         body = str(body)
         username = session["user_id"]
+
         now = datetime.now()
-        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+        date = now.strftime("%d/%m/%Y")
+        time = now.strftime("%H:%M:%S")
+        print("date:" + date)
+        print("time" + time)
 
         #if there is no inputs, return an error
         if title == "" or body == "":
@@ -272,7 +276,7 @@ def course(course):
         print(postslength)
         id = postslength + 1
         #inserts into db
-        postcursor.execute("INSERT INTO posts VALUES (?, ?, ?, ?, ?, ?)", (id, course, username, title, body, dt_string));
+        postcursor.execute("INSERT INTO posts VALUES (?, ?, ?, ?, ?, ?, ?)", (id, course, username, title, body, time, date));
         postconnect.commit()
         postconnect.close()
 
@@ -282,7 +286,7 @@ def course(course):
     dbinfo = connectdb("posts.db")
     postcursor = dbinfo[0]
     postconnect = dbinfo[1]
-    postcursor.execute("SELECT * FROM posts WHERE class = ? ORDER BY timedate DESC;", (course,));
+    postcursor.execute("SELECT * FROM posts WHERE class = ? ORDER BY date,time DESC;", (course,));
     posts = postcursor.fetchall()
     return render_template("coursemain.html", course = course, courses = courses, post = posts)
 
@@ -412,6 +416,8 @@ def viewpost(course, postid):
     files = postcursor.fetchall()
     postconnect.close()
 
+    postduration = time_difference(post[5],post[6])
+
     #if not, return apology
     if post == None:
         flash('post not availible')
@@ -453,15 +459,14 @@ def viewpost(course, postid):
         }
 
     print(replies)
-
     #connect and check if the post db has a post id of that number
-    postconnect.close()
     post = {"id": post[0],
             "class": post[1],
             "username": post[2],
             "title": post[3],
             "body": post[4],
-            "timedate" : post[5]
+            "time" : post[5],
+            "date" : post[6]
     }
     for i in range(len(images)):
         images[i] = {"imageid": images[i][1]

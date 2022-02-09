@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime,timedelta
 import re
 import os
 import requests
@@ -67,3 +68,16 @@ def check(email):
     else:
         print("Invalid Email")
         return("invalid")
+
+
+def time_difference(postedtime,posteddate):
+    now = datetime.now()
+    nowdate = now.strftime("%d/%m/%Y")
+    print("hey")
+
+    posteddate = datetime.strptime(posteddate,"%d/%m/%y")
+
+    print(nowdate)
+    print(posteddate)
+    print((abs(now - posteddate).days))
+
