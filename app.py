@@ -193,7 +193,7 @@ def course(course):
         username = session["user_id"]
 
         now = datetime.now()
-        date = now.strftime("%d/%m/%Y")
+        date = now.strftime("%m/%d/%Y")
         time = now.strftime("%H:%M:%S")
         print("date:" + date)
         print("time" + time)
