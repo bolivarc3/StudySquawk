@@ -77,10 +77,12 @@ def time_difference(postedtime,posteddate):
     nowtime = now.strftime("%H:%M:%S")
     nowtime = datetime.strptime(nowtime,"%H:%M:%S")
     postedtime = datetime.strptime(postedtime, "%H:%M:%S")
+    print(nowtime)
+    print(postedtime)
     differencetime = nowtime - postedtime
     print(differencetime)
     seconds = differencetime.seconds
-    hours = seconds//3600
+    hours = (seconds//3600)-18
     minutes = (seconds//60)%60
     seconds = seconds%60
     differencetime = ""
