@@ -72,16 +72,22 @@ def check(email):
 
 def time_difference(postedtime,posteddate):
     now = datetime.now()
-
     nowdate = now.strftime("%m/%d/%Y")
     nowdate = datetime.strptime(nowdate,"%m/%d/%Y")
-
     nowtime = now.strftime("%H:%M:%S")
     nowtime = datetime.strptime(nowtime,"%H:%M:%S")
-    
-        
-
-
-    print(nowtime)
-    posteddate = datetime.strptime(posteddate, "%m/%d/%Y")
-    differencedate = nowdate - posteddate
+    postedtime = datetime.strptime(postedtime, "%H:%M:%S")
+    differencetime = nowtime - postedtime
+    print(differencetime)
+    seconds = differencetime.seconds
+    hours = seconds//3600
+    minutes = (seconds//60)%60
+    seconds = seconds%60
+    differencetime = ""
+    if hours != 0:
+        differencetime = str(hours) + " hours "
+    if minutes != 0:
+        differencetime = str(differencetime) + str(minutes) + " minutes "
+    if seconds != 0:
+        differencetime = differencetime + str(seconds) + " seconds "
+    print(differencetime)
