@@ -93,3 +93,4 @@ def time_difference(postedtime,posteddate):
     if seconds != 0:
         differencetime = differencetime + str(seconds) + " seconds "
     print(differencetime)
+    

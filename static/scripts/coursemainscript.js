@@ -21,7 +21,7 @@
 
 
 
-function showPreview(event){
+function loadposts(){
     var length = event.target.files.length;
     if(length > 0){
         //for the amount of images 
