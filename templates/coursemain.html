@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <head>
     <link href="/static/mainstyles/coursemain.css" rel="stylesheet">
+    <script type = "text/javascript" src = "/static/scripts/coursemainscript.js"></script>
 </head>
 {% extends "layout.html" %}
-{% block maintitle %} | {{ course }}{% endblock %}
+{% block maintitle %} | {{ course }}{% endblock %}s
 {% block title %}{{ course }}{% endblock %}
 {% block heading %}
     <div id = "titlediv">
@@ -22,6 +23,26 @@
 {% endblock %}
 
 {% block body %}
+<script>
+    async function getcourseposts(course){
+        const response = await fetch('/getcourseposts', {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            headers: {
+                'Content-Type': 'application/json'
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify(course) // body data type must match "Content-Type" header
+        })
+        const data = await response.json()
+        console.log("hello")
+        console.log(data)
+    }
+    console.log("{{course}}")
+    console.log("hello")
+    var course = "{{course}}"
+    console.log(course)
+    getcourseposts(course)
+</script>
 
 <h5>
     {{ post[2] }}

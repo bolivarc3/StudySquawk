@@ -491,3 +491,18 @@ def viewpost(course, postid):
 def getcoursesapi():
     courses = jsonify(grabclasses())
     return(courses)
+
+
+@app.route('/getcourseposts', methods=["GET", "POST"])
+def getcourseposts():
+    course = request.json
+    print("yeyeyeyey")
+    print(course)
+    dbinfo = connectdb("posts.db")
+    postcursor = dbinfo[0]
+    postconnect = dbinfo[1]
+    postcursor.execute("SELECT * FROM posts WHERE class = ? ORDER BY date,time DESC;", (course,));
+    posts = postcursor.fetchall()
+    posts = jsonify(posts)
+    print(posts)
+    return(posts)
