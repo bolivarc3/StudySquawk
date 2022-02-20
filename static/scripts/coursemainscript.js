@@ -21,29 +21,45 @@
 
 
 
-function loadposts(){
-    var length = event.target.files.length;
-    if(length > 0){
-        //for the amount of images 
-        for(let i = 0; i < length; i++){
-            //
-            const img = [];
-            img[i] = document.createElement('img');
-            img[i].src = URL.createObjectURL(event.target.files[i]);
+function loadposts(posts){
+    console.log("hello")
+    console.log(posts)
+    length = posts.length
 
-            //makes a container for the seperate images
-            const imagediv = [];
-            imagediv[i] = document.createElement('div');
-            imagediv[i].id = "imagecontainer" + i;
-            imagediv[i].classList = "imagecontainer";
+    for(let i = 0; i < length; i++){
+        //postscontainer
+        postdiv = document.createElement('div');
+        postdiv.classList = "postdiv";
+        postdiv.setAttribute("onclick",`document.forms['post-form${posts[i][3]}'].submit()`);
 
-            const imagelist = [];
-            imagelist[i] = document.createElement('li');
-            imagelist[i].id = "imagelistelement" + i;
-            //sets the images into the html
-            document.getElementById("horizontal-list").appendChild(imagelist[i]);
-            document.getElementById("imagelistelement" + i).appendChild(imagediv[i]);
-            document.getElementById("imagecontainer" + i).appendChild(img[i]);
-        }
+
+        var form = document.createElement("form")
+        form.setAttribute("method", "POST");
+        form.setAttribute("action", `/${posts[i][1]}/post/${posts[i][0]}`);
+        form.setAttribute("name", `post-form${posts[i][3]}`)
+        form.classList = "postbuttonform"
+        form.setAttribute("type", "submit");
+
+        var input = document.createElement("input")
+        form.setAttribute("method", "POST");
+        form.setAttribute("action", `/${posts[i][1]}/post/${posts[i][0]}`);
+        form.setAttribute("name", `post-form${posts[i][3]}`)
+
+
+        coursename = document.createElement("h5")
+        coursename.innerText = `${posts[i][1]}`
+
+        username = document.createElement("h5")
+        username.innerText = `${posts[i][2]}`
+
+        posttitle = document.createElement("h3")
+        posttitle.innerText = `${posts[i][3]}`
+
+        document.getElementById("postscontainer").appendChild(postdiv);
+        postdiv.appendChild(form)
+        postdiv.appendChild(coursename)
+        postdiv.appendChild(username)
+        postdiv.appendChild(posttitle)
+
     }
 }
