@@ -27,13 +27,6 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 
 
-@app.route("/homepage/apology", methods= ["GET", "POST"])
-def apology(error):
-    #if there is an error, goes to apology page
-    print(error)
-    return render_template("apology.html", error = error)
-
-
 #the intro homepage for the user
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -177,8 +170,7 @@ def course(course):
 
     #if the class is not in the list, it will render an apology
     if courseavailible == False:
-        error = "Class is not availible. Select Class from Options"
-        flash('No file part')
+        flash('Class is not availible. Select Class from Options')
         return redirect(request.url)
     #if there is a post request, it will redirect to a page where you can post
     # else it will render the course page requested
