@@ -1,24 +1,23 @@
 {% extends "layout.html" %}
 {% block body %}
-<div id = "bodydiv">
-    {% for post in post %}
-        <div class = "postdiv" type="submit" value = "{{ post[3] }}" onClick="document.forms['post-form{{ post[3] }}'].submit();">
-            <!--each post is a submit button with a form -->
-            <form name = "post-form{{ post[3] }}", class = "postbuttonform", action = "/{{ post[1] }}/post/{{ post[0] }}", method = "POST">
-                <input type="hidden" id="postId" name="postId" value="{{ post[0] }}">
-            </form>
-            <h5>
-                {{ post[1] }}
-            </h5>
-            <h5>
-                {{ post[2] }}
-            </h5>
-            <br>
-            <h3>
-                {{ post[3] }}
-            </h3>
-            <!--each post is a submit button with a form -->
-        </div>
-    {% endfor %}
-</div>
+<script>
+    async function getcourseposts(course){
+        const response = await fetch('/getcourseposts', {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            headers: {
+                'Content-Type': 'application/json'
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify(course) // body data type must match "Content-Type" header
+        })
+        const data = await response.json()
+        console.log("hello")
+        console.log(data)
+        loadposts(data)
+    }
+    var course = "homepage"
+    console.log(course)
+    getcourseposts(course)
+</script>
+<div id = "postscontainer"></div>
 {% endblock %}

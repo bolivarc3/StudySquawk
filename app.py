@@ -496,13 +496,20 @@ def getcoursesapi():
 @app.route('/getcourseposts', methods=["GET", "POST"])
 def getcourseposts():
     course = request.json
-    print("yeyeyeyey")
-    print(course)
-    dbinfo = connectdb("posts.db")
-    postcursor = dbinfo[0]
-    postconnect = dbinfo[1]
-    postcursor.execute("SELECT * FROM posts WHERE class = ? ORDER BY date,time DESC;", (course,));
-    posts = postcursor.fetchall()
+    if course == "homepage":
+        dbinfo = connectdb("posts.db")
+        postcursor = dbinfo[0]
+        postconnect = dbinfo[1]
+        postcursor.execute("SELECT * FROM posts ORDER BY date,time DESC;");
+        posts = postcursor.fetchall()
+    else:
+        print("yeyeyeyey")
+        print(course)
+        dbinfo = connectdb("posts.db")
+        postcursor = dbinfo[0]
+        postconnect = dbinfo[1]
+        postcursor.execute("SELECT * FROM posts WHERE class = ? ORDER BY date,time DESC;", (course,));
+        posts = postcursor.fetchall()
     posts = jsonify(posts)
     print(posts)
     return(posts)
