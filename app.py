@@ -52,7 +52,6 @@ def index():
             #if password does not match confirmation of password
             if password != confirmation:
                 formsubmission = False
-                print("hello")
                 flash('Confirmation Password and Password do not match')
                 return render_template("intro.html")
 
@@ -73,10 +72,8 @@ def index():
             #checks if email is already in the system | cant be 2 of the same email
             userinfocursor.execute("SELECT email FROM users WHERE email = ?", (email, ));
             stored_email = userinfocursor.fetchone()
-            print(stored_email)
 
             if stored_email != None:
-                print("yo")
                 error = "invalid email address"
                 flash('email already has been used')
                 return redirect(url_for('index'))
@@ -85,10 +82,8 @@ def index():
             userinfocursor.execute("SELECT username FROM users WHERE username = ?", (username, ));
             stored_username = userinfocursor.fetchone()
             userinfoconnect.close()
-            print(stored_username)
 
             if stored_username != None:
-                print("yo")
                 error = "invalid email address"
                 flash("username already has been used")
                 return redirect(url_for('index'))
@@ -146,24 +141,22 @@ def studyist():
         if courseavailible == False:
             flash('Class is not availible. Select Class from Options')
             return render_template('homepage.html')
-        print(courses)
         #checks if the course requested is the same as one in the array
         return redirect(url_for('course', course = course))
 
     else:
-        #grabs info from database adn shows post ont the feed page
+        #grabs info from database and shows post onto the feed page
         dbinfo = connectdb("posts.db")
         postcursor = dbinfo[0]
         postconnect = dbinfo[1]
         postcursor.execute("SELECT * FROM posts ORDER BY date,time ASC;")
         posts = postcursor.fetchall()
-        print(posts)
         return render_template("homepage.html", courses = courses, post = posts)
 
 
 @app.route('/<course>', methods=["GET", "POST"])
 def course(course):
-    print(course)
+
     #grabs the classes and checks if class is a class in db
     courses = grabclasses()
     courseavailible = checkclass(course, courses)
@@ -187,8 +180,6 @@ def course(course):
         now = datetime.now()
         date = now.strftime("%m/%d/%Y")
         time = now.strftime("%H:%M:%S")
-        print("date:" + date)
-        print("time" + time)
 
         #if there is no inputs, return an error
         if title == "" or body == "":
@@ -197,7 +188,6 @@ def course(course):
 
         #check if the post request has the file part
         if 'file' not in request.files:
-            print("not going here")
             flash('No file part')
             return redirect(request.url)
         file = request.files['file']
@@ -212,21 +202,18 @@ def course(course):
         postcursor.execute("SELECT * FROM posts")
         posts = postcursor.fetchall()
         postslength = len(posts)
-        print(postslength)
         id = postslength + 1
         #grabs the postid
 
         #gives permission to parent path
         parentpath = os.getcwd()
         parentpath = str(parentpath) + '/static'
-        print(parentpath)
         os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
         os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
         #gives permission to parent path
 
         #makes a new folder for the images. This makes it so that it can conserve it's name
         filespath = "static/userfiles/" + str(id)
-        print(filespath)
         os.makedirs(filespath)
         #makes a new upload folder
         UPLOAD_FOLDER = filespath
@@ -240,6 +227,7 @@ def course(course):
                 file_name = split_tup[0]
                 file_extension = split_tup[1]
                 imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
+                #checks if image
                 if file_extension in imagefileextensions:
                     filename = secure_filename(file.filename)
                     dbinfo = connectdb("posts.db")
@@ -265,7 +253,6 @@ def course(course):
         postcursor.execute("SELECT * FROM posts")
         posts = postcursor.fetchall()
         postslength = len(posts)
-        print(postslength)
         id = postslength + 1
         #inserts into db
         postcursor.execute("INSERT INTO posts VALUES (?, ?, ?, ?, ?, ?, ?)", (id, course, username, title, body, time, date));
@@ -286,7 +273,6 @@ def course(course):
 @app.route('/<course>/postcreation', methods=["GET", "POST"])
 @login_required
 def post(course):
-    print("high")
     return render_template("post.html", course = course, )
 
 
@@ -322,7 +308,6 @@ def viewpost(course, postid):
             replycursor.execute("SELECT * FROM replies");
             replies = replycursor.fetchall()
             replieslength = len(replies)
-            print(replieslength)
             id = replieslength + 1
             images = "NULL"
 
@@ -332,7 +317,6 @@ def viewpost(course, postid):
             replyconnect.close()
 
             if 'file' not in request.files:
-                print("not going here")
                 flash('No file part')
                 return redirect(request.url)
             file = request.files['file']
@@ -358,16 +342,13 @@ def viewpost(course, postid):
             #for every file, it will save it
             images = []
             for file in files:
+                #if not empty
                 if file.filename != "":
                     split_tup = os.path.splitext(file.filename)
-                    print(split_tup)
 
                     # extract the file name and extension
                     file_name = split_tup[0]
                     file_extension = split_tup[1]
-                    print(file_name)
-                    print(file_extension)
-
                     imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
 
                     if file_extension in imagefileextensions:
@@ -393,6 +374,8 @@ def viewpost(course, postid):
 
     #grab all of the courses
     courses = grabclasses()
+
+    #grabs information for specific post id
     dbinfo = connectdb("posts.db")
     postcursor = dbinfo[0]
     postconnect = dbinfo[1]
@@ -410,12 +393,31 @@ def viewpost(course, postid):
 
     postduration = time_difference(post[5],post[6])
 
-    #if not, return apology
+    #If there is no post found
     if post == None:
         flash('post not availible')
         return redirect(request.url)
 
+    #convert post data into a dictionary form 
+    post = {"id": post[0],
+            "class": post[1],
+            "username": post[2],
+            "title": post[3],
+            "body": post[4],
+            "time" : post[5],
+            "date" : post[6]
+    }
+    for i in range(len(images)):
+        images[i] = {"imageid": images[i][1]
 
+        }
+
+    for i in range(len(files)):
+        files[i] = {"fileid": files[i][1]
+
+        }
+
+    #grabs all info for replies
     dbinfo = connectdb("posts.db")
     replycursor = dbinfo[0]
     replyconnect = dbinfo[1]
@@ -428,7 +430,8 @@ def viewpost(course, postid):
     replycursor.execute("SELECT * FROM replyfiles WHERE postid = ?", (postid,));
     replyfiles = replycursor.fetchall()
     replyconnect.close()
-    print(len(replies))
+
+    #converts Reply data into a dictionary
     for i in range(len(replyimages)):
                     replyimages[i] = {"replyid": int(replyimages[i][0]),
                         "replyimageid": replyimages[i][1],
@@ -450,26 +453,6 @@ def viewpost(course, postid):
                       "timedate": replies[i][5]
         }
 
-    print(replies)
-    #connect and check if the post db has a post id of that number
-    post = {"id": post[0],
-            "class": post[1],
-            "username": post[2],
-            "title": post[3],
-            "body": post[4],
-            "time" : post[5],
-            "date" : post[6]
-    }
-    for i in range(len(images)):
-        images[i] = {"imageid": images[i][1]
-
-        }
-
-    for i in range(len(files)):
-        files[i] = {"fileid": files[i][1]
-
-        }
-
 
     session_user_id = session["user_id"]
     return render_template("viewpost.html", postid = postid, images = images, files = files, replyfiles = replyfiles, replyimages = replyimages, post = post, courses = courses, course = course, replies = replies, session_user_id = session_user_id, )
@@ -481,13 +464,16 @@ def viewpost(course, postid):
 
 @app.route('/getcourses', methods=["GET", "POST"])
 def getcoursesapi():
+    #grab the course lists through Javascript
     courses = jsonify(grabclasses())
     return(courses)
 
 
 @app.route('/getcourseposts', methods=["GET", "POST"])
 def getcourseposts():
+    #grab the posts infomation of the specific class provided 
     course = request.json
+    #if it is displaying the homepage, grab all the posts
     if course == "homepage":
         dbinfo = connectdb("posts.db")
         postcursor = dbinfo[0]
@@ -495,13 +481,11 @@ def getcourseposts():
         postcursor.execute("SELECT * FROM posts ORDER BY date,time DESC;");
         posts = postcursor.fetchall()
     else:
-        print("yeyeyeyey")
-        print(course)
         dbinfo = connectdb("posts.db")
         postcursor = dbinfo[0]
         postconnect = dbinfo[1]
         postcursor.execute("SELECT * FROM posts WHERE class = ? ORDER BY date,time DESC;", (course,));
         posts = postcursor.fetchall()
+        
     posts = jsonify(posts)
-    print(posts)
     return(posts)
