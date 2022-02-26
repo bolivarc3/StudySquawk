@@ -275,6 +275,10 @@ def course(course):
 def post(course):
     return render_template("post.html", course = course, )
 
+@app.route('/<course>/resources', methods=["GET", "POST"])
+def resources(course):
+    return render_template("resources.html", course = course, )
+
 
 @app.route('/<course>/post/<postid>', methods=["GET", "POST"])
 def viewpost(course, postid):

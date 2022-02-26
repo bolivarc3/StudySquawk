@@ -126,15 +126,13 @@ a{
     display: inline-block;
 }
 
-#postbuttonbox{
+#buttonbox{
     display: inline-block;
-    margin-right:4rem;
+    margin:1rem;
 }
 
-#post-button{
-    margin:1rem;
+.button{
     padding:.5rem;
-    margin-left:2rem;
     float: right;
     width: fit-content;
     border-radius: 12px;
@@ -143,12 +141,17 @@ a{
     cursor: pointer;
 }
 
-#post-button:hover{
-    background-color: #e3e3e3;
+.button:hover{
+    color:#30363D;
+    border: 1px solid transparent;
+    text-decoration: none;
+    background-color: #0D1117;
 }
 
-#post-button:active{
-    background-color: #505050;
+.button:active{
+    color:#40798C;
+    border: 1px solid #40798C;
+    background-color: #0D1117;
 }
 
 #logo{
@@ -298,4 +301,13 @@ hr.solid {
 
 #bodydiv{
     display: block;
+}
+
+.postdiv{
+    cursor:pointer;
+}
+
+#bodydiv{
+    padding:1rem;
+    background-color: #161B22;
 }

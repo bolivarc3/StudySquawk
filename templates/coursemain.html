@@ -16,10 +16,14 @@
 
 {% block postbutton %}
 <li>
-    <div id = "postbuttonbox">
-        <a id = "post-button", href ="{{ course }}/postcreation"> Create a Post!</a>
+    <div id = "buttonbox">
+        <a id = "post-button", href ="{{ course }}/postcreation", class = "button"> Create a Post!</a>
+    </div>
+    <div id = "buttonbox">
+        <a id = "resouces-button", href ="{{ course }}/resources", class = "button"> Resources</a>
     </div>
 </li>
+
 {% endblock %}
 
 {% block body %}
@@ -49,4 +53,5 @@
     {{ post[2] }}
 </h5>
 <div id = "postscontainer"></div>
+
 {% endblock %}
