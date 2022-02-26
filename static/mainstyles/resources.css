@@ -1,0 +1,17 @@
+#actionheaders{
+    display:inline-block;
+    color:#676869;
+    margin:1rem 1rem 1rem 3rem;
+}
+#resourcesdiv{
+    display:flex;
+    width:100%;
+    border-bottom: 1px solid #40798C;
+    border-top:1px solid #40798C;
+}
+
+#actionheaders:hover{
+    color:#40798C;
+    margin:1rem;
+    margin:1rem 1rem 1rem 3rem;
+}

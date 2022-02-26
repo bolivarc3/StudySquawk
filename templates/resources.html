@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<head>
+    <script src="https://kit.fontawesome.com/dc046f3b4c.js" crossorigin="anonymous"></script>
+    <link href="/static/mainstyles/resources.css" rel="stylesheet">
+</head>
 {% extends "layout.html" %}
 {% block maintitle %} | {{ course }}{% endblock %}s
 {% block title %}{{ course }}{% endblock %}
@@ -8,4 +12,19 @@
             {{ course }}
         </h1>
     </div>
+{% endblock %}
+
+{% block resources %}
+<div id = "resourcesdiv">
+    <div id = "actionheaders">
+        <i class="fa-solid fa-upload"></i>
+        Upload
+    </div>
+    <div id = "actionheaders">
+        Download
+    </div>
+    <div id = "actionheaders">
+        Apply for Moderator
+    </div>
+</div>
 {% endblock %}
