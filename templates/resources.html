@@ -21,17 +21,16 @@
 <!-- form for the uploading of files -->
 <div id = "uploadformfog" onclick= "uploadoff()">
     <div id = form-group onclick = "uploadon(); event.cancelBubble=true;">
-        <form id = "uploadresourceform" action = "" method ="POST">
+        <form id = "uploadresourceform" action = "/resoueces" method ="POST">
             <h3 id = "form-title">Upload a Resource!</h3>
             <br>
-            <br>
             <div class = "form-element-div">
-                <input class = "form", type = "text", name = "title", placeholder = "Title" >
+                <input id = "formtitleinput", type = "text", name = "title", placeholder = "Title" >
             </div>
             <br>
             <br>
             <div class = "form-element-div">
-                <textarea id = "bodytext" id="text" name="text" rows="12" cols="50" placeholder="Body Text"></textarea>
+                <textarea id = "bodytext" id="text" name="text" rows="12" cols="50" placeholder="Body Text | Recommended"></textarea>
             </div>
             <br>
             <br>

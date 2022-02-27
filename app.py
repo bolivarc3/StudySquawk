@@ -275,10 +275,6 @@ def course(course):
 def post(course):
     return render_template("post.html", course = course, )
 
-@app.route('/<course>/resources', methods=["GET", "POST"])
-def resources(course):
-    return render_template("resources.html", course = course, )
-
 
 @app.route('/<course>/post/<postid>', methods=["GET", "POST"])
 def viewpost(course, postid):
@@ -462,6 +458,84 @@ def viewpost(course, postid):
     return render_template("viewpost.html", postid = postid, images = images, files = files, replyfiles = replyfiles, replyimages = replyimages, post = post, courses = courses, course = course, replies = replies, session_user_id = session_user_id, )
 
 
+
+
+@app.route('/<course>/resources', methods=["GET", "POST"])
+def resources(course):
+        #gathers information for database entry
+        title = request.form.get("title")
+        title = str(title)
+        body = request.form.get("text")
+        body = str(body)
+        username = session["user_id"]
+
+        now = datetime.now()
+        date = now.strftime("%m/%d/%Y")
+        time = now.strftime("%H:%M:%S")
+
+        #if there is no inputs, return an error
+        if title == "":
+            flash('No input to required parts')
+            return redirect(request.url)
+
+        #check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+
+        #grabs the postid
+        dbinfo = connectdb("posts.db")
+        postcursor = dbinfo[0]
+        postconnect = dbinfo[1]
+        #fetches all of the post names and creates unique id's for each
+        postcursor.execute("SELECT * FROM posts")
+        posts = postcursor.fetchall()
+        postslength = len(posts)
+        id = postslength + 1
+        #grabs the postid
+
+        #gives permission to parent path
+        parentpath = os.getcwd()
+        parentpath = str(parentpath) + '/static'
+        os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+        os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+        #gives permission to parent path
+
+        #makes a new folder for the images. This makes it so that it can conserve it's name
+        filespath = "static/userfiles/" + str(id)
+        os.makedirs(filespath)
+        #makes a new upload folder
+        UPLOAD_FOLDER = filespath
+        app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+        files = request.files.getlist("file")
+        for file in files:
+            if file.filename != "":
+                split_tup = os.path.splitext(file.filename)
+
+                # extract the file name and extension
+                file_name = split_tup[0]
+                file_extension = split_tup[1]
+                imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
+                #checks if image
+                if file_extension in imagefileextensions:
+                    filename = secure_filename(file.filename)
+                    dbinfo = connectdb("posts.db")
+                    postcursor = dbinfo[0]
+                    postconnect = dbinfo[1]
+                    postcursor.execute("INSERT INTO images VALUES (?, ?)", (id, file.filename));
+                    postconnect.commit()
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+                else:
+                    filename = secure_filename(file.filename)
+                    dbinfo = connectdb("posts.db")
+                    postcursor = dbinfo[0]
+                    postconnect = dbinfo[1]
+                    postcursor.execute("INSERT INTO files VALUES (?, ?)", (id, file.filename));
+                    postconnect.commit()
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
 
 
 

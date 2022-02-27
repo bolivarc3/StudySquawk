@@ -100,29 +100,35 @@ table{
 
 #submitbutton{
     margin:auto;
-    background-color:transparent;
     padding:.5rem;
     width: fit-content;
     border-radius: 12px;
+    background-color:transparent;
+    color:#40798C;
     border: 1px solid #40798C;
     list-style-type: none;
-    cursor: pointer;
+    cursor: pointer
 }
 
 #submitbutton:hover{
     margin:auto;
-    background-color:#121212;
-    padding:.5rem;
-    width: fit-content;
-    border-radius: 12px;
+    color:#30363D;
+    border: 1px solid transparent;
+    text-decoration: none;
+    background-color: #0D1117;
+}
+
+#submitbutton:active{
+    margin:auto;
+    color:#40798C;
     border: 1px solid #40798C;
-    list-style-type: none;
-    cursor: pointer;
+    background-color: #0D1117;
 }
 
 #bodytext{
+    border-color:transparent;
     border-radius:1px;
-    background-color: #2c2c2c;
+    background-color: #0D1117;
     width:50rem;
     height:20rem;
 }
@@ -165,5 +171,41 @@ ul#horizontal-list {
 
 #form-title{
     color:#40798C;
+}
+
+#formtitleinput{
+    background-color: #0D1117;
+    border-color: transparent;
+    border-radius: 2px;
+    height: 2.5rem;
+    width: 30rem;
+}
+
+#formtitleinput::placeholder{
+    font-family: 'Teko', sans-serif;
+    color: #989898;
+    font-size:15;
+}
+input, select, textarea{
+    color: #989898;
+}
+
+#formtitleinput:hover{
+    background-color: #0D1117;
+    border-color: white;
+    border-radius: 2px;
+    height: 2.5rem;
+    width: 30rem;
+}
+
+.form:focus{
+    font-family: 'Teko', sans-serif;
+    font-size:17;
+    background-color: #2c2c2c;
+    outline:none;
+    border-color: white;
+    border-radius: 2px;
+    height: 2.5rem;
+    width: 30rem;
 }
 
