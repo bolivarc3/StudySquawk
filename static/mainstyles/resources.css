@@ -12,6 +12,19 @@
 
 #actionheaders:hover{
     color:#40798C;
+    cursor:pointer;
     margin:1rem;
     margin:1rem 1rem 1rem 3rem;
+}
+
+table{
+    width:100%;
+    border-spacing: 5rem;
+}
+
+#tableheader{
+    color:#40798C;
+    border: 1px solid transparent;
+    border-bottom: 1px solid #40798C;
+    padding: .25rem 1rem .25rem 1rem;
 }

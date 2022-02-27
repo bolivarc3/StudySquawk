@@ -8,23 +8,43 @@
 {% block title %}{{ course }}{% endblock %}
 {% block heading %}
     <div id = "titlediv">
-        <h1 id = "title">
-            {{ course }}
-        </h1>
+        <a href = "/{{ course }}" style = "text-decoration: none;">
+            <h1 id = "title">
+                {{ course }}
+            </h1>
+        </a>
     </div>
 {% endblock %}
 
 {% block resources %}
-<div id = "resourcesdiv">
-    <div id = "actionheaders">
-        <i class="fa-solid fa-upload"></i>
-        Upload
+    <div id = "resourcesdiv">
+        <div id = "actionheaders">
+            <i class="fa-solid fa-upload"></i>
+            Upload
+        </div>
+        <div id = "actionheaders">
+            <i class="fa-solid fa-download"></i>
+            Download
+        </div>
+        <div id = "actionheaders">
+            <i class="fa-solid fa-pen-to-square"></i>
+            Apply for Moderator
+        </div>
     </div>
-    <div id = "actionheaders">
-        Download
+
+    <br>
+    <h3>routing</h3>
+    <br>
+
+    <div id = "resourcestablediv">
+        <table id = "resourcestable">
+            <tr>
+                <th id = "tableheader"><i class="fa-solid fa-circle-check"></i></th>
+                <th id = "tableheader" width = "2%"><i class="fa-solid fa-file"></i></th>
+                <th id = "tableheader"width ="50%">Name</th>
+                <th id = "tableheader", width = "24%">Date Modified</th>
+                <th id = "tableheader", width = "24%">Modified By</th>
+            </tr>
+        </table>
     </div>
-    <div id = "actionheaders">
-        Apply for Moderator
-    </div>
-</div>
 {% endblock %}
