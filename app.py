@@ -493,3 +493,9 @@ def getcourseposts():
         
     posts = jsonify(posts)
     return(posts)
+
+@app.route('/getresources', methods=["GET", "POST"])
+def getresources():
+    ye = "hellowworld"
+    ye = jsonify(ye)
+    return(ye)
