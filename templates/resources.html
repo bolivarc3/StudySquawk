@@ -12,40 +12,77 @@
         <a href = "/{{ course }}" style = "text-decoration: none;">
             <h1 id = "title">
                 {{ course }}
-            </h1>s
+            </h1>
         </a>
     </div>
 {% endblock %}
 
 {% block resources %}
-    <div id = "resourcesdiv">
-        <div id = "actionheaders">
-            <i class="fa-solid fa-upload"></i>
-            Upload
-        </div>
-        <div id = "actionheaders">
-            <i class="fa-solid fa-download"></i>
-            Download
-        </div>
-        <div id = "actionheaders">
-            <i class="fa-solid fa-pen-to-square"></i>
-            Apply for Moderator
-        </div>
-    </div>
+<!-- form for the uploading of files -->
+<div id = "uploadformfog" onclick= "uploadoff()">
+    <div id = form-group onclick = "uploadon(); event.cancelBubble=true;">
+        <form id = "uploadresourceform" action = "" method ="POST">
+            <h3 id = "form-title">Upload a Resource!</h3>
+            <br>
+            <br>
+            <div class = "form-element-div">
+                <input class = "form", type = "text", name = "title", placeholder = "Title" >
+            </div>
+            <br>
+            <br>
+            <div class = "form-element-div">
+                <textarea id = "bodytext" id="text" name="text" rows="12" cols="50" placeholder="Body Text"></textarea>
+            </div>
+            <br>
+            <br>
+            <div class = "form-element-div">
+                <label id = "uploadbutton" for="file-ip-1" value= "Upload">Upload Files and Images</label>
+                <input type="file" name = "file" id="file-ip-1" onchange="showPreview(event);" multiple>
+            </div>
+            <br>
+            <div id = "filesviewdiv">
+                <ul id = "horizontal-list">
 
-    <br>
-    <h3>routing</h3>
-    <br>
-
-    <div id = "resourcestablediv">
-        <table id = "resourcestable">
-            <tr>
-                <th id = "tableheader"><i class="fa-solid fa-circle-check"></i></th>
-                <th id = "tableheader" width = "2%"><i class="fa-solid fa-file"></i></th>
-                <th id = "tableheader"width ="50%">Name</th>
-                <th id = "tableheader", width = "24%">Date Modified</th>
-                <th id = "tableheader", width = "24%">Modified By</th>
-            </tr>
-        </table>
+                </ul>
+            </div>
+            <br>
+            <div class = "form-element-div">
+                    <input type="submit", id = "submitbutton" value = "Submit"></submit>
+            </div>
+        </form>
     </div>
+</div>
+<!-- form for the uploading of files -->
+<!-- tables for the files -->
+<div id = "resourcesdiv">
+    <div id = "actionheaders" onclick = "uploadon()">
+        <i class="fa-solid fa-upload"></i>
+        Upload
+    </div>
+    <div id = "actionheaders">
+        <i class="fa-solid fa-download"></i>
+        Download
+    </div>
+    <div id = "actionheaders">
+        <i class="fa-solid fa-pen-to-square"></i>
+        Apply for Moderator
+    </div>
+</div>
+
+<br>
+<h3>routing</h3>
+<br>
+
+<div id = "resourcestablediv">
+    <table id = "resourcestable">
+        <tr>
+            <th id = "tableheader"><i class="fa-solid fa-circle-check"></i></th>
+            <th id = "tableheader" width = "2%"><i class="fa-solid fa-file"></i></th>
+            <th id = "tableheader"width ="50%">Name</th>
+            <th id = "tableheader", width = "24%">Date Modified</th>
+            <th id = "tableheader", width = "24%">Modified By</th>
+        </tr>
+    </table>
+</div>
+<!-- tables for the files -->
 {% endblock %}
