@@ -462,6 +462,9 @@ def viewpost(course, postid):
 
 @app.route('/<course>/resources', methods=["GET", "POST"])
 def resources(course):
+    print("yo")
+    if request.method == "POST":
+        print("hey")
         #gathers information for database entry
         title = request.form.get("title")
         title = str(title)
@@ -479,6 +482,7 @@ def resources(course):
             return redirect(request.url)
 
         #check if the post request has the file part
+        print(request.files)
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
@@ -487,14 +491,14 @@ def resources(course):
         # empty file without a filename.
 
         #grabs the postid
-        dbinfo = connectdb("posts.db")
-        postcursor = dbinfo[0]
-        postconnect = dbinfo[1]
+        dbinfo = connectdb("resources.db")
+        resourcescursor = dbinfo[0]
+        resourcesconnect = dbinfo[1]
         #fetches all of the post names and creates unique id's for each
-        postcursor.execute("SELECT * FROM posts")
-        posts = postcursor.fetchall()
-        postslength = len(posts)
-        id = postslength + 1
+        resourcescursor.execute("SELECT * FROM resources")
+        resources = resourcescursor.fetchall()
+        resourceslength = len(resources)
+        id = resourceslength + 1
         #grabs the postid
 
         #gives permission to parent path
@@ -505,12 +509,15 @@ def resources(course):
         #gives permission to parent path
 
         #makes a new folder for the images. This makes it so that it can conserve it's name
-        filespath = "static/userfiles/" + str(id)
+        filespath = "static/resources/" + str(course) + str(id)
         os.makedirs(filespath)
         #makes a new upload folder
         UPLOAD_FOLDER = filespath
         app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
         files = request.files.getlist("file")
+        username = session["user_id"]
+        resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?)", (id, course, username, title, body, time, date));
+        resourcesconnect.commit()
         for file in files:
             if file.filename != "":
                 split_tup = os.path.splitext(file.filename)
@@ -523,20 +530,21 @@ def resources(course):
                 if file_extension in imagefileextensions:
                     filename = secure_filename(file.filename)
                     dbinfo = connectdb("posts.db")
-                    postcursor = dbinfo[0]
-                    postconnect = dbinfo[1]
-                    postcursor.execute("INSERT INTO images VALUES (?, ?)", (id, file.filename));
-                    postconnect.commit()
+                    resourcescursor = dbinfo[0]
+                    resourcesconnect = dbinfo[1]
+                    resourcescursor.execute("INSERT INTO images VALUES (?, ?)", (id, file.filename));
+                    resourcesconnect.commit()
                     file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
                 else:
                     filename = secure_filename(file.filename)
                     dbinfo = connectdb("posts.db")
-                    postcursor = dbinfo[0]
-                    postconnect = dbinfo[1]
-                    postcursor.execute("INSERT INTO files VALUES (?, ?)", (id, file.filename));
+                    resourcescursor = dbinfo[0]
+                    resourcesconnect = dbinfo[1]
+                    resourcescursor.execute("INSERT INTO files VALUES (?, ?)", (id, file.filename));
                     postconnect.commit()
                     file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-
+    else:
+        return render_template("resources.html", course = course, )
 
 
 
