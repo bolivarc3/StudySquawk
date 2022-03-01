@@ -29,6 +29,29 @@ table{
     padding: .25rem 1rem .25rem 1rem;
 }
 
+#checkbox{
+    color:#161b22;
+    border: 1px solid transparent;
+    border-bottom: 1px solid #40798C;
+    padding: .25rem 1rem .25rem 1rem;
+}
+
+#checkbox:hover{
+        color:white;
+}
+
+#tablecells{
+    color:#40798C;
+    border: 1px solid transparent;
+    border-bottom: 1px solid #40798C;
+    padding: .25rem 1rem .25rem 1rem;
+}
+
+#rowbox:hover{
+    background-color:#212529;
+}
+
+
 /* All of the style nessary for the form including the fog */
 
 #uploadformfog{
@@ -64,7 +87,7 @@ table{
     display:none;
     margin-bottom:30px;
   }
-  
+
 #file-ip-1{
     display:none;
 }
