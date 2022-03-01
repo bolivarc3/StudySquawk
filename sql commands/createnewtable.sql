@@ -1,2 +1,1 @@
-CREATE TABLE files(id,filename);
-CREATE TABLE images(id,filename);
+CREATE TABLE materials(id,objectroute,objecttype,class,username,name,time,date);

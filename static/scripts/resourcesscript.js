@@ -14,14 +14,17 @@ function uploadoff() {
 
 // gets the files from the server to display on the tables
 async function getresources(course){
-    const response = await fetch('/getresources')
+    const response = await fetch('/getresources', {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify(course) // body data type must match "Content-Type" header
+    })
     const data = await response.json()
     console.log(data);
 }
-
-document.addEventListener('DOMContentLoaded', function(){
-    getresources()
-});
 // gets the files from the server to display on the tables
 
 // Allows for Preview of file

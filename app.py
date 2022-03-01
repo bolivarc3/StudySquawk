@@ -466,11 +466,11 @@ def resources(course):
     if request.method == "POST":
         print("hey")
         #gathers information for database entry
+        
         title = request.form.get("title")
         title = str(title)
-        body = request.form.get("text")
-        body = str(body)
         username = session["user_id"]
+        objectroute = request.form.get("route")
 
         now = datetime.now()
         date = now.strftime("%m/%d/%Y")
@@ -495,7 +495,7 @@ def resources(course):
         resourcescursor = dbinfo[0]
         resourcesconnect = dbinfo[1]
         #fetches all of the post names and creates unique id's for each
-        resourcescursor.execute("SELECT * FROM resources")
+        resourcescursor.execute("SELECT * FROM materials")
         resources = resourcescursor.fetchall()
         resourceslength = len(resources)
         id = resourceslength + 1
@@ -503,20 +503,23 @@ def resources(course):
 
         #gives permission to parent path
         parentpath = os.getcwd()
-        parentpath = str(parentpath) + '/static'
+        staticpath = str(parentpath) + '/static'
         os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-        os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+        os.chmod(staticpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
         #gives permission to parent path
 
         #makes a new folder for the images. This makes it so that it can conserve it's name
-        filespath = "static/resources/" + str(course) + str(id)
-        os.makedirs(filespath)
+        filespath = "static/resources/" + str(course)
+        if os.path.exists(filespath):
+            print("it exists")
+        else:
+            print("hey")
+            os.makedirs(filespath)
         #makes a new upload folder
         UPLOAD_FOLDER = filespath
         app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
         files = request.files.getlist("file")
         username = session["user_id"]
-        resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?)", (id, course, username, title, body, time, date));
         resourcesconnect.commit()
         for file in files:
             if file.filename != "":
@@ -528,23 +531,18 @@ def resources(course):
                 imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
                 #checks if image
                 if file_extension in imagefileextensions:
+                    objecttype = "file"
                     filename = secure_filename(file.filename)
-                    dbinfo = connectdb("posts.db")
-                    resourcescursor = dbinfo[0]
-                    resourcesconnect = dbinfo[1]
-                    resourcescursor.execute("INSERT INTO images VALUES (?, ?)", (id, file.filename));
+                    resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, objectroute, objecttype, course, username, filename, time, date));
                     resourcesconnect.commit()
                     file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
                 else:
+                    objecttype = "file"
                     filename = secure_filename(file.filename)
-                    dbinfo = connectdb("posts.db")
-                    resourcescursor = dbinfo[0]
-                    resourcesconnect = dbinfo[1]
-                    resourcescursor.execute("INSERT INTO files VALUES (?, ?)", (id, file.filename));
-                    postconnect.commit()
+                    resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, objectroute, objecttype, course, username, filename, time, date));
+                    resourcesconnect.commit()
                     file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-    else:
-        return render_template("resources.html", course = course, )
+    return render_template("resources.html", course = course, )
 
 
 
@@ -578,6 +576,12 @@ def getcourseposts():
 
 @app.route('/getresources', methods=["GET", "POST"])
 def getresources():
-    ye = "hellowworld"
-    ye = jsonify(ye)
-    return(ye)
+    course = request.json
+    dbinfo = connectdb("resources.db")
+    resourcescursor = dbinfo[0]
+    resourcesconnect = dbinfo[1]
+    resourcescursor.execute("SELECT * FROM materials WHERE class = ?", (course, ));
+    materials = resourcescursor.fetchall()
+    resourcesconnect.close
+    resources = jsonify(materials)
+    return(resources)

@@ -18,10 +18,21 @@
 {% endblock %}
 
 {% block resources %}
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        console.log("{{course}}")
+        console.log("hello")
+        var course = "{{course}}"
+        console.log(course)
+        getresources(course)
+    });
+</script>
+
 <!-- form for the uploading of files -->
 <div id = "uploadformfog" onclick= "uploadoff()">
     <div id = form-group onclick = "uploadon(); event.cancelBubble=true;">
-        <form id = "uploadresourceform" action = "/{{ course }}/resources" method ="POST">
+        <form id = "uploadresourceform" action = "/{{ course }}/resources" method ="POST" enctype=multipart/form-data>
+            <input name = "route" type="hidden" value="/{{ course }}">
             <h3 id = "form-title">Upload a Resource!</h3>
             <br>
             <div class = "form-element-div">
