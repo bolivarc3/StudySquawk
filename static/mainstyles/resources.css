@@ -47,6 +47,14 @@ table{
     padding: .25rem 1rem .25rem 1rem;
 }
 
+#tablecells a{
+    color:#40798C;
+    text-decoration:none;
+    text-align:left;
+    display: block;
+    width:100%;
+}
+
 #rowbox:hover{
     background-color:#212529;
 }
