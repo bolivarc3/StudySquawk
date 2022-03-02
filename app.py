@@ -532,16 +532,17 @@ def resources(course):
                 #checks if image
                 if file_extension in imagefileextensions:
                     objecttype = "file"
-                    filename = secure_filename(file.filename)
+                    filename = file.filename
                     resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, objectroute, objecttype, course, username, filename, time, date));
                     resourcesconnect.commit()
                     file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
                 else:
                     objecttype = "file"
-                    filename = secure_filename(file.filename)
+                    filename = file.filename
                     resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, objectroute, objecttype, course, username, filename, time, date));
                     resourcesconnect.commit()
                     file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+                
     return render_template("resources.html", course = course, )
 
 

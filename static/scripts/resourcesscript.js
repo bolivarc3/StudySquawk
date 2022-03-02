@@ -52,21 +52,62 @@ function createresources(materials){
     if(length > 0){
         //for the amount of images
         for(let i = 0; i < length; i++){
-            material = materials[i];
             //makes a container for the seperate images
+            document.getElementById("routing").innerHTML = materials[i][1]
+            console.log(materials[i][0])
+
             tablerow = document.createElement('tr');
-            tablerow.id = "rowbox"
+            tablerow.id = "rowbox" + Number(materials[i][0])
+            tablerow.classList = "rowbox"
 
-            name = document.createElement('td');
-            name.id = "tablecells"
+            checkmark = document.createElement('td');
+            checkmark.id = "checkbox"
 
-            const imagelist = [];
-            imagelist[i] = document.createElement('li');
-            imagelist[i].id = "imagelistelement" + i;
-            //sets the images into the html
-            document.getElementById("horizontal-list").appendChild(imagelist[i]);
-            document.getElementById("imagelistelement" + i).appendChild(imagediv[i]);
-            document.getElementById("imagecontainer" + i).appendChild(img[i]);
+            checkmark = document.createElement('td');
+            checkmark.id = "checkbox"
+            checkmarkicon = document.createElement('i');
+            checkmarkicon.classList = "fa-solid fa-circle-check"
+            checkmark.appendChild(checkmarkicon);
+            tablerow.appendChild(checkmark);
+
+            filetype = document.createElement('td');
+            filetype.id = "tablecells"
+            filetypeicon = document.createElement('i');
+            filetypeicon.classList = "fa-solid fa-file"
+            filetype.appendChild(filetypeicon);
+            tablerow.appendChild(filetype);
+
+            filename = document.createElement('td');
+            filename.id = "tablecells"
+            filename.classList = "tablecells"
+            link = document.createElement('a')
+            link.href = "/static/resources" + materials[i][1] + "/" + materials[i][5]
+            link.innerHTML = materials[i][5]
+            link.target = "_blank"
+            filename.appendChild(link);
+            tablerow.appendChild(filename);
+
+            modifieddate = document.createElement('td');
+            modifieddate.id = "tablecells"
+            modifieddate.classList = "tablecells"
+            link2 = document.createElement('a')
+            link2.href = "/static/resources" + materials[i][1] + "/" + materials[i][5]
+            link2.innerHTML = materials[i][7]
+            link2.target = "_blank"
+            modifieddate.appendChild(link2);
+            tablerow.appendChild(modifieddate);
+
+            username = document.createElement('td');
+            username.id = "tablecells"
+            username.classList = "tablecells"
+            link3 = document.createElement('a')
+            link3.href = "/static/resources" + materials[i][1] + "/" + materials[i][5]
+            link3.innerHTML = materials[i][4]
+            link3.target = "_blank"
+            username.appendChild(link3);
+            tablerow.appendChild(username);
+
+            document.getElementById("resourcestable").appendChild(tablerow);
         }
     }
 }
