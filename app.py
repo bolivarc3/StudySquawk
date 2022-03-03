@@ -149,8 +149,9 @@ def studyist():
         dbinfo = connectdb("posts.db")
         postcursor = dbinfo[0]
         postconnect = dbinfo[1]
-        postcursor.execute("SELECT * FROM posts ORDER BY date,time ASC;")
+        postcursor.execute("SELECT * FROM posts ORDER BY date,time DESC;")
         posts = postcursor.fetchall()
+        print(posts)
         return render_template("homepage.html", courses = courses, post = posts)
 
 
@@ -398,7 +399,7 @@ def viewpost(course, postid):
         flash('post not availible')
         return redirect(request.url)
 
-    #convert post data into a dictionary form 
+    #convert post data into a dictionary form
     post = {"id": post[0],
             "class": post[1],
             "username": post[2],
@@ -466,7 +467,7 @@ def resources(course):
     if request.method == "POST":
         print("hey")
         #gathers information for database entry
-        
+
         title = request.form.get("title")
         title = str(title)
         username = session["user_id"]
@@ -542,7 +543,7 @@ def resources(course):
                     resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, objectroute, objecttype, course, username, filename, time, date));
                     resourcesconnect.commit()
                     file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-                
+
     return render_template("resources.html", course = course, )
 
 
@@ -556,22 +557,27 @@ def getcoursesapi():
 
 @app.route('/getcourseposts', methods=["GET", "POST"])
 def getcourseposts():
-    #grab the posts infomation of the specific class provided 
+    #grab the posts infomation of the specific class provided
     course = request.json
     #if it is displaying the homepage, grab all the posts
     if course == "homepage":
         dbinfo = connectdb("posts.db")
         postcursor = dbinfo[0]
         postconnect = dbinfo[1]
-        postcursor.execute("SELECT * FROM posts ORDER BY date,time DESC;");
+        now = datetime.now()
+        nowdate = now.strftime("%m/%d/%Y")
+        nowdate = datetime.strptime(nowdate,"%m/%d/%Y")
+        postcursor.execute("SELECT * FROM posts ORDER BY date DESC;")
         posts = postcursor.fetchall()
+        print(posts)
     else:
         dbinfo = connectdb("posts.db")
         postcursor = dbinfo[0]
         postconnect = dbinfo[1]
-        postcursor.execute("SELECT * FROM posts WHERE class = ? ORDER BY date,time DESC;", (course,));
+        postcursor.execute("SELECT * FROM posts WHERE class = ? ORDER BY date DESC;", (course,));
         posts = postcursor.fetchall()
-        
+        print(posts)
+
     posts = jsonify(posts)
     return(posts)
 
