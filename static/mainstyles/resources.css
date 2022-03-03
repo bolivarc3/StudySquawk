@@ -55,7 +55,7 @@ table{
     width:100%;
 }
 
-.rowbox:hover{
+#rowbox:hover{
     background-color:#212529;
 }
 
@@ -240,10 +240,18 @@ input, select, textarea{
     width: 30rem;
 }
 
-#routingdiv{
-    padding-left:1rem;
+#newactionheaders{
+    background-color:#40798C;
+    margin:.5rem .5rem .5rem 3rem;
+    color:#212529;
 }
 
-#routing{
-    color:#40798C
+
+.newbutton{
+    padding:.5rem;
+    float: right;
+    width: fit-content;
+    border: 1px solid #40798C;
+    list-style-type: none;
+    cursor: pointer;
 }
