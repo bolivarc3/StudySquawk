@@ -25,8 +25,6 @@ def after_request(response):
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-
-
 #the intro homepage for the user
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -567,14 +565,14 @@ def getcourseposts():
         now = datetime.now()
         nowdate = now.strftime("%m/%d/%Y")
         nowdate = datetime.strptime(nowdate,"%m/%d/%Y")
-        postcursor.execute("SELECT * FROM posts ORDER BY date DESC;")
+        postcursor.execute("SELECT * FROM posts ORDER BY date DESC, time DESC;")
         posts = postcursor.fetchall()
         print(posts)
     else:
         dbinfo = connectdb("posts.db")
         postcursor = dbinfo[0]
         postconnect = dbinfo[1]
-        postcursor.execute("SELECT * FROM posts WHERE class = ? ORDER BY date DESC;", (course,));
+        postcursor.execute("SELECT * FROM posts WHERE class = ? ORDER BY date DESC,time DESC;", (course,));
         posts = postcursor.fetchall()
         print(posts)
 

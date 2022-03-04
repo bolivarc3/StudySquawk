@@ -1,0 +1,256 @@
+#newactionheaders{
+    background-color:#40798C;
+    margin:.5rem .5rem .5rem 3rem;
+    color:#212529;
+}
+#actionheaders{
+    display:inline-block;
+    color:#676869;
+    margin:1rem 1rem 1rem 3rem;
+}
+#resourcesdiv{
+    display:flex;
+    width:100%;
+    border-bottom: 1px solid #40798C;
+    border-top:1px solid #40798C;
+}
+
+#actionheaders:hover{
+    color:#40798C;
+    cursor:pointer;
+    margin:1rem;
+    margin:1rem 1rem 1rem 3rem;
+}
+
+table{
+    width:100%;
+    border-spacing: 5rem;
+}
+
+#tableheader{
+    color:#40798C;
+    border: 1px solid transparent;
+    border-bottom: 1px solid #40798C;
+    padding: .25rem 1rem .25rem 1rem;
+}
+
+#checkbox{
+    color:#161b22;
+    border: 1px solid transparent;
+    border-bottom: 1px solid #40798C;
+    padding: .25rem 1rem .25rem 1rem;
+}
+
+#checkbox:hover{
+        color:white;
+}
+
+#tablecells{
+    color:#40798C;
+    border: 1px solid transparent;
+    border-bottom: 1px solid #40798C;
+    padding: .25rem 1rem .25rem 1rem;
+}
+
+#tablecells a{
+    color:#40798C;
+    text-decoration:none;
+    text-align:left;
+    display: block;
+    width:100%;
+}
+
+#rowbox:hover{
+    background-color:#212529;
+}
+
+
+/* All of the style nessary for the form including the fog */
+
+#uploadformfog{
+    padding-top:4%;
+    height: 100%;
+    overflow: hidden;
+    position: fixed; /* Sit on top of the page content */
+    display: none; /* Hidden by default */
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height (cover the whole page) */
+    top:0;
+    left: 0;
+    right: 0;
+    bottom:0;
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+}
+
+#form-group{
+    margin:auto;
+    padding:1rem;
+    text-align:center;
+    background-color:#161B22;
+    width: fit-content;
+    border:10px solid #161B22;
+    border-radius: 12px;
+  }
+
+
+.form-input img {
+    width:100%;
+    display:none;
+    margin-bottom:30px;
+  }
+
+#file-ip-1{
+    display:none;
+}
+
+#file-ip-1-preview{
+    max-width: 20%;
+    height: auto;
+
+    display:none;
+}
+
+.filepreview{
+    width:100%;
+    height: fit-content;
+    background-color:#40798C;
+}
+
+#uploadbutton {
+    display:block;
+    width:40rem;
+    height:45px;
+    line-height:50px;
+    text-align:center;
+    background:#40798C;
+    color:#fff;
+    font-size:15px;
+    font-family:"Open Sans",sans-serif;
+    text-transform:Uppercase;
+    font-weight:600;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+#submitbutton{
+    margin:auto;
+    padding:.5rem;
+    width: fit-content;
+    border-radius: 12px;
+    background-color:transparent;
+    color:#40798C;
+    border: 1px solid #40798C;
+    list-style-type: none;
+    cursor: pointer
+}
+
+#submitbutton:hover{
+    margin:auto;
+    color:#30363D;
+    border: 1px solid transparent;
+    text-decoration: none;
+    background-color: #0D1117;
+}
+
+#submitbutton:active{
+    margin:auto;
+    color:#40798C;
+    border: 1px solid #40798C;
+    background-color: #0D1117;
+}
+
+#bodytext{
+    border-color:transparent;
+    border-radius:1px;
+    background-color: #0D1117;
+    width:50rem;
+    height:20rem;
+}
+
+.imagecontainer{
+    width:100px;
+    height:100px;
+    max-width:100px;
+    max-height:100px;
+    background-size: cover;
+}
+
+.imagecontainer img{
+    width:100px;
+    height:100px;
+    object-fit: cover;
+}
+
+#filesviewdiv{
+    display: table;
+    width:100%;
+    height:fit-content;
+}
+
+ul#horizontal-list {
+    min-width: 696px;
+    list-style: none;
+    padding-top: 20px;
+}
+
+#horizontal-list li{
+    display: inline;
+}
+
+
+.form-element-div{
+    width:fit-content;
+    margin:auto;
+}
+
+#form-title{
+    color:#40798C;
+}
+
+#formtitleinput{
+    background-color: #0D1117;
+    border-color: transparent;
+    border-radius: 2px;
+    height: 2.5rem;
+    width: 30rem;
+}
+
+#formtitleinput::placeholder{
+    font-family: 'Teko', sans-serif;
+    color: #989898;
+    font-size:15;
+}
+input, select, textarea{
+    color: #989898;
+}
+
+#formtitleinput:hover{
+    background-color: #0D1117;
+    border-color: white;
+    border-radius: 2px;
+    height: 2.5rem;
+    width: 30rem;
+}
+
+.form:focus{
+    font-family: 'Teko', sans-serif;
+    font-size:17;
+    background-color: #2c2c2c;
+    outline:none;
+    border-color: white;
+    border-radius: 2px;
+    height: 2.5rem;
+    width: 30rem;
+}
+
+
+.newbutton{
+    padding:.5rem;
+    float: right;
+    width: fit-content;
+    border: 1px solid #40798C;
+    list-style-type: none;
+    cursor: pointer;
+}
