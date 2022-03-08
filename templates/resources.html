@@ -33,17 +33,16 @@
     <div id = form-group onclick = "uploadon(); event.cancelBubble=true;">
         <form id = "uploadresourceform" action = "/{{ course }}/resources" method ="POST" enctype=multipart/form-data>
             <input name = "route" type="hidden" value="/{{ course }}">
+            <input name = "type_of_form" type="hidden" value="uploadfile">
             <h3 id = "form-title">Upload a Resource!</h3>
             <br>
             <div class = "form-element-div">
                 <input id = "formtitleinput", type = "text", name = "title", placeholder = "Title" >
             </div>
             <br>
-            <br>
             <div class = "form-element-div">
                 <textarea id = "bodytext" id="text" name="text" rows="12" cols="50" placeholder="Body Text | Recommended"></textarea>
             </div>
-            <br>
             <br>
             <div class = "form-element-div">
                 <label id = "uploadbutton" for="file-ip-1" value= "Upload">Upload Files and Images</label>
@@ -67,11 +66,15 @@
     <div id = form-group onclick = "newfolderon(); event.cancelBubble=true;">
         <form id = "uploadresourceform" action = "/{{ course }}/resources" method ="POST" enctype=multipart/form-data>
             <input name = "route" type="hidden" value="/{{ course }}">
-            <input name = "typeofform" type="hidden" value="newfolder">
+            <input name = "type_of_form" type="hidden" value="newfolder">
             <h3 id = "form-title">New Folder</h3>
             <br>
             <div class = "form-element-div">
                 <input id = "formtitleinput", type = "text", name = "title", placeholder = "Name of Folder" >
+            </div>
+            <br>
+            <div class = "form-element-div">
+                <input type="submit", id = "submitbutton" value = "Submit"></submit>
             </div>
         </form>
     </div>
