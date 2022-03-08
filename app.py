@@ -465,83 +465,86 @@ def resources(course):
     if request.method == "POST":
         print("hey")
         #gathers information for database entry
+        type_of_form = request.form.get("type_of_form")
+        if type_of_form == "uploadfile":
+            title = request.form.get("title")
+            title = str(title)
+            username = session["user_id"]
+            objectroute = request.form.get("route")
 
-        title = request.form.get("title")
-        title = str(title)
-        username = session["user_id"]
-        objectroute = request.form.get("route")
+            now = datetime.now()
+            date = now.strftime("%m/%d/%Y")
+            time = now.strftime("%H:%M:%S")
 
-        now = datetime.now()
-        date = now.strftime("%m/%d/%Y")
-        time = now.strftime("%H:%M:%S")
+            #if there is no inputs, return an error
+            if title == "":
+                flash('No input to required parts')
+                return redirect(request.url)
 
-        #if there is no inputs, return an error
-        if title == "":
-            flash('No input to required parts')
-            return redirect(request.url)
+            #check if the post request has the file part
+            print(request.files)
+            if 'file' not in request.files:
+                flash('No file part')
+                return redirect(request.url)
+            file = request.files['file']
+            # If the user does not select a file, the browser submits an
+            # empty file without a filename.
 
-        #check if the post request has the file part
-        print(request.files)
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
+            #grabs the postid
+            dbinfo = connectdb("resources.db")
+            resourcescursor = dbinfo[0]
+            resourcesconnect = dbinfo[1]
+            #fetches all of the post names and creates unique id's for each
+            resourcescursor.execute("SELECT * FROM materials")
+            resources = resourcescursor.fetchall()
+            resourceslength = len(resources)
+            id = resourceslength + 1
+            #grabs the postid
 
-        #grabs the postid
-        dbinfo = connectdb("resources.db")
-        resourcescursor = dbinfo[0]
-        resourcesconnect = dbinfo[1]
-        #fetches all of the post names and creates unique id's for each
-        resourcescursor.execute("SELECT * FROM materials")
-        resources = resourcescursor.fetchall()
-        resourceslength = len(resources)
-        id = resourceslength + 1
-        #grabs the postid
+            #gives permission to parent path
+            parentpath = os.getcwd()
+            staticpath = str(parentpath) + '/static'
+            os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+            os.chmod(staticpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+            #gives permission to parent path
 
-        #gives permission to parent path
-        parentpath = os.getcwd()
-        staticpath = str(parentpath) + '/static'
-        os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-        os.chmod(staticpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-        #gives permission to parent path
+            #makes a new folder for the images. This makes it so that it can conserve it's name
+            filespath = "static/resources/" + str(course)
+            if os.path.exists(filespath):
+                print("it exists")
+            else:
+                print("hey")
+                os.makedirs(filespath)
+            #makes a new upload folder
+            UPLOAD_FOLDER = filespath
+            app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+            files = request.files.getlist("file")
+            username = session["user_id"]
+            resourcesconnect.commit()
+            for file in files:
+                if file.filename != "":
+                    split_tup = os.path.splitext(file.filename)
 
-        #makes a new folder for the images. This makes it so that it can conserve it's name
-        filespath = "static/resources/" + str(course)
-        if os.path.exists(filespath):
-            print("it exists")
-        else:
-            print("hey")
-            os.makedirs(filespath)
-        #makes a new upload folder
-        UPLOAD_FOLDER = filespath
-        app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-        files = request.files.getlist("file")
-        username = session["user_id"]
-        resourcesconnect.commit()
-        for file in files:
-            if file.filename != "":
-                split_tup = os.path.splitext(file.filename)
-
-                # extract the file name and extension
-                file_name = split_tup[0]
-                file_extension = split_tup[1]
-                imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
-                #checks if image
-                if file_extension in imagefileextensions:
-                    objecttype = "file"
-                    filename = file.filename
-                    resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, objectroute, objecttype, course, username, filename, time, date));
-                    resourcesconnect.commit()
-                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-                else:
-                    objecttype = "file"
-                    filename = file.filename
-                    resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, objectroute, objecttype, course, username, filename, time, date));
-                    resourcesconnect.commit()
-                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-
+                    # extract the file name and extension
+                    file_name = split_tup[0]
+                    file_extension = split_tup[1]
+                    imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
+                    #checks if image
+                    if file_extension in imagefileextensions:
+                        objecttype = "file"
+                        filename = file.filename
+                        resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, objectroute, objecttype, course, username, filename, time, date));
+                        resourcesconnect.commit()
+                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+                    else:
+                        objecttype = "file"
+                        filename = file.filename
+                        resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, objectroute, objecttype, course, username, filename, time, date));
+                        resourcesconnect.commit()
+                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+        if type_of_form == "newfolder":
+            title = request.form.get("title")
+            
     return render_template("resources.html", course = course, )
 
 
