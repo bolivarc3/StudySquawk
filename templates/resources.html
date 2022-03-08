@@ -67,10 +67,11 @@
     <div id = form-group onclick = "newfolderon(); event.cancelBubble=true;">
         <form id = "uploadresourceform" action = "/{{ course }}/resources" method ="POST" enctype=multipart/form-data>
             <input name = "route" type="hidden" value="/{{ course }}">
+            <input name = "typeofform" type="hidden" value="newfolder">
             <h3 id = "form-title">New Folder</h3>
             <br>
             <div class = "form-element-div">
-                <input id = "formtitleinput", type = "text", name = "title", placeholder = "Title" >
+                <input id = "formtitleinput", type = "text", name = "title", placeholder = "Name of Folder" >
             </div>
         </form>
     </div>
@@ -81,7 +82,7 @@
 <!-- Example single danger button -->
     <div id = "newactionheaders" onclick = "newfolderon()">
         <div class = "newbutton" onclick = "newfolderon()">
-            <i class="fa-solid fa-upload"></i>
+            <i class="fa-solid fa-folder"></i>
             New Folder
         </div>
     </div>
