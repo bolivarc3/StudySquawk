@@ -11,6 +11,18 @@ function uploadoff() {
 }
 // The function used for fog on form
 
+function newfolderoff() {
+    document.getElementById("newfolderformfog").style.display = "none";
+}
+
+function newfolderon() {
+    document.getElementById("newfolderformfog").style.display = "block";
+    var x=window.scrollX;
+    var y=window.scrollY;
+    window.onscroll=function(){window.scrollTo(x, y);};
+}
+
+
 
 // gets the files from the server to display on the tables
 async function getresources(course){
