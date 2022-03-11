@@ -51,26 +51,7 @@ async function getresources(course){
     console.log(data);
     createresources(data)
 }
-// gets the files from the server to display on the tables
-    // <table id = "resourcestable">
-    //     <tr>
-    //         <th id = "tableheader"><i class="fa-solid fa-circle-check"></i></th>
-    //         <th id = "tableheader" width = "2%"><i class="fa-solid fa-file"></i></th>
-    //         <th id = "tableheader"width ="50%">Name</th>
-    //         <th id = "tableheader", width = "24%">Date Modified</th>
-    //         <th id = "tableheader", width = "24%">Modified By</th>
-    //     </tr>
-    //     <link href="/static/resources/Algebra 1/Capture - Copy.PNG">
 
-    //     <tr id = "rowbox">
-
-    //         <td id = "checkbox"><i class="fa-solid fa-circle-check"></td>
-    //         <td id = "tablecells"><i class="fa-solid fa-file"></i></td>
-    //         <td id = "tablecells"><a href="/static/resources/Algebra 1/Capture - Copy.PNG" target="_blank">Testing File</a></td>
-    //         <td id = "tablecells"><a href="/static/resources/Algebra 1/Capture - Copy.PNG" target="_blank">8/20/2022</a></td>
-    //         <td id = "tablecells"><a href="/static/resources/Algebra 1/Capture - Copy.PNG" target="_blank">codetest</a></td>
-    //     </tr>
-    // </table>
 function createresources(materials){
     var length = materials.length
     if(length > 0){
