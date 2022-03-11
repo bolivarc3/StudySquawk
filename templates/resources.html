@@ -24,6 +24,7 @@
         console.log("hello")
         var course = "{{course}}"
         console.log(course)
+        getfolders(course)
         getresources(course)
     });
 </script>
@@ -70,7 +71,7 @@
             <h3 id = "form-title">New Folder</h3>
             <br>
             <div class = "form-element-div">
-                <input id = "formtitleinput", type = "text", name = "title", placeholder = "Name of Folder" >
+                <input id = "formtitleinput", type = "text", name = "name_of_folder", placeholder = "Name of Folder" >
             </div>
             <br>
             <div class = "form-element-div">
@@ -85,7 +86,7 @@
 <!-- Example single danger button -->
     <div id = "newactionheaders" onclick = "newfolderon()">
         <div class = "newbutton" onclick = "newfolderon()">
-            <i class="fa-solid fa-folder"></i>
+            <i class="fa-solid fa-folder-plus"></i>
             New Folder
         </div>
     </div>
@@ -113,7 +114,7 @@
     <table id = "resourcestable">
         <tr>
             <th id = "tableheader"><i class="fa-solid fa-circle-check"></i></th>
-            <th id = "tableheader" width = "2%"><i class="fa-solid fa-file"></i></th>
+            <th id = "tableheader" width = "2%">type</th>
             <th id = "tableheader"width ="50%">Name</th>
             <th id = "tableheader", width = "24%">Date Modified</th>
             <th id = "tableheader", width = "24%">Modified By</th>

@@ -466,15 +466,27 @@ def resources(course):
         print("hey")
         #gathers information for database entry
         type_of_form = request.form.get("type_of_form")
+        username = session["user_id"]
+        objectroute = request.form.get("route")
+
+        now = datetime.now()
+        date = now.strftime("%m/%d/%Y")
+        time = now.strftime("%H:%M:%S")
+
+        #grabs the postid
+        dbinfo = connectdb("resources.db")
+        resourcescursor = dbinfo[0]
+        resourcesconnect = dbinfo[1]
+        #fetches all of the post names and creates unique id's for each
+        resourcescursor.execute("SELECT * FROM materials")
+        resources = resourcescursor.fetchall()
+        resourceslength = len(resources)
+        id = resourceslength + 1
+        #grabs the postid
+
         if type_of_form == "uploadfile":
             title = request.form.get("title")
             title = str(title)
-            username = session["user_id"]
-            objectroute = request.form.get("route")
-
-            now = datetime.now()
-            date = now.strftime("%m/%d/%Y")
-            time = now.strftime("%H:%M:%S")
 
             #if there is no inputs, return an error
             if title == "":
@@ -489,17 +501,6 @@ def resources(course):
             file = request.files['file']
             # If the user does not select a file, the browser submits an
             # empty file without a filename.
-
-            #grabs the postid
-            dbinfo = connectdb("resources.db")
-            resourcescursor = dbinfo[0]
-            resourcesconnect = dbinfo[1]
-            #fetches all of the post names and creates unique id's for each
-            resourcescursor.execute("SELECT * FROM materials")
-            resources = resourcescursor.fetchall()
-            resourceslength = len(resources)
-            id = resourceslength + 1
-            #grabs the postid
 
             #gives permission to parent path
             parentpath = os.getcwd()
@@ -543,8 +544,22 @@ def resources(course):
                         resourcesconnect.commit()
                         file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
         if type_of_form == "newfolder":
-            title = request.form.get("title")
-            
+            foldername = request.form.get("name_of_folder")
+            foldername = str(foldername)
+
+            if foldername == "":
+                flash('No input to required parts')
+                return redirect(request.url)
+
+            dbinfo = connectdb("resources.db")
+            objecttype = "folder"
+            resourcescursor = dbinfo[0]
+            resourcesconnect = dbinfo[1]
+            resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, objectroute, objecttype, course, username, foldername, time, date));
+            resourcesconnect.commit()
+            resourcesconnect.close
+            return render_template("resources.html", course = course, )
+
     return render_template("resources.html", course = course, )
 
 
@@ -588,8 +603,23 @@ def getresources():
     dbinfo = connectdb("resources.db")
     resourcescursor = dbinfo[0]
     resourcesconnect = dbinfo[1]
-    resourcescursor.execute("SELECT * FROM materials WHERE class = ?", (course, ));
+    filetype = "file"
+    resourcescursor.execute("SELECT * FROM materials WHERE class = ? AND objecttype = ?", (course, filetype, ));
     materials = resourcescursor.fetchall()
     resourcesconnect.close
     resources = jsonify(materials)
     return(resources)
+
+@app.route('/getfolders', methods=["GET", "POST"])
+def getfolders():
+    course = request.json
+    dbinfo = connectdb("resources.db")
+    resourcescursor = dbinfo[0]
+    resourcesconnect = dbinfo[1]
+    filetype = "folder"
+    resourcescursor.execute("SELECT * FROM materials WHERE class = ? AND objecttype = ?", (course, filetype, ));
+    folders = resourcescursor.fetchall()
+    print(folders)
+    resourcesconnect.close
+    folders = jsonify(folders)
+    return(folders)
