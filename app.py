@@ -23,6 +23,8 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+SQLALCHEMY_DATABASE_URI = os.environ.get()
+
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 #the intro homepage for the user
@@ -613,7 +615,7 @@ def resources(route):
     folders = resourcescursor.fetchall()
     resourcesconnect.close
     #grab the folders
-    
+
     return render_template("resources.html",currentfolderrouteurl = currentfolderrouteurl, course = course, folders = folders, materials = materials, route = route)
 
 
