@@ -1,4 +1,4 @@
 -- -- SQLite
 -- DROP TABLE files
 
-DELETE FROM materials WHERE name = "Practice Problems"
+DELETE FROM posts WHERE class = "Precalculus"
