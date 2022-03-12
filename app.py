@@ -1,5 +1,7 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
 from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference
+from flask_sqlalchemy import SQLAlchemy
+import psycopg2
 import stat
 from werkzeug.utils import secure_filename
 import os
@@ -12,6 +14,30 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = "super secret key"
 
+ENV = 'dev'
+
+if ENV == 'dev':
+    app.debug = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Tecra$2290@localhost/postgres'
+else:
+    app.debug = False
+    app.config['SQLALCHEMY_DATABASE_URI'] = ''
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+class userinfo(db.Model):
+    __tablename__= 'userinfo'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(200))
+    password = db.Column(db.String(220))
+    email = db.Column(db.String(220))
+
+    def __init__(self, username, password, email):
+        self.username = username
+        self.password = password
+        self.email = email
+
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
@@ -23,11 +49,13 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
-SQLALCHEMY_DATABASE_URI = os.environ.get('postgres://slkedmlgcgmkcr:f08ee6902f2927dc30bbbcede250367346bd1d403df61eff2f0ae56b6a0300bd@ec2-44-192-245-97.compute-1.amazonaws.com:5432/dc5ag0rmvnv6cd')
 
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+
+if __name__ == '__main__':
+    app.run()
 #the intro homepage for the user
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -65,66 +93,90 @@ def index():
                 return render_template("intro.html")
 
             #goes to function that connects db
-            dbinfo = connectdb("userinfo.db")
-            #seperate list into db objects
-            userinfocursor = dbinfo[0]
-            userinfoconnect = dbinfo[1]
+            # dbinfo = connectdb("userinfo.db")
+            # #seperate list into db objects
+            # userinfocursor = dbinfo[0]
+            # userinfoconnect = dbinfo[1]
 
+            # connection = psycopg2.connect(db)
+            # userinfocursor = connection.cursor()
             #checks if email is already in the system | cant be 2 of the same email
-            userinfocursor.execute("SELECT email FROM users WHERE email = ?", (email, ));
-            stored_email = userinfocursor.fetchone()
+            stored_email = db.session.query(userinfo).filter(userinfo.email == email).count()
+            print(stored_email)
+            # userinfocursor.execute("SELECT email FROM users WHERE email = ?", (email, ));
+            # stored_email = userinfocursor.fetchone()
 
-            if stored_email != None:
+            if stored_email != 0:
                 error = "invalid email address"
                 flash('email already has been used')
                 return redirect(url_for('index'))
 
-            #checks if username is already in the system | cant be 2 of same username
-            userinfocursor.execute("SELECT username FROM users WHERE username = ?", (username, ));
-            stored_username = userinfocursor.fetchone()
-            userinfoconnect.close()
 
-            if stored_username != None:
+            #checks if username is already in the system | cant be 2 of same username
+            stored_username = db.session.query(userinfo).filter(userinfo.username == username).count()
+            # userinfocursor.execute("SELECT username FROM users WHERE username = ?", (username, ));
+            # stored_username = userinfocursor.fetchone()
+            # userinfoconnect.close()
+
+            if stored_username != 0:
                 error = "invalid email address"
                 flash("username already has been used")
                 return redirect(url_for('index'))
 
             # after checks, insert into db
-            dbinfo = connectdb("userinfo.db")
-            userinfodb = dbinfo[0]
-            userinfoconnect = dbinfo[1]
-            userinfodb.execute("INSERT INTO users VALUES (?, ?, ?)", (username, password, email));
-            userinfoconnect.commit()
-            userinfoconnect.close()
+            data = userinfo(username, password, email)
+            print(data)
+            db.session.add(data)
+            db.session.commit()
+            # dbinfo = connectdb("userinfo.db")
+            # userinfodb = dbinfo[0]
+            # userinfoconnect = dbinfo[1]
+            # userinfodb.execute("INSERT INTO users VALUES (?, ?, ?)", (username, password, email));
+            # userinfoconnect.commit()
+            # userinfoconnect.close()
             return redirect("/")
 
         if form == "loginform":
             #connects to db and checks if account is valid
             session.clear()
-            dbinfo = connectdb("userinfo.db")
-            userinfocursor = dbinfo[0]
-            userinfoconnect = dbinfo[1]
+            # dbinfo = connectdb("userinfo.db")
+            # userinfocursor = dbinfo[0]
+            # userinfoconnect = dbinfo[1]
             email = request.form.get("email")
             password = request.form.get("password")
-            userinfocursor.execute("SELECT * FROM users WHERE email = ? ", (email, ))
-            fetchedemail = userinfocursor.fetchone()
+            # userinfocursor.execute("SELECT * FROM users WHERE email = ? ", (email, ))
+            # fetchedemail = userinfocursor.fetchone()
+            fetchedemail = db.session.query(userinfo).filter(userinfo.email == email).count()
 
-            if fetchedemail == None:
+
+            if fetchedemail == 0:
                 flash("Email and User not found")
                 return render_template("intro.html")
-            userinfocursor.execute("SELECT * FROM users WHERE email = ? AND password = ?", (email, password, ))
-            fetchpassword = userinfocursor.fetchone()
 
-            if fetchpassword == None:
+            # userinfocursor.execute("SELECT * FROM users WHERE email = ? AND password = ?", (email, password, ))
+            # fetchpassword = userinfocursor.fetchone()
+            fetchpassword = db.session.query(userinfo).filter(userinfo.email == email,userinfo.password == password).count()
+
+            if fetchpassword == 0:
                 flash("Password is Incorrect")
                 return render_template("intro.html")
-            userinfocursor.execute("SELECT username FROM users WHERE email = ? AND password = ?", (email, password, ))
-            username = userinfocursor.fetchone()
-            userinfoconnect.close()
+            
+
+            # userinfocursor.execute("SELECT username FROM users WHERE email = ? AND password = ?", (email, password, ))
+            # username = userinfocursor.fetchone()
+            # userinfoconnect.close()
+            username = db.session.query(userinfo.username).filter(userinfo.email == email,userinfo.password == password).all()
+            print(username)
 
             #login successful redirects to homepage with feed
-            username = username[0]
+
+            #structure of sqlachemy. They are tuples
+                #original ->[('codetest',)]
+                #original[0] -> ('codetest',)
+                #orginal[0][0] -> codetest
+            username = username[0][0]
             session["user_id"] = username
+            print(username)
             return redirect("homepage")
     else:
         return render_template("intro.html")
