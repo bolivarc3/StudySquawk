@@ -25,6 +25,10 @@ function newfolderon() {
 
 // gets the files from the server to display on the tables
 async function getfolders(course){
+    const rows = Array.from(document.getElementsByClassName('rowbox'))
+    rows.forEach(row =>{
+        row.remove();
+    });
     const response = await fetch('/getfolders', {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
         headers: {
@@ -36,6 +40,7 @@ async function getfolders(course){
     const data = await response.json()
     console.log(data);
     createfolders(data)
+    getresources(course)
 }
 
 async function getresources(course){
@@ -119,6 +124,8 @@ function createresources(materials){
 
 function createfolders(materials){
     var length = materials.length
+    console.log("length")
+    console.log(length)
     if(length > 0){
         //for the amount of images
         for(let i = 0; i < length; i++){
@@ -153,6 +160,18 @@ function createfolders(materials){
             link = document.createElement('a')
             link.innerHTML = materials[i][5]
             link.target = "_blank"
+            newfilepath = materials[i][1] + "/" + materials[i][5]
+            console.log(newfilepath)
+            link.addEventListener("click",function() {
+                    getfolders(newfilepath)
+                }
+            );
+            const formroutings = Array.from(document.getElementsByName('route'))
+            console.log(formroutings)
+            formroutinglengths = formroutings.length
+            for (i = 0; i < formroutinglengths; i++) {
+                formroutings[i].value = newfilepath
+            }
             filename.appendChild(link);
             tablerow.appendChild(filename);
 
@@ -179,6 +198,7 @@ function createfolders(materials){
         }
     }
 }
+
 
 // Allows for Preview of file
 function showPreview(event){

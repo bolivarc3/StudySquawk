@@ -459,15 +459,31 @@ def viewpost(course, postid):
 
 
 
-@app.route('/<course>/resources', methods=["GET", "POST"])
-def resources(course):
+@app.route('/resources/<route>', methods=["GET", "POST"])
+def resources(route):
+    #saves route created and checks if peson put in a correct course
+    currentfolderrouteurl = route
+    routeparts = route.split(">")
+    print("routeparts" + str(routeparts))
+    route = str()
+    for i in range(len(routeparts)):
+        route = route + "/" + routeparts[i]
+    course = routeparts[0]
+    courses = grabclasses()
+    courseavailible = checkclass(course, courses)
+    #saves route created and checks if peson put in a correct course
+
+    #if the class is not in the list, it will render an apology
+    if courseavailible == False:
+        flash('Class is not availible. Select Class from Options')
+        return redirect(url_for('course', course = course))
     print("yo")
     if request.method == "POST":
         print("hey")
         #gathers information for database entry
         type_of_form = request.form.get("type_of_form")
         username = session["user_id"]
-        objectroute = request.form.get("route")
+        objectroute = route
 
         now = datetime.now()
         date = now.strftime("%m/%d/%Y")
@@ -516,12 +532,14 @@ def resources(course):
             else:
                 print("hey")
                 os.makedirs(filespath)
-            #makes a new upload folder
-            UPLOAD_FOLDER = filespath
+            #makes a new upload folder if the upload folder does not exist
+            UPLOAD_FOLDER = "static/resources/" + str(route)
             app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
             files = request.files.getlist("file")
             username = session["user_id"]
             resourcesconnect.commit()
+            #makes a new upload folder if the upload folder does not exist
+
             for file in files:
                 if file.filename != "":
                     split_tup = os.path.splitext(file.filename)
@@ -547,10 +565,27 @@ def resources(course):
             foldername = request.form.get("name_of_folder")
             foldername = str(foldername)
 
+            #if no upload folder, return error
             if foldername == "":
                 flash('No input to required parts')
                 return redirect(request.url)
+            
+            parentpath = os.getcwd()
+            staticpath = str(parentpath) + '/static'
+            os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+            os.chmod(staticpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+            #gives permission to parent path
 
+            #makes a new folder for the images. This makes it so that it can conserve it's name
+            filespath = "static/resources" + str(route) + "/" + str(foldername)
+            if os.path.exists(filespath):
+                print("it exists")
+                return(request.url)
+            else:
+                print("hey")
+                os.makedirs(filespath)
+            
+            #enter folder information into database
             dbinfo = connectdb("resources.db")
             objecttype = "folder"
             resourcescursor = dbinfo[0]
@@ -558,9 +593,28 @@ def resources(course):
             resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, objectroute, objecttype, course, username, foldername, time, date));
             resourcesconnect.commit()
             resourcesconnect.close
-            return render_template("resources.html", course = course, )
 
-    return render_template("resources.html", course = course, )
+    #grab the materials
+    dbinfo = connectdb("resources.db")
+    resourcescursor = dbinfo[0]
+    resourcesconnect = dbinfo[1]
+    filetype = "file"
+    resourcescursor.execute("SELECT * FROM materials WHERE objectroute = ? AND objecttype = ?", (route, filetype, ));
+    materials = resourcescursor.fetchall()
+    resourcesconnect.close
+    #grab the materials
+
+    #grab the folders
+    dbinfo = connectdb("resources.db")
+    resourcescursor = dbinfo[0]
+    resourcesconnect = dbinfo[1]
+    filetype = "folder"
+    resourcescursor.execute("SELECT * FROM materials WHERE objectroute = ? AND objecttype = ?", (route, filetype, ));
+    folders = resourcescursor.fetchall()
+    resourcesconnect.close
+    #grab the folders
+    
+    return render_template("resources.html",currentfolderrouteurl = currentfolderrouteurl, course = course, folders = folders, materials = materials, route = route)
 
 
 
@@ -604,7 +658,7 @@ def getresources():
     resourcescursor = dbinfo[0]
     resourcesconnect = dbinfo[1]
     filetype = "file"
-    resourcescursor.execute("SELECT * FROM materials WHERE class = ? AND objecttype = ?", (course, filetype, ));
+    resourcescursor.execute("SELECT * FROM materials WHERE objectroute = ? AND objecttype = ?", (course, filetype, ));
     materials = resourcescursor.fetchall()
     resourcesconnect.close
     resources = jsonify(materials)
@@ -613,11 +667,12 @@ def getresources():
 @app.route('/getfolders', methods=["GET", "POST"])
 def getfolders():
     course = request.json
+    print(course)
     dbinfo = connectdb("resources.db")
     resourcescursor = dbinfo[0]
     resourcesconnect = dbinfo[1]
     filetype = "folder"
-    resourcescursor.execute("SELECT * FROM materials WHERE class = ? AND objecttype = ?", (course, filetype, ));
+    resourcescursor.execute("SELECT * FROM materials WHERE objectroute = ? AND objecttype = ?", (course, filetype, ));
     folders = resourcescursor.fetchall()
     print(folders)
     resourcesconnect.close
