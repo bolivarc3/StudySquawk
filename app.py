@@ -25,6 +25,7 @@ def after_request(response):
 
 SQLALCHEMY_DATABASE_URI = os.environ.get('postgres://slkedmlgcgmkcr:f08ee6902f2927dc30bbbcede250367346bd1d403df61eff2f0ae56b6a0300bd@ec2-44-192-245-97.compute-1.amazonaws.com:5432/dc5ag0rmvnv6cd')
 
+
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 #the intro homepage for the user
