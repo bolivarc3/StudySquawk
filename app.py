@@ -1,5 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
 from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference
+import stat
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime
