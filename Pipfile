@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 gunicorn = "*"
 flask = "*"
+requests = "*"
+datetime = "*"
 
 [dev-packages]
 
