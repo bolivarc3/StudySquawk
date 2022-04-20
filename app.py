@@ -1,21 +1,16 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
 from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference
-import stat
 from werkzeug.utils import secure_filename
-import os
 from datetime import datetime
+import stat
+import os
 import sqlite3
-from flask_sqlalchemy import SQLAlchemy
 
 UPLOAD_FOLDER = '/Studyist/userfiles'
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = "super secret key"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////database.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-from models import Users
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -76,43 +71,30 @@ def index():
             userinfoconnect = dbinfo[1]
 
             #checks if email is already in the system | cant be 2 of the same email
-            stored_user_emails = Users.query.filter_by(email=email).first()
-            # print(useremails)
-            # userinfocursor.execute("SELECT email FROM users WHERE email = ?", (email, ));
-            # stored_email = userinfocursor.fetchone()
-            print(stored_user_emails)
-            if stored_user_emails == None:
+            userinfocursor.execute("SELECT email FROM users WHERE email = ?", (email, ));
+            stored_email = userinfocursor.fetchone()
+            if stored_email != None:
                 error = "invalid email address"
                 flash('email already has been used')
                 return redirect(url_for('index'))
 
             #checks if username is already in the system | cant be 2 of same username
-            storedusername = Users.query.filter_by(username=username).first()
-            # userinfocursor.execute("SELECT username FROM users WHERE username = ?", (username, ));
-            # stored_username = userinfocursor.fetchone()
-            # userinfoconnect.close()
+            userinfocursor.execute("SELECT username FROM users WHERE username = ?", (username, ));
+            stored_username = userinfocursor.fetchone()
+            userinfoconnect.close()
 
-            if stored_username == None:
+            if stored_username != None:
                 error = "invalid email address"
                 flash("username already has been used")
                 return redirect(url_for('index'))
 
             # after checks, insert into db
-            # dbinfo = connectdb("userinfo.db")
-            # userinfodb = dbinfo[0]
-            # userinfoconnect = dbinfo[1]
-            # userinfodb.execute("INSERT INTO users VALUES (?, ?, ?)", (username, password, email));
-            # userinfoconnect.commit()
-            # userinfoconnect.close()
-            new_user = Users(
-                    username = username,
-                    password = password,
-                    email = email)
-            print(newuser)
-            dbsession.add(new_user)
-            dbsession.commit()
-            dball = Users.query.all()
-            print(dball)
+            dbinfo = connectdb("userinfo.db")
+            userinfodb = dbinfo[0]
+            userinfoconnect = dbinfo[1]
+            userinfodb.execute("INSERT INTO users VALUES (?, ?, ?)", (username, password, email));
+            userinfoconnect.commit()
+            userinfoconnect.close()
             return redirect("/")
 
         if form == "loginform":
