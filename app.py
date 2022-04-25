@@ -1,7 +1,7 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
 from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference
 from werkzeug.utils import secure_filename
-import sqlalchemy
+from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import stat
@@ -43,7 +43,7 @@ else:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-from models import Users
+from models import Users, posts, images, files, replies, replyfiles, replyimages, materials
 
 
 #the intro homepage for the user
@@ -112,6 +112,7 @@ def index():
             return redirect("/")
 
         if form == "loginform":
+            email = request.form.get("email")
             password = request.form.get("password")
             if db.session.query(Users).filter(Users.email == email).count() == 0:
                 flash("Email and User not found")
@@ -149,8 +150,14 @@ def studyist():
         postcursor = dbinfo[0]
         postconnect = dbinfo[1]
         postcursor.execute("SELECT * FROM posts ORDER BY date,time DESC;")
-        posts = postcursor.fetchall()
-        print(posts)
+        posting = postcursor.fetchall()
+        postsalch = db.session.query(posts).order_by(posts.date.desc(),posts.time.desc()).all()
+        #return object looking like <posts> which is an object
+        #index into it and .{insert what you are looking for}
+        print("hey")
+        print (postsalch)
+        print("hey")
+        print(posting)
         return render_template("homepage.html", courses = courses, post = posts)
 
 
