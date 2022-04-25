@@ -8,6 +8,12 @@ gunicorn = "*"
 flask = "*"
 requests = "*"
 datetime = "*"
+psycopg2 = "*"
+psycopg2-binary = "*"
+flask-sqlalchemy = "*"
+flask-migrate = "*"
+flask-wtf = "*"
+sqlalchemy = "*"
 
 [dev-packages]
 

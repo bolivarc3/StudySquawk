@@ -1,6 +1,8 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
 from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference
 from werkzeug.utils import secure_filename
+from sqlalchemy import *
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import stat
 import os
@@ -28,6 +30,22 @@ def getApp():
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+
+ENV = 'dev'
+
+if ENV == 'dev':
+    app.debug = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Tecra$2290@localhost/studyist'
+else:
+    app.debug = False
+    app.config['SQLALCHEMY_DATABASE_URI'] = ''
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+from models import Users, posts, images, files, replies, replyfiles, replyimages, materials
+
+
 #the intro homepage for the user
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -71,58 +89,40 @@ def index():
             userinfoconnect = dbinfo[1]
 
             #checks if email is already in the system | cant be 2 of the same email
-            userinfocursor.execute("SELECT email FROM users WHERE email = ?", (email, ));
-            stored_email = userinfocursor.fetchone()
-            if stored_email != None:
+            # userinfocursor.execute("SELECT email FROM users WHERE email = ?", (email, ));
+            # stored_email = userinfocursor.fetchone()
+
+            if db.session.query(Users).filter(Users.email == email).count() != 0:
                 error = "invalid email address"
                 flash('email already has been used')
                 return redirect(url_for('index'))
 
             #checks if username is already in the system | cant be 2 of same username
-            userinfocursor.execute("SELECT username FROM users WHERE username = ?", (username, ));
-            stored_username = userinfocursor.fetchone()
-            userinfoconnect.close()
+            # userinfocursor.execute("SELECT username FROM users WHERE username = ?", (username, ));
+            # stored_username = userinfocursor.fetchone()
+            # userinfoconnect.close()
 
-            if stored_username != None:
+            if db.session.query(Users).filter(Users.username == username).count() != 0:
                 error = "invalid email address"
                 flash("username already has been used")
                 return redirect(url_for('index'))
-
-            # after checks, insert into db
-            dbinfo = connectdb("userinfo.db")
-            userinfodb = dbinfo[0]
-            userinfoconnect = dbinfo[1]
-            userinfodb.execute("INSERT INTO users VALUES (?, ?, ?)", (username, password, email));
-            userinfoconnect.commit()
-            userinfoconnect.close()
+            data = Users(username, password, email)
+            db.session.add(data)
+            db.session.commit()
             return redirect("/")
 
         if form == "loginform":
-            #connects to db and checks if account is valid
-            session.clear()
-            dbinfo = connectdb("userinfo.db")
-            userinfocursor = dbinfo[0]
-            userinfoconnect = dbinfo[1]
             email = request.form.get("email")
             password = request.form.get("password")
-            userinfocursor.execute("SELECT * FROM users WHERE email = ? ", (email, ))
-            fetchedemail = userinfocursor.fetchone()
-
-            if fetchedemail == None:
+            if db.session.query(Users).filter(Users.email == email).count() == 0:
                 flash("Email and User not found")
                 return render_template("intro.html")
-            userinfocursor.execute("SELECT * FROM users WHERE email = ? AND password = ?", (email, password, ))
-            fetchpassword = userinfocursor.fetchone()
 
-            if fetchpassword == None:
+            User = db.session.query(Users).filter(Users.email == email, Users.password == password).first()
+            username = User.username
+            if db.session.query(Users).filter(Users.email == email, Users.password == password).count() == 0:
                 flash("Password is Incorrect")
                 return render_template("intro.html")
-            userinfocursor.execute("SELECT username FROM users WHERE email = ? AND password = ?", (email, password, ))
-            username = userinfocursor.fetchone()
-            userinfoconnect.close()
-
-            #login successful redirects to homepage with feed
-            username = username[0]
             session["user_id"] = username
             return redirect("homepage")
     else:
@@ -150,8 +150,14 @@ def studyist():
         postcursor = dbinfo[0]
         postconnect = dbinfo[1]
         postcursor.execute("SELECT * FROM posts ORDER BY date,time DESC;")
-        posts = postcursor.fetchall()
-        print(posts)
+        posting = postcursor.fetchall()
+        postsalch = db.session.query(posts).order_by(posts.date.desc(),posts.time.desc()).all()
+        #return object looking like <posts> which is an object
+        #index into it and .{insert what you are looking for}
+        print("hey")
+        print (postsalch)
+        print("hey")
+        print(posting)
         return render_template("homepage.html", courses = courses, post = posts)
 
 
