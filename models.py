@@ -16,7 +16,7 @@ class Users(db.Model):
         self.password = password
         self.email = email
 
-
+#models for postings
 class posts(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
@@ -57,6 +57,7 @@ class files(db.Model):
         self.postid = postid
         self.files = files
 
+#models for replies
 class replies(db.Model):
     __tablename__ = 'replies'
     id = db.Column(db.Integer, primary_key=True)
@@ -98,6 +99,8 @@ class replyfiles(db.Model):
         self.postid = postid
         self.files = files
 
+#models for materials
+
 class materials(db.Model):
     __tablename__ = 'materials'
     id = db.Column(db.Integer, primary_key=True)
@@ -119,6 +122,7 @@ class materials(db.Model):
         self.time = time
         self.date = date
 
+#models for classes
 class classes(db.Model):
     __tablename__ = 'classes'
     id = db.Column(db.Integer, primary_key=True)

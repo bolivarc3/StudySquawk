@@ -114,15 +114,20 @@ def index():
         if form == "loginform":
             email = request.form.get("email")
             password = request.form.get("password")
+
+            #if email is not in system, return error
             if db.session.query(Users).filter(Users.email == email).count() == 0:
                 flash("Email and User not found")
                 return render_template("intro.html")
 
             User = db.session.query(Users).filter(Users.email == email, Users.password == password).first()
             username = User.username
+            #if password is not the same as the user with the email, return error
             if db.session.query(Users).filter(Users.email == email, Users.password == password).count() == 0:
                 flash("Password is Incorrect")
                 return render_template("intro.html")
+
+            #set the session
             session["user_id"] = username
             return redirect("homepage")
     else:
@@ -146,18 +151,15 @@ def studyist():
 
     else:
         #grabs info from database and shows post onto the feed page
-        dbinfo = connectdb("posts.db")
-        postcursor = dbinfo[0]
-        postconnect = dbinfo[1]
-        postcursor.execute("SELECT * FROM posts ORDER BY date,time DESC;")
-        posting = postcursor.fetchall()
+        # dbinfo = connectdb("posts.db")
+        # postcursor = dbinfo[0]
+        # postconnect = dbinfo[1]
+        # postcursor.execute("SELECT * FROM posts ORDER BY date,time DESC;")
+        # posting = postcursor.fetchall()
         postsalch = db.session.query(posts).order_by(posts.date.desc(),posts.time.desc()).all()
         #return object looking like <posts> which is an object
-        #index into it and .{insert what you are looking for}
-        print("hey")
-        print (postsalch)
-        print("hey")
-        print(posting)
+        #index into it and . insert what you are looking for
+
         return render_template("homepage.html", courses = courses, post = posts)
 
 
