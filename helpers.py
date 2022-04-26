@@ -91,4 +91,18 @@ def time_difference(postedtime,posteddate):
     if seconds != 0:
         differencetime = differencetime + str(seconds) + " seconds "
     print(differencetime)
+
+def upload(filespath,filename):
+    if request.method == 'POST':
+        img = request.files['file']
+        if img:
+            filename = secure_filename(img.filename)
+            img.save(filename)
+            s3.upload_file(
+                Bucket = BUCKET_NAME,
+                Filename=filename,
+                Key = filename
+            )
+            msg = "Upload Done ! "
+    return render_template("file_upload_to_s3.html",msg =msg)
     
