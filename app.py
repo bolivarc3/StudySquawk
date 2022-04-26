@@ -4,9 +4,28 @@ from werkzeug.utils import secure_filename
 from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask_s3 import FlaskS3
+import json
 import stat
 import os
 import sqlite3
+import boto3
+
+s3 = boto3.client('s3',
+                    aws_access_key_id='AKIA4XOBDYJLMRYYW35I',
+                    aws_secret_access_key= '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',
+                     )
+BUCKET_NAME='studyist'
+
+from app import BUCKET_NAME
+def upload(filespath,filename,filedata):
+        filedata.save(filename)
+        s3.upload_file(
+            Bucket = BUCKET_NAME,
+            Filename=filename,
+            Key = filespath +  "/" + filename
+        )
+        return "Upload Done ! "
 
 UPLOAD_FOLDER = '/Studyist/userfiles'
 
@@ -30,12 +49,13 @@ def getApp():
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-
+app.config['AWS_ACCESS_KEY_ID'] = 'AKIA4XOBDYJLMRYYW35I'
 ENV = 'dev'
 
 if ENV == 'dev':
     app.debug = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Tecra$2290@localhost/studyist'
+    
 else:
     app.debug = False
     app.config['SQLALCHEMY_DATABASE_URI'] = ''
@@ -156,11 +176,10 @@ def studyist():
         # postconnect = dbinfo[1]
         # postcursor.execute("SELECT * FROM posts ORDER BY date,time DESC;")
         # posting = postcursor.fetchall()
-        postsalch = db.session.query(posts).order_by(posts.date.desc(),posts.time.desc()).all()
+        postings = db.session.query(posts).order_by(posts.date.desc(),posts.time.desc()).all()
         #return object looking like <posts> which is an object
         #index into it and . insert what you are looking for
-
-        return render_template("homepage.html", courses = courses, post = posts)
+        return render_template("homepage.html", courses = courses,postings = postings)
 
 
 @app.route('/<course>', methods=["GET", "POST"])
@@ -200,35 +219,27 @@ def course(course):
             flash('No file part')
             return redirect(request.url)
         file = request.files['file']
+        filedata = request.files.getlist("file")
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
 
-        #grabs the postid
-        dbinfo = connectdb("posts.db")
-        postcursor = dbinfo[0]
-        postconnect = dbinfo[1]
-        #fetches all of the post names and creates unique id's for each
-        postcursor.execute("SELECT * FROM posts")
-        posts = postcursor.fetchall()
-        postslength = len(posts)
-        id = postslength + 1
+        id = db.session.query(posts).count() +1
         #grabs the postid
 
         #gives permission to parent path
-        parentpath = os.getcwd()
-        parentpath = str(parentpath) + '/static'
-        os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-        os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-        #gives permission to parent path
+        # parentpath = os.getcwd()
+        # parentpath = str(parentpath) + '/static'
+        # os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+        # os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+        # #gives permission to parent path
 
-        #makes a new folder for the images. This makes it so that it can conserve it's name
-        filespath = "static/userfiles/" + str(id)
-        os.makedirs(filespath)
-        #makes a new upload folder
-        UPLOAD_FOLDER = filespath
-        app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-        files = request.files.getlist("file")
-        for file in files:
+        # #makes a new folder for the images. This makes it so that it can conserve it's name
+        filespath = "userfiles/" + str(id)
+        # os.makedirs(filespath)
+        # #makes a new upload folder
+        # UPLOAD_FOLDER = filespath
+        # app.config['UPLOAD_FSOLDER'] = UPLOAD_FOLDER
+        for file in filedata:
             if file.filename != "":
                 split_tup = os.path.splitext(file.filename)
 
@@ -239,43 +250,53 @@ def course(course):
                 #checks if image
                 if file_extension in imagefileextensions:
                     filename = secure_filename(file.filename)
-                    dbinfo = connectdb("posts.db")
-                    postcursor = dbinfo[0]
-                    postconnect = dbinfo[1]
-                    postcursor.execute("INSERT INTO images VALUES (?, ?)", (id, file.filename));
-                    postconnect.commit()
-                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+                    fileupload = upload(filespath,filename,file)
+
+                    imagedata = images(id,file.filename)
+                    db.session.add(imagedata)
+                    db.session.commit()
+
+
+                    # dbinfo = connectdb("posts.db")
+                    # postcursor = dbinfo[0]
+                    # postconnect = dbinfo[1]
+                    # postcursor.execute("INSERT INTO images VALUES (?, ?)", (id, file.filename));
+                    # postconnect.commit()
+                    # file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+
                 else:
                     filename = secure_filename(file.filename)
-                    dbinfo = connectdb("posts.db")
-                    postcursor = dbinfo[0]
-                    postconnect = dbinfo[1]
-                    postcursor.execute("INSERT INTO files VALUES (?, ?)", (id, file.filename));
-                    postconnect.commit()
-                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+                    fileupload = upload(filespath,filename,file)
+
+                    filedata = files(id,file.filename)
+                    db.session.add(filedata)
+                    db.session.commit()
 
         #connects to the post db
-        dbinfo = connectdb("posts.db")
-        postcursor = dbinfo[0]
-        postconnect = dbinfo[1]
-        #fetches all of the post names and creates unique id's for each
-        postcursor.execute("SELECT * FROM posts")
-        posts = postcursor.fetchall()
-        postslength = len(posts)
-        id = postslength + 1
-        #inserts into db
-        postcursor.execute("INSERT INTO posts VALUES (?, ?, ?, ?, ?, ?, ?)", (id, course, username, title, body, time, date));
-        postconnect.commit()
-        postconnect.close()
+        # dbinfo = connectdb("posts.db")
+        # postcursor = dbinfo[0]
+        # postconnect = dbinfo[1]
+        # #fetches all of the post names and creates unique id's for each
+        # postcursor.execute("SELECT * FROM posts")
+        # posts = postcursor.fetchall()
+        # postslength = len(posts)
+        # id = postslength + 1
+        # #inserts into db
+        # postcursor.execute("INSERT INTO posts VALUES (?, ?, ?, ?, ?, ?, ?)", (id, course, username, title, body, time, date));
+        # postconnect.commit()
+        # postconnect.close()
+        postsdata = posts(id, course, username, title, body, time, date)
+        db.session.add(postsdata)
+        db.session.commit()
 
         return redirect(url_for('course', course = course))
 
     #db feches all the post from a cetain course
-    dbinfo = connectdb("posts.db")
-    postcursor = dbinfo[0]
-    postconnect = dbinfo[1]
-    postcursor.execute("SELECT * FROM posts WHERE class = ? ORDER BY date,time DESC;", (course,));
-    posts = postcursor.fetchall()
+    # dbinfo = connectdb("posts.db")
+    # postcursor = dbinfo[0]
+    # postconnect = dbinfo[1]
+    # postcursor.execute("SELECT * FROM posts WHERE class = ? ORDER BY date,time DESC;", (course,));
+    # posts = postcursor.fetchall()
     return render_template("coursemain.html", course = course, courses = courses, post = posts)
 
 
@@ -635,31 +656,24 @@ def getcoursesapi():
     return(courses)
 
 
-@app.route('/getcourseposts', methods=["GET", "POST"])
-def getcourseposts():
-    #grab the posts infomation of the specific class provided
-    course = request.json
-    #if it is displaying the homepage, grab all the posts
-    if course == "homepage":
-        dbinfo = connectdb("posts.db")
-        postcursor = dbinfo[0]
-        postconnect = dbinfo[1]
-        now = datetime.now()
-        nowdate = now.strftime("%m/%d/%Y")
-        nowdate = datetime.strptime(nowdate,"%m/%d/%Y")
-        postcursor.execute("SELECT * FROM posts ORDER BY date DESC, time DESC;")
-        posts = postcursor.fetchall()
-        print(posts)
-    else:
-        dbinfo = connectdb("posts.db")
-        postcursor = dbinfo[0]
-        postconnect = dbinfo[1]
-        postcursor.execute("SELECT * FROM posts WHERE class = ? ORDER BY date DESC,time DESC;", (course,));
-        posts = postcursor.fetchall()
-        print(posts)
+# @app.route('/getcourseposts', methods=["GET", "POST"])
+# def getcourseposts():
+#     #grab the posts infomation of the specific class provided
+#     course = request.json
+#     #if it is displaying the homepage, grab all the posts
+#     if course == "homepage":
+#         # dbinfo = connectdb("posts.db")
+#         # postcursor = dbinfo[0]
+#         # postconnect = dbinfo[1]
+#         now = datetime.now()
+#         nowdate = now.strftime("%m/%d/%Y")
+#         nowdate = datetime.strptime(nowdate,"%m/%d/%Y")
+#         # postcursor.execute("SELECT * FROM posts ORDER BY date DESC, time DESC;")
+#         # posts = postcursor.fetchall()
+#         postings = db.session.query(posts).order_by(posts.date.desc(),posts.time.desc()).all()
 
-    posts = jsonify(posts)
-    return(posts)
+#     postings = json.dumps(postings)
+#     return(postings)
 
 @app.route('/getresources', methods=["GET", "POST"])
 def getresources():

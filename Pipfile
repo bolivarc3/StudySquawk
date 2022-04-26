@@ -14,6 +14,8 @@ flask-sqlalchemy = "*"
 flask-migrate = "*"
 flask-wtf = "*"
 sqlalchemy = "*"
+boto3 = "*"
+flask-s3 = "*"
 
 [dev-packages]
 

@@ -36,6 +36,7 @@ class posts(db.Model):
         self.body = body
         self.time = time
         self.date = date
+        
 
 class images(db.Model):
     __tablename__ = 'images'
