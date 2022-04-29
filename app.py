@@ -55,7 +55,7 @@ ENV = 'dev'
 if ENV == 'dev':
     app.debug = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Tecra$2290@localhost/studyist'
-    
+
 else:
     app.debug = False
     app.config['SQLALCHEMY_DATABASE_URI'] = ''
@@ -297,7 +297,8 @@ def course(course):
     # postconnect = dbinfo[1]
     # postcursor.execute("SELECT * FROM posts WHERE class = ? ORDER BY date,time DESC;", (course,));
     # posts = postcursor.fetchall()
-    return render_template("coursemain.html", course = course, courses = courses, post = posts)
+    postings = db.session.query(posts).filter(posts.course == course).order_by(posts.date.desc(),posts.time.desc()).all()
+    return render_template("coursemain.html", course = course, courses = courses, postings = postings)
 
 
 @app.route('/<course>/postcreation', methods=["GET", "POST"])
@@ -323,56 +324,61 @@ def viewpost(course, postid):
             username = session["user_id"]
             images = "NULL"
             now = datetime.now()
-            dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-
+            # dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+            now = datetime.now()
+            date = now.strftime("%m/%d/%Y")
+            time = now.strftime("%H:%M:%S")
             if title == "" or body == "":
                 error = "No input to the post"
                 flash('No input to the post')
                 return redirect(request.url)
 
             #connects to the post db
-            dbinfo = connectdb("posts.db")
-            replycursor = dbinfo[0]
-            replyconnect = dbinfo[1]
-            #fetches all of the post names and creates unique id's for each
-            replycursor.execute("SELECT * FROM replies");
-            replies = replycursor.fetchall()
-            replieslength = len(replies)
+            # dbinfo = connectdb("posts.db")
+            # replycursor = dbinfo[0]
+            # replyconnect = dbinfo[1]
+            # #fetches all of the post names and creates unique id's for each
+            # replycursor.execute("SELECT * FROM replies");
+            # replies = replycursor.fetchall()
+            repliesquery = db.session.query(replies).order_by(replies.date.desc(),replies.time.desc()).all()
+            replieslength = len(repliesquery)
             id = replieslength + 1
             images = "NULL"
 
+            data = replies(id, course, username, title, body, time, date)
+            db.session.add(data)
+            db.session.commit()
             #inserts into db
-            replycursor.execute("INSERT INTO replies VALUES (?, ?, ?, ?, ?, ?, ?)", (id, course, username, title, body, dt_string, postid ));
-            replyconnect.commit()
-            replyconnect.close()
+            # replycursor.execute("INSERT INTO replies VALUES (?, ?, ?, ?, ?, ?, ?)", (id, course, username, title, body, dt_string, postid ));
+            # replyconnect.commit()
+            # replyconnect.close()
 
-            if 'file' not in request.files:
-                flash('No file part')
-                return redirect(request.url)
+            # if 'file' not in request.files:
+            #     flash('No file part')
+            #     return redirect(request.url)
             file = request.files['file']
-            # If the user does not select a file, the browser submits an
-            # empty file without a filename
+            # # If the user does not select a file, the browser submits an
+            # # empty file without a filename
 
-            #gives permission to parent path
-            parentpath = os.getcwd()
-            parentpath = str(parentpath) + '/static'
-            os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-            os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-            #gives permission to parent path
+            # #gives permission to parent path
+            # parentpath = os.getcwd()
+            # parentpath = str(parentpath) + '/static'
+            # os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+            # os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+            # #gives permission to parent path
 
-            #makes a new folder for the images. This makes it so that it can conserve it's name
-            filepath = "static/userfiles-replies/" + str(id)
-            os.makedirs(filepath)
+            # #makes a new folder for the images. This makes it so that it can conserve it's name
+            # filepath = "static/userfiles-replies/" + str(id)
+            # os.makedirs(filepath)
 
-            #makes a new upload folder
-            UPLOAD_FOLDER = filepath
-            app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-            files = request.files.getlist("file")
-
+            # #makes a new upload folder
+            # UPLOAD_FOLDER = filepath
+            # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+            filedata = request.files.getlist("file")
+            filespath = "userfiles-replies/" + str(id)
             #for every file, it will save it
             images = []
-            for file in files:
-                #if not empty
+            for file in filedata:
                 if file.filename != "":
                     split_tup = os.path.splitext(file.filename)
 
@@ -380,24 +386,31 @@ def viewpost(course, postid):
                     file_name = split_tup[0]
                     file_extension = split_tup[1]
                     imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
-
+                    #checks if image
                     if file_extension in imagefileextensions:
                         filename = secure_filename(file.filename)
-                        dbinfo = connectdb("posts.db")
-                        replycursor = dbinfo[0]
-                        replyconnect = dbinfo[1]
-                        replycursor.execute("INSERT INTO replyimages VALUES (?, ?, ?)", (id, file.filename, postid));
-                        replyconnect.commit()
-                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+                        fileupload = upload(filespath,filename,file)
+
+                        imagedata = images(id,file.filename)
+                        db.session.add(imagedata)
+                        db.session.commit()
+
+
+                        # dbinfo = connectdb("posts.db")
+                        # postcursor = dbinfo[0]
+                        # postconnect = dbinfo[1]
+                        # postcursor.execute("INSERT INTO images VALUES (?, ?)", (id, file.filename));
+                        # postconnect.commit()
+                        # file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+
                     else:
                         filename = secure_filename(file.filename)
-                        dbinfo = connectdb("posts.db")
-                        replycursor = dbinfo[0]
-                        replyconnect = dbinfo[1]
-                        replycursor.execute("INSERT INTO replyfiles VALUES (?, ?, ?)", (id, file.filename, postid));
-                        replyconnect.commit()
-                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-                    replyconnect.close()
+                        fileupload = upload(filespath,filename,file)
+
+                        filedata = files(id,file.filename)
+                        db.session.add(filedata)
+                        db.session.commit()
+
 
         return redirect(url_for('viewpost', course = course, postid = postid))
 
@@ -406,86 +419,94 @@ def viewpost(course, postid):
     courses = grabclasses()
 
     #grabs information for specific post id
-    dbinfo = connectdb("posts.db")
-    postcursor = dbinfo[0]
-    postconnect = dbinfo[1]
-    postcursor.execute("SELECT * FROM posts WHERE id = ?", (postid, ));
-    post = postcursor.fetchone()
-    postconnect.close()
-    dbinfo = connectdb("posts.db")
-    postcursor = dbinfo[0]
-    postconnect = dbinfo[1]
-    postcursor.execute("SELECT * FROM images WHERE postid = ?", (postid, ));
-    images = postcursor.fetchall()
-    postcursor.execute("SELECT * FROM files WHERE postid = ?", (postid, ));
-    files = postcursor.fetchall()
-    postconnect.close()
+    # dbinfo = connectdb("posts.db")
+    # postcursor = dbinfo[0]
+    # postconnect = dbinfo[1]
+    # postcursor.execute("SELECT * FROM posts WHERE id = ?", (postid, ));
+    # post = postcursor.fetchone()
+    # postconnect.close()
+    # dbinfo = connectdb("posts.db")
+    # postcursor = dbinfo[0]
+    # postconnect = dbinfo[1]
+    # postcursor.execute("SELECT * FROM images WHERE postid = ?", (postid, ));
+    # images = postcursor.fetchall()
+    # postcursor.execute("SELECT * FROM files WHERE postid = ?", (postid, ));
+    # files = postcursor.fetchall()
+    # postconnect.close()
+    postinfo = db.session.query(post).filter(post.postid = postid).first()
+    imagesinfo = db.session.query(images).filter(images.postid = postid).all()
+    filesinfo = db.session.query(files).filter(files.postid = postid).all()
 
-    postduration = time_difference(post[5],post[6])
+    # postduration = time_difference(post[5],post[6])
 
     #If there is no post found
-    if post == None:
+    if postinfo == None:
         flash('post not availible')
         return redirect(request.url)
 
     #convert post data into a dictionary form
-    post = {"id": post[0],
-            "class": post[1],
-            "username": post[2],
-            "title": post[3],
-            "body": post[4],
-            "time" : post[5],
-            "date" : post[6]
-    }
-    for i in range(len(images)):
-        images[i] = {"imageid": images[i][1]
+    # post = {"id": post[0],
+    #         "class": post[1],
+    #         "username": post[2],
+    #         "title": post[3],
+    #         "body": post[4],
+    #         "time" : post[5],
+    #         "date" : post[6]
+    # }
+    # for i in range(len(images)):
+    #     images[i] = {"imageid": images[i][1]
 
-        }
+    #     }
 
-    for i in range(len(files)):
-        files[i] = {"fileid": files[i][1]
+    # for i in range(len(files)):
+    #     files[i] = {"fileid": files[i][1]
 
-        }
+    #     }
 
     #grabs all info for replies
-    dbinfo = connectdb("posts.db")
-    replycursor = dbinfo[0]
-    replyconnect = dbinfo[1]
-    replycursor.execute("SELECT * FROM replies WHERE postid = ?", (postid,));
-    replies = replycursor.fetchall()
+    # dbinfo = connectdb("posts.db")
+    # replycursor = dbinfo[0]
+    # replyconnect = dbinfo[1]
+    # replycursor.execute("SELECT * FROM replies WHERE postid = ?", (postid,));
+    # replies = replycursor.fetchall()
 
-    replycursor.execute("SELECT * FROM replyimages WHERE postid = ?", (postid,));
-    replyimages = replycursor.fetchall()
+    repliesinfo = db.session.query(replies).filter(replies.postid == postid).order_by(replies.date.desc(),replies.time.desc()).all()
 
-    replycursor.execute("SELECT * FROM replyfiles WHERE postid = ?", (postid,));
-    replyfiles = replycursor.fetchall()
-    replyconnect.close()
+    # replycursor.execute("SELECT * FROM replyimages WHERE postid = ?", (postid,));
+    # replyimages = replycursor.fetchall()
 
+    repliesimagesinfo = db.session.query(replyimages).filter(replyimages.postid == postid).order_by(replies.date.desc(),replies.time.desc()).all()
+
+    # replycursor.execute("SELECT * FROM replyfiles WHERE postid = ?", (postid,));
+    # replyfiles = replycursor.fetchall()
+    # replyconnect.close()
+
+    repliesfilesinfo = db.session.query(replyfiles).filter(replyfiles.postid == postid).order_by(replyfiles.date.desc(),replyfiles.time.desc()).all()
     #converts Reply data into a dictionary
-    for i in range(len(replyimages)):
-                    replyimages[i] = {"replyid": int(replyimages[i][0]),
-                        "replyimageid": replyimages[i][1],
-                        "postid": replyimages[i][2]
-                    }
+    # for i in range(len(replyimages)):
+    #                 replyimages[i] = {"replyid": int(replyimages[i][0]),
+    #                     "replyimageid": replyimages[i][1],
+    #                     "postid": replyimages[i][2]
+    #                 }
 
-    for i in range(len(replyfiles)):
-                    replyfiles[i] = {"replyid": int(replyfiles[i][0]),
-                        "replyfileid": replyfiles[i][1],
-                        "postid": replyfiles[i][2]
-                    }
+    # for i in range(len(replyfiles)):
+    #                 replyfiles[i] = {"replyid": int(replyfiles[i][0]),
+    #                     "replyfileid": replyfiles[i][1],
+    #                     "postid": replyfiles[i][2]
+    #                 }
 
-    for i in range(len(replies)):
-        replies[i] = {"id": int(replies[i][0]),
-                      "class": replies[i][1],
-                      "username": replies[i][2],
-                      "title": replies [i][3],
-                      "body": replies[i][4],
-                      "timedate": replies[i][5]
-        }
+    # for i in range(len(replies)):
+    #     replies[i] = {"id": int(replies[i][0]),
+    #                   "class": replies[i][1],
+    #                   "username": replies[i][2],
+    #                   "title": replies [i][3],
+    #                   "body": replies[i][4],
+    #                   "timedate": replies[i][5]
+    #     }
 
 
-    session_user_id = session["user_id"]
-    return render_template("viewpost.html", postid = postid, images = images, files = files, replyfiles = replyfiles, replyimages = replyimages, post = post, courses = courses, course = course, replies = replies, session_user_id = session_user_id, )
+    userid = session["user_id"]
+    return render_template("viewpost.html", postid = postid, postinfo = postinfo, imagesinfo = imagesinfo, filesinfo = filesinfo, repliesinfo = repliesinfo, replyfilesinfo = replyfilesinfo, replyimagesinfo = replyimagesinfo, courses = courses, course = course, userid = userid, )
 
 
 
