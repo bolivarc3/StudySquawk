@@ -58,6 +58,7 @@ class files(db.Model):
         self.postid = postid
         self.files = files
 
+
 #models for replies
 class replies(db.Model):
     __tablename__ = 'replies'

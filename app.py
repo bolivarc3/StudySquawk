@@ -10,6 +10,7 @@ import stat
 import os
 import sqlite3
 import boto3
+import botocore
 
 s3 = boto3.client('s3',
                     aws_access_key_id='AKIA4XOBDYJLMRYYW35I',
@@ -26,6 +27,20 @@ def upload(filespath,filename,filedata):
             Key = filespath +  "/" + filename
         )
         return "Upload Done ! "
+
+def download_file(filespath, BUCKET_NAME):
+    parentpath = os.getcwd()
+    folderpath = str(parentpath) + "/static/" + str(filespath)
+    if not os.path.isdir(folderpath):
+        os.makedirs(folderpath)
+    s3_resource = boto3.resource('s3')
+    bucket = s3_resource.Bucket(BUCKET_NAME)
+    objects = bucket.objects.filter(Prefix=filespath)
+    for obj in objects:
+        path, filename = os.path.split(obj.key)
+        target = str(parentpath) + '/static/' + str(filespath) + "/" + str(filename)
+        bucket.download_file(obj.key, target)
+    # s3.download_file(Bucket=BUCKET_NAME, Key=s3_key, Filename=filename)
 
 UPLOAD_FOLDER = '/Studyist/userfiles'
 
@@ -49,7 +64,6 @@ def getApp():
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-app.config['AWS_ACCESS_KEY_ID'] = 'AKIA4XOBDYJLMRYYW35I'
 ENV = 'dev'
 
 if ENV == 'dev':
@@ -322,7 +336,6 @@ def viewpost(course, postid):
             body = request.form.get("text")
             body = str(body)
             username = session["user_id"]
-            images = "NULL"
             now = datetime.now()
             # dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
             now = datetime.now()
@@ -343,7 +356,6 @@ def viewpost(course, postid):
             repliesquery = db.session.query(replies).order_by(replies.date.desc(),replies.time.desc()).all()
             replieslength = len(repliesquery)
             id = replieslength + 1
-            images = "NULL"
 
             data = replies(id, course, username, title, body, time, date)
             db.session.add(data)
@@ -377,7 +389,6 @@ def viewpost(course, postid):
             filedata = request.files.getlist("file")
             filespath = "userfiles-replies/" + str(id)
             #for every file, it will save it
-            images = []
             for file in filedata:
                 if file.filename != "":
                     split_tup = os.path.splitext(file.filename)
@@ -394,7 +405,6 @@ def viewpost(course, postid):
                         imagedata = images(id,file.filename)
                         db.session.add(imagedata)
                         db.session.commit()
-
 
                         # dbinfo = connectdb("posts.db")
                         # postcursor = dbinfo[0]
@@ -433,10 +443,11 @@ def viewpost(course, postid):
     # postcursor.execute("SELECT * FROM files WHERE postid = ?", (postid, ));
     # files = postcursor.fetchall()
     # postconnect.close()
-    postinfo = db.session.query(post).filter(post.postid = postid).first()
-    imagesinfo = db.session.query(images).filter(images.postid = postid).all()
-    filesinfo = db.session.query(files).filter(files.postid = postid).all()
+    postinfo = db.session.query(posts).filter(posts.postid == postid).first()
+    imagesinfo = db.session.query(images.id,images.postid,images.images).filter(images.postid == postid).all()
+    filesinfo = db.session.query(files).filter(files.postid == postid).all()
 
+    print(imagesinfo)
     # postduration = time_difference(post[5],post[6])
 
     #If there is no post found
@@ -475,25 +486,36 @@ def viewpost(course, postid):
     # replycursor.execute("SELECT * FROM replyimages WHERE postid = ?", (postid,));
     # replyimages = replycursor.fetchall()
 
-    repliesimagesinfo = db.session.query(replyimages).filter(replyimages.postid == postid).order_by(replies.date.desc(),replies.time.desc()).all()
+    repliesimagesinfo = db.session.query(replyimages.id,replyimages.postid,replyimages.images).filter(replyimages.postid == postid).all()
 
     # replycursor.execute("SELECT * FROM replyfiles WHERE postid = ?", (postid,));
     # replyfiles = replycursor.fetchall()
     # replyconnect.close()
 
-    repliesfilesinfo = db.session.query(replyfiles).filter(replyfiles.postid == postid).order_by(replyfiles.date.desc(),replyfiles.time.desc()).all()
+    repliesfilesinfo = db.session.query(replyfiles.id,replyfiles.postid,replyfiles.files).filter(replyfiles.postid == postid).all()
     #converts Reply data into a dictionary
     # for i in range(len(replyimages)):
     #                 replyimages[i] = {"replyid": int(replyimages[i][0]),
     #                     "replyimageid": replyimages[i][1],
     #                     "postid": replyimages[i][2]
     #                 }
+    print("replies")
+    print(len(repliesfilesinfo))
+    if len(repliesfilesinfo) != 0:
+        filespath = "userfiles-replies/" + str(repliesfilesinfo[0].id)
+        download_file(filespath,BUCKET_NAME)
 
-    # for i in range(len(replyfiles)):
-    #                 replyfiles[i] = {"replyid": int(replyfiles[i][0]),
-    #                     "replyfileid": replyfiles[i][1],
-    #                     "postid": replyfiles[i][2]
-    #                 }
+    if len(repliesimagesinfo) != 0:
+        filespath = "userfiles-replies/" + str(repliesimagesinfo[0].id)
+        download_file(filespath,BUCKET_NAME)
+    
+    if len(imagesinfo) != 0:
+        filespath = "userfiles/" + str(imagesinfo[0].id)
+        download_file(filespath,BUCKET_NAME)
+    
+    if len(filesinfo) != 0:
+        filespath = "userfiles/" + str(filesinfo[0].id)
+        download_file(filespath,BUCKET_NAME)
 
     # for i in range(len(replies)):
     #     replies[i] = {"id": int(replies[i][0]),
@@ -504,9 +526,13 @@ def viewpost(course, postid):
     #                   "timedate": replies[i][5]
     #     }
 
-
+    # for i in range(len(imagesinfo)):
+    #     postimages[i] = imagesinfo[i]["id"]
+    #     postimages[i] = imagesinfo[i]["postid"]
+    #     postimages[i] = imagesinfo[i]["images"]
+    # print(postimages)
     userid = session["user_id"]
-    return render_template("viewpost.html", postid = postid, postinfo = postinfo, imagesinfo = imagesinfo, filesinfo = filesinfo, repliesinfo = repliesinfo, replyfilesinfo = replyfilesinfo, replyimagesinfo = replyimagesinfo, courses = courses, course = course, userid = userid, )
+    return render_template("viewpost.html", postid = postid, postinfo = postinfo, imagesinfo = imagesinfo, filesinfo = filesinfo, repliesinfo = repliesinfo, repliesimagesinfo = repliesimagesinfo, courses = courses, course = course, userid = userid, )
 
 
 

@@ -16,8 +16,9 @@ flask-wtf = "*"
 sqlalchemy = "*"
 boto3 = "*"
 flask-s3 = "*"
+botocore = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.10"
+python_version = "3.10.4"
