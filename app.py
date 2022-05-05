@@ -406,13 +406,6 @@ def viewpost(course, postid):
                         db.session.add(imagedata)
                         db.session.commit()
 
-                        # dbinfo = connectdb("posts.db")
-                        # postcursor = dbinfo[0]
-                        # postconnect = dbinfo[1]
-                        # postcursor.execute("INSERT INTO images VALUES (?, ?)", (id, file.filename));
-                        # postconnect.commit()
-                        # file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-
                     else:
                         filename = secure_filename(file.filename)
                         fileupload = upload(filespath,filename,file)
@@ -428,24 +421,15 @@ def viewpost(course, postid):
     #grab all of the courses
     courses = grabclasses()
 
-    #grabs information for specific post id
-    # dbinfo = connectdb("posts.db")
-    # postcursor = dbinfo[0]
-    # postconnect = dbinfo[1]
-    # postcursor.execute("SELECT * FROM posts WHERE id = ?", (postid, ));
-    # post = postcursor.fetchone()
-    # postconnect.close()
-    # dbinfo = connectdb("posts.db")
-    # postcursor = dbinfo[0]
-    # postconnect = dbinfo[1]
-    # postcursor.execute("SELECT * FROM images WHERE postid = ?", (postid, ));
-    # images = postcursor.fetchall()
-    # postcursor.execute("SELECT * FROM files WHERE postid = ?", (postid, ));
-    # files = postcursor.fetchall()
-    # postconnect.close()
     postinfo = db.session.query(posts).filter(posts.postid == postid).first()
+    #looks like -> <object> -inside -> <id:id#, postid:postid#, etc>
+
     imagesinfo = db.session.query(images.id,images.postid,images.images).filter(images.postid == postid).all()
-    filesinfo = db.session.query(files).filter(files.postid == postid).all()
+    #looks like -> {id,postid,images}
+
+    filesinfo = db.session.query(files.id,files.postid,files.files).filter(files.postid == postid).all()
+    #looks like -> {id,postid,images}
+
 
     print(imagesinfo)
     # postduration = time_difference(post[5],post[6])
@@ -455,52 +439,20 @@ def viewpost(course, postid):
         flash('post not availible')
         return redirect(request.url)
 
-    #convert post data into a dictionary form
-    # post = {"id": post[0],
-    #         "class": post[1],
-    #         "username": post[2],
-    #         "title": post[3],
-    #         "body": post[4],
-    #         "time" : post[5],
-    #         "date" : post[6]
-    # }
-    # for i in range(len(images)):
-    #     images[i] = {"imageid": images[i][1]
-
-    #     }
-
-    # for i in range(len(files)):
-    #     files[i] = {"fileid": files[i][1]
-
-    #     }
-
-    #grabs all info for replies
-    # dbinfo = connectdb("posts.db")
-    # replycursor = dbinfo[0]
-    # replyconnect = dbinfo[1]
-    # replycursor.execute("SELECT * FROM replies WHERE postid = ?", (postid,));
-    # replies = replycursor.fetchall()
 
     repliesinfo = db.session.query(replies).filter(replies.postid == postid).order_by(replies.date.desc(),replies.time.desc()).all()
+    #looks like -> <object> -inside -> <id:id#, postid:postid#, etc>
 
-    # replycursor.execute("SELECT * FROM replyimages WHERE postid = ?", (postid,));
-    # replyimages = replycursor.fetchall()
 
     repliesimagesinfo = db.session.query(replyimages.id,replyimages.postid,replyimages.images).filter(replyimages.postid == postid).all()
-
-    # replycursor.execute("SELECT * FROM replyfiles WHERE postid = ?", (postid,));
-    # replyfiles = replycursor.fetchall()
-    # replyconnect.close()
+    #looks like -> {id,postid,images}
 
     repliesfilesinfo = db.session.query(replyfiles.id,replyfiles.postid,replyfiles.files).filter(replyfiles.postid == postid).all()
-    #converts Reply data into a dictionary
-    # for i in range(len(replyimages)):
-    #                 replyimages[i] = {"replyid": int(replyimages[i][0]),
-    #                     "replyimageid": replyimages[i][1],
-    #                     "postid": replyimages[i][2]
-    #                 }
+    #looks like -> {id,postid,files}
     print("replies")
     print(len(repliesfilesinfo))
+
+    #if there are images or files that need to be downloaded, download them. 
     if len(repliesfilesinfo) != 0:
         filespath = "userfiles-replies/" + str(repliesfilesinfo[0].id)
         download_file(filespath,BUCKET_NAME)
@@ -516,21 +468,8 @@ def viewpost(course, postid):
     if len(filesinfo) != 0:
         filespath = "userfiles/" + str(filesinfo[0].id)
         download_file(filespath,BUCKET_NAME)
+    #if there are images or files that need to be downloaded, download them. 
 
-    # for i in range(len(replies)):
-    #     replies[i] = {"id": int(replies[i][0]),
-    #                   "class": replies[i][1],
-    #                   "username": replies[i][2],
-    #                   "title": replies [i][3],
-    #                   "body": replies[i][4],
-    #                   "timedate": replies[i][5]
-    #     }
-
-    # for i in range(len(imagesinfo)):
-    #     postimages[i] = imagesinfo[i]["id"]
-    #     postimages[i] = imagesinfo[i]["postid"]
-    #     postimages[i] = imagesinfo[i]["images"]
-    # print(postimages)
     userid = session["user_id"]
     return render_template("viewpost.html", postid = postid, postinfo = postinfo, imagesinfo = imagesinfo, filesinfo = filesinfo, repliesinfo = repliesinfo, repliesimagesinfo = repliesimagesinfo, courses = courses, course = course, userid = userid, )
 
