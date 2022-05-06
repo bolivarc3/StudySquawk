@@ -37,10 +37,10 @@
     });
 </script>
 {% for postings in postings %}
-<div class = "postdiv" type="submit" value = "{{ postings.id }}" onClick="document.forms['post-form{{ postings.id }}'].submit();">
+<div class = "postdiv" type="submit" value = "{{ postings.postid }}" onClick="document.forms['post-form{{ postings.postid }}'].submit();">
     <!--each post is a submit button with a form -->
-    <form name = "post-form{{ postings.id }}", class = "postbuttonform", action = "/{{ postings.course }}/post/{{ postings.id }}", method = "POST">
-        <input type="hidden" id="postId" name="postId" value="{{ postings.id }}">
+    <form name = "post-form{{ postings.postid }}", class = "postbuttonform", action = "/{{ postings.course }}/post/{{ postings.postid }}", method = "POST">
+        <input type="hidden" id="postId" name="postId" value="{{ postings.postid }}">
     </form>
     <h5>
         {{ postings.course }}

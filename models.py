@@ -63,6 +63,7 @@ class files(db.Model):
 class replies(db.Model):
     __tablename__ = 'replies'
     id = db.Column(db.Integer, primary_key=True)
+    replyid = db.Column(db.Integer,nullable=False)
     postid = db.Column(db.Integer,nullable=False)
     course = db.Column(db.String(80), nullable=False)
     username = db.Column(db.String(80), nullable=False)
@@ -71,7 +72,8 @@ class replies(db.Model):
     time = db.Column(db.Time, nullable=False)
     date = db.Column(db.Date, nullable=False)
 
-    def __init__(self, postid, course, username, title, body, time, date):
+    def __init__(self, replyid, postid, course, username, title, body, time, date):
+        self.replyid = replyid
         self.postid = postid
         self.course = course
         self.username = username
@@ -83,10 +85,12 @@ class replies(db.Model):
 class replyimages(db.Model):
     __tablename__ = 'replyimages'
     id = db.Column(db.Integer, primary_key=True)
+    replyid = db.Column(db.Integer,nullable=False)
     postid = db.Column(db.Integer,nullable=False)
     images = db.Column(db.Text,nullable=False)
 
-    def __init__(self,postid, images):
+    def __init__(self, replyid, postid, images):
+        self.replyid = replyid
         self.postid = postid
         self.images = images
 
@@ -94,10 +98,12 @@ class replyimages(db.Model):
 class replyfiles(db.Model):
     __tablename__ = 'replyfiles'
     id = db.Column(db.Integer, primary_key=True)
+    replyid = db.Column(db.Integer,nullable=False)
     postid = db.Column(db.Integer,nullable=False)
     files = db.Column(db.Text, nullable=False)
 
-    def __init__(self,postid, files):
+    def __init__(self, replyid, postid, files):
+        self.replyid = replyid
         self.postid = postid
         self.files = files
 

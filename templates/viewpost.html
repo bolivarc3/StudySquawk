@@ -84,37 +84,35 @@
         </div>
         <br>
         <hr class="solid">
-        {% for replies in replies %}
+        {% for repliesinfo in repliesinfo %}
         <div style = "padding:1rem">
             <p>{{ repliesinfo["username"] }}</p>
             <p>{{ repliesinfo["time"] }} {{ repliesinfo["date"] }}</p>
-            <p>
-                {{ repliesinfo["body"] }}
-                    {% for replyimagesinfo in replyimagesinfo %}
-                        {% if repliesinfo["id"] == replyimagesinfo["id"] %}
-                            <div id = "imagediv">
-                                <link href="/static/userfilesreplies/{{ repliesinfo["id"] }}/{{ replyimagesinfo["id"] }}">
-                                <img src = "/static/userfiles-replies/{{ repliesinfo["id"] }}/{{ replyimagesinfo["id"] }}">
-                                <link href="/static/userfiles/{{ postinfo["postid"] }}/{{ filesinfo["id"] }}">
-                                <a href="/static/userfiles/{{ postinfo["postid"] }}/{{ replyfilesinfo["id"] }}">{{ replyfilesinfo["id"] }}</a>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                    {% for replyfiles in replyfiles %}
-                        {% if repliesinfo["id"] == replyfilesinfo["id"] %}
-                        <div id = "filesdiv">
-                            <a href="/static/userfiles/{{ postinfo["id"] }}/{{ replyfiles["id"] }}">
-                                <div id = "fileviewdiv">
-                                    <img src = "/static/images/file.png">
-                                    <div>
-                                        {{ replyfilesinfo["files"] }}
-                                    </div>
-                                </div>
-                            </a>
+            <br>
+            <p>{{ repliesinfo["body"] }}</p>
+                {% for repliesimagesinfo in repliesimagesinfo %}
+                    {% if repliesinfo[replyid] == repliesimagesinfo[replyid] %}
+                        <div id = "imagediv">
+                            <link href="/static/userfilesreplies/{{ repliesinfo.replyid }}/{{ repliesimagesinfo.images }}">
+                            <img src = "/static/userfiles-replies/{{ repliesinfo.replyid }}/{{ repliesimagesinfo.images }}">
+
                         </div>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
+                    {% endif %}
+                {% endfor %}
+                {% for repliesfiles in repliesfiles %}
+                    {% if repliesinfo["replyid"] == repliesfilesinfo["replyid"] %}
+                    <div id = "filesdiv">
+                        <a href="/static/userfiles/{{repliesinfo['replyid']}}/{{ repliesfiles['files'] }}">
+                            <div id = "fileviewdiv">
+                                <img src = "/static/images/file.png">
+                                <div>
+                                    {{ repliesfilesinfo["files"] }}
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {% endif %}
+                {% endfor %}
             </p>
         </div>
         <hr class="solid">

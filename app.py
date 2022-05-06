@@ -31,6 +31,7 @@ def upload(filespath,filename,filedata):
 def download_file(filespath, BUCKET_NAME):
     parentpath = os.getcwd()
     folderpath = str(parentpath) + "/static/" + str(filespath)
+    print(folderpath)
     if not os.path.isdir(folderpath):
         os.makedirs(folderpath)
     s3_resource = boto3.resource('s3')
@@ -39,6 +40,7 @@ def download_file(filespath, BUCKET_NAME):
     for obj in objects:
         path, filename = os.path.split(obj.key)
         target = str(parentpath) + '/static/' + str(filespath) + "/" + str(filename)
+        print(target)
         bucket.download_file(obj.key, target)
     # s3.download_file(Bucket=BUCKET_NAME, Key=s3_key, Filename=filename)
 
@@ -179,17 +181,11 @@ def studyist():
         courseavailible = checkclass(course, courses)
         if courseavailible == False:
             flash('Class is not availible. Select Class from Options')
-            return render_template('homepage.html')
+            return redirect(url_for(studyist))
         #checks if the course requested is the same as one in the array
         return redirect(url_for('course', course = course))
 
     else:
-        #grabs info from database and shows post onto the feed page
-        # dbinfo = connectdb("posts.db")
-        # postcursor = dbinfo[0]
-        # postconnect = dbinfo[1]
-        # postcursor.execute("SELECT * FROM posts ORDER BY date,time DESC;")
-        # posting = postcursor.fetchall()
         postings = db.session.query(posts).order_by(posts.date.desc(),posts.time.desc()).all()
         #return object looking like <posts> which is an object
         #index into it and . insert what you are looking for
@@ -201,12 +197,13 @@ def course(course):
 
     #grabs the classes and checks if class is a class in db
     courses = grabclasses()
+    print(course)
     courseavailible = checkclass(course, courses)
 
     #if the class is not in the list, it will render an apology
     if courseavailible == False:
         flash('Class is not availible. Select Class from Options')
-        return redirect(request.url)
+        return redirect(url_for(studyist))
     #if there is a post request, it will redirect to a page where you can post
     # else it will render the course page requested
     checkclass(course, courses)
@@ -239,20 +236,8 @@ def course(course):
 
         id = db.session.query(posts).count() +1
         #grabs the postid
-
-        #gives permission to parent path
-        # parentpath = os.getcwd()
-        # parentpath = str(parentpath) + '/static'
-        # os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-        # os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-        # #gives permission to parent path
-
         # #makes a new folder for the images. This makes it so that it can conserve it's name
         filespath = "userfiles/" + str(id)
-        # os.makedirs(filespath)
-        # #makes a new upload folder
-        # UPLOAD_FOLDER = filespath
-        # app.config['UPLOAD_FSOLDER'] = UPLOAD_FOLDER
         for file in filedata:
             if file.filename != "":
                 split_tup = os.path.splitext(file.filename)
@@ -260,57 +245,28 @@ def course(course):
                 # extract the file name and extension
                 file_name = split_tup[0]
                 file_extension = split_tup[1]
-                imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
+                imagefileextensions = ['.png', '.PNG', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif', '.webp']
                 #checks if image
                 if file_extension in imagefileextensions:
                     filename = secure_filename(file.filename)
                     fileupload = upload(filespath,filename,file)
-
-                    imagedata = images(id,file.filename)
+                    imagedata = images(id,filename)
                     db.session.add(imagedata)
                     db.session.commit()
-
-
-                    # dbinfo = connectdb("posts.db")
-                    # postcursor = dbinfo[0]
-                    # postconnect = dbinfo[1]
-                    # postcursor.execute("INSERT INTO images VALUES (?, ?)", (id, file.filename));
-                    # postconnect.commit()
-                    # file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
-
                 else:
                     filename = secure_filename(file.filename)
                     fileupload = upload(filespath,filename,file)
 
-                    filedata = files(id,file.filename)
+                    filedata = files(id,filename)
                     db.session.add(filedata)
                     db.session.commit()
 
-        #connects to the post db
-        # dbinfo = connectdb("posts.db")
-        # postcursor = dbinfo[0]
-        # postconnect = dbinfo[1]
-        # #fetches all of the post names and creates unique id's for each
-        # postcursor.execute("SELECT * FROM posts")
-        # posts = postcursor.fetchall()
-        # postslength = len(posts)
-        # id = postslength + 1
-        # #inserts into db
-        # postcursor.execute("INSERT INTO posts VALUES (?, ?, ?, ?, ?, ?, ?)", (id, course, username, title, body, time, date));
-        # postconnect.commit()
-        # postconnect.close()
         postsdata = posts(id, course, username, title, body, time, date)
         db.session.add(postsdata)
         db.session.commit()
 
         return redirect(url_for('course', course = course))
 
-    #db feches all the post from a cetain course
-    # dbinfo = connectdb("posts.db")
-    # postcursor = dbinfo[0]
-    # postconnect = dbinfo[1]
-    # postcursor.execute("SELECT * FROM posts WHERE class = ? ORDER BY date,time DESC;", (course,));
-    # posts = postcursor.fetchall()
     postings = db.session.query(posts).filter(posts.course == course).order_by(posts.date.desc(),posts.time.desc()).all()
     return render_template("coursemain.html", course = course, courses = courses, postings = postings)
 
@@ -337,7 +293,6 @@ def viewpost(course, postid):
             body = str(body)
             username = session["user_id"]
             now = datetime.now()
-            # dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
             now = datetime.now()
             date = now.strftime("%m/%d/%Y")
             time = now.strftime("%H:%M:%S")
@@ -346,46 +301,14 @@ def viewpost(course, postid):
                 flash('No input to the post')
                 return redirect(request.url)
 
-            #connects to the post db
-            # dbinfo = connectdb("posts.db")
-            # replycursor = dbinfo[0]
-            # replyconnect = dbinfo[1]
-            # #fetches all of the post names and creates unique id's for each
-            # replycursor.execute("SELECT * FROM replies");
-            # replies = replycursor.fetchall()
             repliesquery = db.session.query(replies).order_by(replies.date.desc(),replies.time.desc()).all()
             replieslength = len(repliesquery)
             id = replieslength + 1
 
-            data = replies(id, course, username, title, body, time, date)
+            data = replies(id, postid,course, username, title, body, time, date)
             db.session.add(data)
             db.session.commit()
-            #inserts into db
-            # replycursor.execute("INSERT INTO replies VALUES (?, ?, ?, ?, ?, ?, ?)", (id, course, username, title, body, dt_string, postid ));
-            # replyconnect.commit()
-            # replyconnect.close()
-
-            # if 'file' not in request.files:
-            #     flash('No file part')
-            #     return redirect(request.url)
             file = request.files['file']
-            # # If the user does not select a file, the browser submits an
-            # # empty file without a filename
-
-            # #gives permission to parent path
-            # parentpath = os.getcwd()
-            # parentpath = str(parentpath) + '/static'
-            # os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-            # os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-            # #gives permission to parent path
-
-            # #makes a new folder for the images. This makes it so that it can conserve it's name
-            # filepath = "static/userfiles-replies/" + str(id)
-            # os.makedirs(filepath)
-
-            # #makes a new upload folder
-            # UPLOAD_FOLDER = filepath
-            # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
             filedata = request.files.getlist("file")
             filespath = "userfiles-replies/" + str(id)
             #for every file, it will save it
@@ -396,13 +319,13 @@ def viewpost(course, postid):
                     # extract the file name and extension
                     file_name = split_tup[0]
                     file_extension = split_tup[1]
-                    imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
+                    imagefileextensions = ['.png', 'PNG', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif','.webp']
                     #checks if image
                     if file_extension in imagefileextensions:
                         filename = secure_filename(file.filename)
                         fileupload = upload(filespath,filename,file)
 
-                        imagedata = images(id,file.filename)
+                        imagedata = replyimages(id,postid,filename)
                         db.session.add(imagedata)
                         db.session.commit()
 
@@ -410,7 +333,7 @@ def viewpost(course, postid):
                         filename = secure_filename(file.filename)
                         fileupload = upload(filespath,filename,file)
 
-                        filedata = files(id,file.filename)
+                        filedata = replyfiles(id,postid,filename)
                         db.session.add(filedata)
                         db.session.commit()
 
@@ -440,33 +363,36 @@ def viewpost(course, postid):
         return redirect(request.url)
 
 
-    repliesinfo = db.session.query(replies).filter(replies.postid == postid).order_by(replies.date.desc(),replies.time.desc()).all()
+    repliesinfo = db.session.query(replies.id,replies.replyid,replies.postid,replies.course,replies.username,replies.title,replies.body,replies.time,replies.date).filter(replies.postid == postid).order_by(replies.date.desc(),replies.time.desc()).all()
     #looks like -> <object> -inside -> <id:id#, postid:postid#, etc>
 
 
-    repliesimagesinfo = db.session.query(replyimages.id,replyimages.postid,replyimages.images).filter(replyimages.postid == postid).all()
+    repliesimagesinfo = db.session.query(replyimages.id,replyimages.replyid,replyimages.postid,replyimages.images).filter(replyimages.postid == postid).all()
     #looks like -> {id,postid,images}
 
-    repliesfilesinfo = db.session.query(replyfiles.id,replyfiles.postid,replyfiles.files).filter(replyfiles.postid == postid).all()
+    repliesfilesinfo = db.session.query(replyfiles.id,replyfiles.replyid,replyfiles.postid,replyfiles.files).filter(replyfiles.postid == postid).all()
     #looks like -> {id,postid,files}
     print("replies")
     print(len(repliesfilesinfo))
 
     #if there are images or files that need to be downloaded, download them. 
     if len(repliesfilesinfo) != 0:
-        filespath = "userfiles-replies/" + str(repliesfilesinfo[0].id)
-        download_file(filespath,BUCKET_NAME)
+        for i in range(len(repliesfilesinfo)):
+            filespath = "userfiles-replies/" + str(repliesfilesinfo[i].replyid)
+            download_file(filespath,BUCKET_NAME)
 
     if len(repliesimagesinfo) != 0:
-        filespath = "userfiles-replies/" + str(repliesimagesinfo[0].id)
-        download_file(filespath,BUCKET_NAME)
+        for i in range(len(repliesimagesinfo)):
+            filespath = "userfiles-replies/" + str(repliesimagesinfo[i].replyid)
+            download_file(filespath,BUCKET_NAME)
     
     if len(imagesinfo) != 0:
-        filespath = "userfiles/" + str(imagesinfo[0].id)
+        filespath = "userfiles/" + str(imagesinfo[0].postid)
+        print(filespath)
         download_file(filespath,BUCKET_NAME)
     
     if len(filesinfo) != 0:
-        filespath = "userfiles/" + str(filesinfo[0].id)
+        filespath = "userfiles/" + str(filesinfo[0].postid)
         download_file(filespath,BUCKET_NAME)
     #if there are images or files that need to be downloaded, download them. 
 
