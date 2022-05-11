@@ -112,7 +112,7 @@ class replyfiles(db.Model):
 class materials(db.Model):
     __tablename__ = 'materials'
     id = db.Column(db.Integer, primary_key=True)
-    postid = db.Column(db.Integer,nullable=False)
+    resourceid = db.Column(db.Integer,nullable=False)
     objectroute = db.Column(db.Text, nullable=False)
     objecttype = db.Column(db.String(80), nullable=False)
     course = db.Column(db.String(80), nullable=False)
@@ -121,12 +121,13 @@ class materials(db.Model):
     time = db.Column(db.Time, nullable=False)
     date = db.Column(db.Date, nullable=False)
 
-    def __init__(self, postid, course, username, title, body, time, date):
-        self.postid = postid
+    def __init__(self, resourceid, objectroute, objecttype, course, username,name, time, date):
+        self.resourceid = resourceid
+        self.objectroute = objectroute
+        self.objecttype = objecttype
         self.course = course
         self.username = username
-        self.title = title
-        self.body = body
+        self.name = name
         self.time = time
         self.date = date
 

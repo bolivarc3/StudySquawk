@@ -18,7 +18,7 @@
 {% endblock %}
 
 {% block resources %}
-<!-- <script>
+<script>
     document.addEventListener('DOMContentLoaded', function(){
         console.log("{{course}}")
         console.log("hello")
@@ -27,7 +27,7 @@
         getfolders("/" + course)
         console.log("folders")
     });
-</script> -->
+</script>
 
 <!-- form for the uploading of files -->
 <div id = "uploadformfog" onclick= "uploadoff()">
@@ -119,22 +119,22 @@
             <th id = "tableheader", width = "24%">Date Modified</th>
             <th id = "tableheader", width = "24%">Modified By</th>
         </tr>
-        {% for folders in folders %}
+        {% for foldersinfo in foldersinfo %}
         <tr id = "rowbox">
             <td id = "checkbox"><i class="fa-solid fa-circle-check"></td>
             <td id = "tablecells"><i class="fa-solid fa-folder"></i></td>
-            <td id = "tablecells"><a href="/resources/{{ currentfolderrouteurl }}>{{ folders[5] }}" >{{ folders[5] }}</a></td>
-            <td id = "tablecells"><a href="/static/resources/Algebra 1/Capture - Copy.PNG" >{{ folders[7] }}</a></td>
-            <td id = "tablecells"><a href="/static/resources/Algebra 1/Capture - Copy.PNG" >{{ folders[4] }}</a></td>
+            <td id = "tablecells"><a href="/resources/{{ currentfolderrouteurl }}>{{ foldersinfo[6] }}" >{{ foldersinfo[6] }}</a></td>
+            <td id = "tablecells"><a href="/static/resources/Algebra 1/Capture - Copy.PNG" >{{ foldersinfo[8] }}</a></td>
+            <td id = "tablecells"><a href="/static/resources/Algebra 1/Capture - Copy.PNG" >{{ foldersinfo[5] }}</a></td>
         </tr>
         {% endfor %}
-        {% for materials in materials %}
+        {% for materialsinfo in materialsinfo %}
         <tr id = "rowbox">
             <td id = "checkbox"><i class="fa-solid fa-circle-check"></td>
             <td id = "tablecells"><i class="fa-solid fa-file"></i></td>
-            <td id = "tablecells"><a href="/static/resources/{{ route }}/{{ materials[5] }}" target="_blank">{{ materials[5] }}</a></td>
-            <td id = "tablecells"><a href="/static/resources/{{ route }}/{{ materials[5] }}" target="_blank">{{ materials[7] }}</a></td>
-            <td id = "tablecells"><a href="/static/resources/{{ route }}/{{ materials[5] }}" target="_blank">{{ materials[4] }}</a></td>
+            <td id = "tablecells"><a href="/static/resources/{{ route }}/{{ materialsinfo[6] }}" target="_blank">{{ materialsinfo[6] }}</a></td>
+            <td id = "tablecells"><a href="/static/resources/{{ route }}/{{ materialsinfo[6] }}" target="_blank">{{ materialsinfo[8] }}</a></td>
+            <td id = "tablecells"><a href="/static/resources/{{ route }}/{{ materialsinfo[6] }}" target="_blank">{{ materialsinfo[5] }}</a></td>
         </tr>
         {% endfor %}
     </table>

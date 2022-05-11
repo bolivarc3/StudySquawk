@@ -4,7 +4,6 @@ from werkzeug.utils import secure_filename
 from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from flask_s3 import FlaskS3
 import json
 import stat
 import os
@@ -407,13 +406,18 @@ def resources(route):
     #saves route created and checks if peson put in a correct course
     currentfolderrouteurl = route
     routeparts = route.split(">")
-    print("routeparts" + str(routeparts))
     route = str()
     for i in range(len(routeparts)):
         route = route + "/" + routeparts[i]
     course = routeparts[0]
     courses = grabclasses()
     courseavailible = checkclass(course, courses)
+    print("route")
+    print(route)
+    
+    
+    
+    
     #saves route created and checks if peson put in a correct course
 
     #if the class is not in the list, it will render an apology
@@ -433,14 +437,14 @@ def resources(route):
         time = now.strftime("%H:%M:%S")
 
         #grabs the postid
-        dbinfo = connectdb("resources.db")
-        resourcescursor = dbinfo[0]
-        resourcesconnect = dbinfo[1]
-        #fetches all of the post names and creates unique id's for each
-        resourcescursor.execute("SELECT * FROM materials")
-        resources = resourcescursor.fetchall()
-        resourceslength = len(resources)
-        id = resourceslength + 1
+        # dbinfo = connectdb("resources.db")
+        # resourcescursor = dbinfo[0]
+        # resourcesconnect = dbinfo[1]
+        # #fetches all of the post names and creates unique id's for each
+        # resourcescursor.execute("SELECT * FROM materials")
+        # resources = resourcescursor.fetchall()
+        id = db.session.query(materials).count()
+
         #grabs the postid
 
         if type_of_form == "uploadfile":
@@ -453,7 +457,6 @@ def resources(route):
                 return redirect(request.url)
 
             #check if the post request has the file part
-            print(request.files)
             if 'file' not in request.files:
                 flash('No file part')
                 return redirect(request.url)
@@ -461,12 +464,6 @@ def resources(route):
             # If the user does not select a file, the browser submits an
             # empty file without a filename.
 
-            #gives permission to parent path
-            parentpath = os.getcwd()
-            staticpath = str(parentpath) + '/static'
-            os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-            os.chmod(staticpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-            #gives permission to parent path
 
             #makes a new folder for the images. This makes it so that it can conserve it's name
             filespath = "static/resources/" + str(course)
@@ -474,36 +471,41 @@ def resources(route):
                 print("it exists")
             else:
                 print("hey")
-                os.makedirs(filespath)
+                
             #makes a new upload folder if the upload folder does not exist
             UPLOAD_FOLDER = "static/resources/" + str(route)
             app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-            files = request.files.getlist("file")
+            filedata = request.files.getlist("file")
             username = session["user_id"]
-            resourcesconnect.commit()
             #makes a new upload folder if the upload folder does not exist
 
-            for file in files:
+            filespath = "resources" + str(route)
+            print(filespath)
+            for file in filedata:
                 if file.filename != "":
                     split_tup = os.path.splitext(file.filename)
 
                     # extract the file name and extension
                     file_name = split_tup[0]
                     file_extension = split_tup[1]
-                    imagefileextensions = ['.png', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif']
+                    imagefileextensions = ['.png', '.PNG', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif', '.webp']
                     #checks if image
                     if file_extension in imagefileextensions:
-                        objecttype = "file"
-                        filename = file.filename
-                        resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, objectroute, objecttype, course, username, filename, time, date));
-                        resourcesconnect.commit()
-                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+                        objecttype = "image"
+                        filename = secure_filename(file.filename)
+                        fileupload = upload(filespath,filename,file)
+                        print("hey")
+                        materialdata = materials(id,objectroute,objecttype,course,username,filename,time,date)
+                        db.session.add(materialdata)
+                        db.session.commit()
                     else:
                         objecttype = "file"
-                        filename = file.filename
-                        resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, objectroute, objecttype, course, username, filename, time, date));
-                        resourcesconnect.commit()
-                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+                        filename = secure_filename(file.filename)
+                        fileupload = upload(filespath,filename,file)
+                        materialdata = materials(id,objectroute,objecttype,course,username,filename,time,date)
+                        db.session.add(filedata)
+                        db.session.commit()
+
         if type_of_form == "newfolder":
             foldername = request.form.get("name_of_folder")
             foldername = str(foldername)
@@ -520,44 +522,56 @@ def resources(route):
             #gives permission to parent path
 
             #makes a new folder for the images. This makes it so that it can conserve it's name
-            filespath = "static/resources" + str(route) + "/" + str(foldername)
-            if os.path.exists(filespath):
-                print("it exists")
-                return(request.url)
-            else:
-                print("hey")
-                os.makedirs(filespath)
+            s3filepath = "resources" + str(route) + "/" + str(foldername) + "/"
+            # if os.path.exists(filespath):
+            #     print("it exists")
+            #     return(request.url)
+            # else:
+            print("hey")
+            s3.put_object(Bucket = BUCKET_NAME, Key=s3filepath)
 
-            #enter folder information into database
-            dbinfo = connectdb("resources.db")
             objecttype = "folder"
-            resourcescursor = dbinfo[0]
-            resourcesconnect = dbinfo[1]
-            resourcescursor.execute("INSERT INTO materials VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (id, objectroute, objecttype, course, username, foldername, time, date));
-            resourcesconnect.commit()
-            resourcesconnect.close
-
+            #enter folder information into database
+            materialdata = materials(id,objectroute,objecttype,course,username,foldername,time,date)
+            db.session.add(materialdata)
+            db.session.commit()
+    
     #grab the materials
-    dbinfo = connectdb("resources.db")
-    resourcescursor = dbinfo[0]
-    resourcesconnect = dbinfo[1]
-    filetype = "file"
-    resourcescursor.execute("SELECT * FROM materials WHERE objectroute = ? AND objecttype = ?", (route, filetype, ));
-    materials = resourcescursor.fetchall()
-    resourcesconnect.close
+    materialsinfo = db.session.query(materials.id,materials.resourceid,materials.objectroute,materials.objecttype,materials.course,materials.username,materials.name,materials.time,materials.date).filter(or_(materials.objecttype == "file", materials.objecttype == "image"), materials.objectroute ==  route).all()
+    print(materialsinfo)
+    materialsinfocount = db.session.query(materials.id,materials.resourceid,materials.objectroute,materials.objecttype,materials.course,materials.username,materials.name,materials.time,materials.date).filter(materials.objecttype == "file", materials.objecttype == "image", materials.objectroute ==  route).count()
+    print(materialsinfocount)
+        #grab the folders
+    foldersinfo = db.session.query(materials.id,materials.resourceid,materials.objectroute,materials.objecttype,materials.course,materials.username,materials.name,materials.time,materials.date).filter(materials.objecttype == "folder", materials.objectroute == route).all()
+    parentpath = os.getcwd()
+    folderpath = str(parentpath) + "/static/resources" + route
+    print("folderpath")
+    print(folderpath)
+    if not os.path.isdir(folderpath):
+            os.makedirs(folderpath)
+    for j in range(len(foldersinfo)):
+        parentpath = os.getcwd()
+        folderpath = str(parentpath) + "/static/resources/" + str(foldersinfo[i][2])
+        print(folderpath)
+        if not os.path.isdir(folderpath):
+            os.makedirs(folderpath)
+    #grab the folders
+    for i in range(len(materialsinfo)):
+        print("yesss")
+        parentpath = os.getcwd()
+        if materialsinfo[i][3] == "folder":
+            folderpath = str(parentpath) + "/static/" + str(materialsinfo[i][2])
+            print(folderpath)
+            if not os.path.isdir(folderpath):
+                os.makedirs(folderpath)
+        else:
+            key = "resources" + str(materialsinfo[i][2]) + "/" + str(materialsinfo[i][6])
+            print(key)
+            localfolder = str(parentpath) + '/static/' + str(key)
+            s3.download_file(BUCKET_NAME,key,localfolder)
     #grab the materials
 
-    #grab the folders
-    dbinfo = connectdb("resources.db")
-    resourcescursor = dbinfo[0]
-    resourcesconnect = dbinfo[1]
-    filetype = "folder"
-    resourcescursor.execute("SELECT * FROM materials WHERE objectroute = ? AND objecttype = ?", (route, filetype, ));
-    folders = resourcescursor.fetchall()
-    resourcesconnect.close
-    #grab the folders
-
-    return render_template("resources.html",currentfolderrouteurl = currentfolderrouteurl, course = course, folders = folders, materials = materials, route = route)
+    return render_template("resources.html",currentfolderrouteurl = currentfolderrouteurl, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route)
 
 
 
@@ -590,27 +604,37 @@ def getcoursesapi():
 @app.route('/getresources', methods=["GET", "POST"])
 def getresources():
     course = request.json
-    dbinfo = connectdb("resources.db")
-    resourcescursor = dbinfo[0]
-    resourcesconnect = dbinfo[1]
-    filetype = "file"
-    resourcescursor.execute("SELECT * FROM materials WHERE objectroute = ? AND objecttype = ?", (course, filetype, ));
-    materials = resourcescursor.fetchall()
-    resourcesconnect.close
-    resources = jsonify(materials)
+    #grab the materials
+    materialsinfo = db.session.query(materials.id,materials.resourceid,materials.objectroute,materials.objecttype,materials.course,materials.username,materials.name,materials.time,materials.date).filter(materials.objecttype == "file", materials.objecttype == "image", materials.course == course).all()
+    #grab the materials
+
+    #grab the folders
+
+    #grab the folders
+    # dbinfo = connectdb("resources.db")
+    # resourcescursor = dbinfo[0]
+    # resourcesconnect = dbinfo[1]
+    # filetype = "file"
+    # resourcescursor.execute("SELECT * FROM materials WHERE objectroute = ? AND objecttype = ?", (course, filetype, ));
+    # materials = resourcescursor.fetchall()
+    # resourcesconnect.close
+
+    resources = jsonify(materialsinfo)
     return(resources)
 
 @app.route('/getfolders', methods=["GET", "POST"])
 def getfolders():
     course = request.json
     print(course)
-    dbinfo = connectdb("resources.db")
-    resourcescursor = dbinfo[0]
-    resourcesconnect = dbinfo[1]
-    filetype = "folder"
-    resourcescursor.execute("SELECT * FROM materials WHERE objectroute = ? AND objecttype = ?", (course, filetype, ));
-    folders = resourcescursor.fetchall()
-    print(folders)
-    resourcesconnect.close
-    folders = jsonify(folders)
+    # dbinfo = connectdb("resources.db")
+    # resourcescursor = dbinfo[0]
+    # resourcesconnect = dbinfo[1]
+    # filetype = "folder"
+    # resourcescursor.execute("SELECT * FROM materials WHERE objectroute = ? AND objecttype = ?", (course, filetype, ));
+    # folders = resourcescursor.fetchall()
+    # print(folders)
+    # resourcesconnect.close
+    foldersinfo = db.session.query(materials.id,materials.resourceid,materials.objectroute,materials.objecttype,materials.course,materials.username,materials.name,materials.time,materials.date).filter(materials.objecttype == "folder", materials.course == course).all()
+    print(foldersinfo)
+    folders = jsonify(foldersinfo)
     return(folders)
