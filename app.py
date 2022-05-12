@@ -19,6 +19,7 @@ BUCKET_NAME='studyist'
 
 from app import BUCKET_NAME
 def upload(filespath,filename,filedata):
+    #saving files to the s3 with a filepath and filename
         filedata.save(filename)
         s3.upload_file(
             Bucket = BUCKET_NAME,
@@ -28,20 +29,26 @@ def upload(filespath,filename,filedata):
         return "Upload Done ! "
 
 def download_file(filespath, BUCKET_NAME):
+    #filepath for the folder creation
     parentpath = os.getcwd()
     folderpath = str(parentpath) + "/static/" + str(filespath)
     print(folderpath)
     if not os.path.isdir(folderpath):
         os.makedirs(folderpath)
+    
+    #s3 information for downloads
     s3_resource = boto3.resource('s3')
     bucket = s3_resource.Bucket(BUCKET_NAME)
+
+    #grabs the objects from the s3 bucket and downloads them
     objects = bucket.objects.filter(Prefix=filespath)
     for obj in objects:
+        #from the objects, grab the paths and names
         path, filename = os.path.split(obj.key)
+        #make the target path
         target = str(parentpath) + '/static/' + str(filespath) + "/" + str(filename)
-        print(target)
+        #download
         bucket.download_file(obj.key, target)
-    # s3.download_file(Bucket=BUCKET_NAME, Key=s3_key, Filename=filename)
 
 UPLOAD_FOLDER = '/Studyist/userfiles'
 
@@ -436,13 +443,6 @@ def resources(route):
         date = now.strftime("%m/%d/%Y")
         time = now.strftime("%H:%M:%S")
 
-        #grabs the postid
-        # dbinfo = connectdb("resources.db")
-        # resourcescursor = dbinfo[0]
-        # resourcesconnect = dbinfo[1]
-        # #fetches all of the post names and creates unique id's for each
-        # resourcescursor.execute("SELECT * FROM materials")
-        # resources = resourcescursor.fetchall()
         id = db.session.query(materials).count()
 
         #grabs the postid
@@ -523,11 +523,7 @@ def resources(route):
 
             #makes a new folder for the images. This makes it so that it can conserve it's name
             s3filepath = "resources" + str(route) + "/" + str(foldername) + "/"
-            # if os.path.exists(filespath):
-            #     print("it exists")
-            #     return(request.url)
-            # else:
-            print("hey")
+
             s3.put_object(Bucket = BUCKET_NAME, Key=s3filepath)
 
             objecttype = "folder"
@@ -608,17 +604,6 @@ def getresources():
     materialsinfo = db.session.query(materials.id,materials.resourceid,materials.objectroute,materials.objecttype,materials.course,materials.username,materials.name,materials.time,materials.date).filter(materials.objecttype == "file", materials.objecttype == "image", materials.course == course).all()
     #grab the materials
 
-    #grab the folders
-
-    #grab the folders
-    # dbinfo = connectdb("resources.db")
-    # resourcescursor = dbinfo[0]
-    # resourcesconnect = dbinfo[1]
-    # filetype = "file"
-    # resourcescursor.execute("SELECT * FROM materials WHERE objectroute = ? AND objecttype = ?", (course, filetype, ));
-    # materials = resourcescursor.fetchall()
-    # resourcesconnect.close
-
     resources = jsonify(materialsinfo)
     return(resources)
 
@@ -626,14 +611,6 @@ def getresources():
 def getfolders():
     course = request.json
     print(course)
-    # dbinfo = connectdb("resources.db")
-    # resourcescursor = dbinfo[0]
-    # resourcesconnect = dbinfo[1]
-    # filetype = "folder"
-    # resourcescursor.execute("SELECT * FROM materials WHERE objectroute = ? AND objecttype = ?", (course, filetype, ));
-    # folders = resourcescursor.fetchall()
-    # print(folders)
-    # resourcesconnect.close
     foldersinfo = db.session.query(materials.id,materials.resourceid,materials.objectroute,materials.objecttype,materials.course,materials.username,materials.name,materials.time,materials.date).filter(materials.objecttype == "folder", materials.course == course).all()
     print(foldersinfo)
     folders = jsonify(foldersinfo)
