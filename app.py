@@ -79,7 +79,7 @@ if ENV == 'dev':
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Tecra$2290@localhost/studyist'
 else:
     app.debug = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://kwojennumjzmdu:b0e93f570640137a760a26e20b9b9b6be01f44458f0d9ae6a41d218fa90bf20f@ec2-52-4-104-184.compute-1.amazonaws.com:5432/dcl8pinre2v8h7'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:kwojennumjzmdu:b0e93f570640137a760a26e20b9b9b6be01f44458f0d9ae6a41d218fa90bf20f@ec2-52-4-104-184.compute-1.amazonaws.com:5432/dcl8pinre2v8h7'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
