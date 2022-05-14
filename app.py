@@ -11,6 +11,7 @@ import sqlite3
 import boto3
 import botocore
 
+#s3 
 s3 = boto3.client('s3',
                     aws_access_key_id='AKIA4XOBDYJLMRYYW35I',
                     aws_secret_access_key= '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',
