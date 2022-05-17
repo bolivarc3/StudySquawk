@@ -11,82 +11,47 @@ import sqlite3
 import boto3
 import botocore
 
-#s3 
-s3 = boto3.client('s3',
-                    aws_access_key_id='AKIA4XOBDYJLMRYYW35I',
-                    aws_secret_access_key= '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',
-                     )
-BUCKET_NAME='studyist'
-
-from app import BUCKET_NAME
-def upload(filespath,filename,filedata):
-    #saving files to the s3 with a filepath and filename
-        filedata.save(filename)
-        s3.upload_file(
-            Bucket = BUCKET_NAME,
-            Filename=filename,
-            Key = filespath +  "/" + filename
-        )
-        return "Upload Done ! "
-
-def download_file(filespath, BUCKET_NAME):
-    #filepath for the folder creation
-    parentpath = os.getcwd()
-    folderpath = str(parentpath) + "/static/" + str(filespath)
-    print(folderpath)
-    if not os.path.isdir(folderpath):
-        os.makedirs(folderpath)
-    
-    #s3 information for downloads
-    s3_resource = boto3.resource('s3')
-    bucket = s3_resource.Bucket(BUCKET_NAME)
-
-    #grabs the objects from the s3 bucket and downloads them
-    objects = bucket.objects.filter(Prefix=filespath)
-    for obj in objects:
-        #from the objects, grab the paths and names
-        path, filename = os.path.split(obj.key)
-        #make the target path
-        target = str(parentpath) + '/static/' + str(filespath) + "/" + str(filename)
-        #download
-        bucket.download_file(obj.key, target)
-
-UPLOAD_FOLDER = '/Studyist/userfiles'
-
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.secret_key = "super secret key"
-
-# Ensure templates are auto-reloaded
-app.config["TEMPLATES_AUTO_RELOAD"] = True
-
+app.run(debug=True)
 # Ensure responses aren't cached
-@app.after_request
-def after_request(response):
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Expires"] = 0
-    response.headers["Pragma"] = "no-cache"
-    return response
-
-def getApp():
-    return app
-
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-ENV = 'prod'
 
+ENV = 'dev'
 if ENV == 'dev':
     app.debug = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Tecra$2290@localhost/studyist'
 else:
     app.debug = False
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://itcvgcvisexyny:d26e28ebfd32c57eddc7109790c28f97362c5613c4f8c8dd5282e599dfad72b8@ec2-3-231-82-226.compute-1.amazonaws.com:5432/d648svkf6ffm4r'
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+UPLOAD_FOLDER = '/Studyist/userfiles'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.secret_key = "super secret key"
+app.config["TEMPLATES_AUTO_RELOAD"] = True
 db = SQLAlchemy(app)
 from models import Users, posts, images, files, replies, replyfiles, replyimages, materials
+    
 
+
+#s3
+s3 = boto3.client('s3',
+                aws_access_key_id='AKIA4XOBDYJLMRYYW35I',
+                aws_secret_access_key= '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',
+                    )
+BUCKET_NAME='studyist'
+
+def getApp():
+    return app
+
+
+@app.after_request
+def after_request(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Expires"] = 0
+    response.headers["Pragma"] = "no-cache"
+    return response
 
 #the intro homepage for the user
 @app.route("/", methods=["GET", "POST"])
@@ -570,6 +535,39 @@ def resources(route):
     return render_template("resources.html",currentfolderrouteurl = currentfolderrouteurl, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route)
 
 
+from app import BUCKET_NAME
+def upload(filespath,filename,filedata):
+    #saving files to the s3 with a filepath and filename
+        filedata.save(filename)
+        s3.upload_file(
+            Bucket = BUCKET_NAME,
+            Filename=filename,
+            Key = filespath +  "/" + filename
+        )
+        return "Upload Done ! "
+
+def download_file(filespath, BUCKET_NAME):
+    #filepath for the folder creation
+    parentpath = os.getcwd()
+    folderpath = str(parentpath) + "/static/" + str(filespath)
+    print(folderpath)
+    if not os.path.isdir(folderpath):
+        os.makedirs(folderpath)
+    
+    #s3 information for downloads
+    s3_resource = boto3.resource('s3')
+    bucket = s3_resource.Bucket(BUCKET_NAME)
+
+    #grabs the objects from the s3 bucket and downloads them
+    objects = bucket.objects.filter(Prefix=filespath)
+    for obj in objects:
+        #from the objects, grab the paths and names
+        path, filename = os.path.split(obj.key)
+        #make the target path
+        target = str(parentpath) + '/static/' + str(filespath) + "/" + str(filename)
+        #download
+        bucket.download_file(obj.key, target)
+
 
 @app.route('/getcourses', methods=["GET", "POST"])
 def getcoursesapi():
@@ -578,24 +576,32 @@ def getcoursesapi():
     return(courses)
 
 
-# @app.route('/getcourseposts', methods=["GET", "POST"])
-# def getcourseposts():
-#     #grab the posts infomation of the specific class provided
-#     course = request.json
-#     #if it is displaying the homepage, grab all the posts
-#     if course == "homepage":
-#         # dbinfo = connectdb("posts.db")
-#         # postcursor = dbinfo[0]
-#         # postconnect = dbinfo[1]
-#         now = datetime.now()
-#         nowdate = now.strftime("%m/%d/%Y")
-#         nowdate = datetime.strptime(nowdate,"%m/%d/%Y")
-#         # postcursor.execute("SELECT * FROM posts ORDER BY date DESC, time DESC;")
-#         # posts = postcursor.fetchall()
-#         postings = db.session.query(posts).order_by(posts.date.desc(),posts.time.desc()).all()
+@app.route('/getcourseposts', methods=["GET", "POST"])
+def getcourseposts():
+    #grab the posts infomation of the specific class provided
+    course = request.json
+    #if it is displaying the homepage, grab all the posts
+    if course == "homepage":
+        # dbinfo = connectdb("posts.db")
+        # postcursor = dbinfo[0]
+        # postconnect = dbinfo[1]
+        now = datetime.now()
+        nowdate = now.strftime("%m/%d/%Y")
+        nowdate = datetime.strptime(nowdate,"%m/%d/%Y")
+        # postcursor.execute("SELECT * FROM posts ORDER BY date DESC, time DESC;")
+        # posts = postcursor.fetchall()
+        postings = db.session.query(posts.id,posts.postid,posts.course,posts.username,posts.title,posts.body,posts.time,posts.date).order_by(posts.date.desc(),posts.time.desc()).all()
+    else:
+        postings = db.session.query(posts.id,posts.postid,posts.course,posts.username,posts.title,posts.body,posts.time,posts.date).filter(posts.course == course).order_by(posts.date.desc(),posts.time.desc()).all()
+    print(postings)
 
-#     postings = json.dumps(postings)
-#     return(postings)
+    postlist = ()
+    for postings in postings:
+        row = (postings[0],postings[1],postings[2],postings[3],postings[4],postings[5],postings[6],postings[7])
+        postlist.append(row)
+    postings = json.dumps(postlist)
+    print("hey")
+    return(postings)
 
 @app.route('/getresources', methods=["GET", "POST"])
 def getresources():

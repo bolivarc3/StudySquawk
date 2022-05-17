@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
-<!-- <script>
+<script>
     async function getcourseposts(course){
         const response = await fetch('/getcourseposts', {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -19,11 +19,10 @@
     console.log(course)
     getcourseposts(course)
 </script>
-<div id = "postscontainer"></div> -->
+<div id = "postscontainer"></div>
 
 {% for postings in postings %}
-<div class = "postdiv" type="submit" value = "{{ postings.postid }}" onClick="document.forms['post-form{{ postings.postid }}'].submit();">
-    <!--each post is a submit button with a form -->
+<!-- <div class = "postdiv" type="submit" value = "{{ postings.postid }}" onClick="document.forms['post-form{{ postings.postid }}'].submit();">
     <form name = "post-form{{ postings.postid }}", class = "postbuttonform", action = "/{{ postings.course }}/post/{{ postings.postid }}", method = "POST">
         <input type="hidden" id="postId" name="postId" value="{{ postings.postid }}">
     </form>
@@ -33,7 +32,6 @@
     <h3>
         {{ postings.title }}
     </h3>
-    <!--each post is a submit button with a form -->
-</div>
+</div> -->
 {% endfor %}
 {% endblock %}
