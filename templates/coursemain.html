@@ -1,10 +1,31 @@
 <!DOCTYPE html>
-<head>
-    <link href="/static/mainstyles/coursemain.css" rel="stylesheet">
+{% block head %}
     <script type = "text/javascript" src = "/static/scripts/coursemainscript.js"></script>
-</head>
+    <script>
+        async function getcourseposts(course){
+            const response = await fetch('/getcourseposts', {
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                headers: {
+                    'Content-Type': 'application/json'
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: JSON.stringify(course) // body data type must match "Content-Type" header
+            })
+
+            const data = await response.json()
+            console.log("hello")
+            loadposts(data)
+        }
+        var course = "{{course}}"
+        getData()
+        getcourseposts(course)
+
+    </script>
+    
+{% endblock %}
+
 {% extends "layout.html" %}
-{% block maintitle %} | {{ course }}{% endblock %}s
+{% block maintitle %} | {{ course }}{% endblock %}
 {% block title %}{{ course }}{% endblock %}
 {% block heading %}
     <div id = "titlediv">
@@ -27,29 +48,5 @@
 {% endblock %}
 
 {% block body %}
-<script>
-    document.addEventListener('DOMContentLoaded', function(){
-        console.log("{{course}}")
-        console.log("hello")
-        var course = "{{course}}"
-        console.log(course)
-        getcourseposts(course)
-    });
-</script>
-{% for postings in postings %}
-<div class = "postdiv" type="submit" value = "{{ postings.postid }}" onClick="document.forms['post-form{{ postings.postid }}'].submit();">
-    <!--each post is a submit button with a form -->
-    <form name = "post-form{{ postings.postid }}", class = "postbuttonform", action = "/{{ postings.course }}/post/{{ postings.postid }}", method = "POST">
-        <input type="hidden" id="postId" name="postId" value="{{ postings.postid }}">
-    </form>
-    <h5>
-        {{ postings.course }}
-    </h5>
-    <h3>
-        {{ postings.title }}
-    </h3>
-    <!--each post is a submit button with a form -->
-</div>
-{% endfor %}
-
+<div id = "postscontainer"></div>
 {% endblock %}

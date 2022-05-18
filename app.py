@@ -582,25 +582,14 @@ def getcourseposts():
     course = request.json
     #if it is displaying the homepage, grab all the posts
     if course == "homepage":
-        # dbinfo = connectdb("posts.db")
-        # postcursor = dbinfo[0]
-        # postconnect = dbinfo[1]
         now = datetime.now()
         nowdate = now.strftime("%m/%d/%Y")
         nowdate = datetime.strptime(nowdate,"%m/%d/%Y")
-        # postcursor.execute("SELECT * FROM posts ORDER BY date DESC, time DESC;")
-        # posts = postcursor.fetchall()
         postings = db.session.query(posts.id,posts.postid,posts.course,posts.username,posts.title,posts.body,posts.time,posts.date).order_by(posts.date.desc(),posts.time.desc()).all()
     else:
         postings = db.session.query(posts.id,posts.postid,posts.course,posts.username,posts.title,posts.body,posts.time,posts.date).filter(posts.course == course).order_by(posts.date.desc(),posts.time.desc()).all()
-    print(postings)
-
-    postlist = ()
-    for postings in postings:
-        row = (postings[0],postings[1],postings[2],postings[3],postings[4],postings[5],postings[6],postings[7])
-        postlist.append(row)
-    postings = json.dumps(postlist)
-    print("hey")
+    postlist = [tuple(row) for row in postings]
+    postings = json.dumps(postlist, indent=4, sort_keys=True, default=str)
     return(postings)
 
 @app.route('/getresources', methods=["GET", "POST"])

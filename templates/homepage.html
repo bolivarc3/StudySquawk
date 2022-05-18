@@ -1,37 +1,37 @@
 {% extends "layout.html" %}
-{% block body %}
-<script>
-    async function getcourseposts(course){
-        const response = await fetch('/getcourseposts', {
-            method: 'POST', // *GET, POST, PUT, DELETE, etc.
-            headers: {
-                'Content-Type': 'application/json'
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: JSON.stringify(course) // body data type must match "Content-Type" header
-        })
-        const data = await response.json()
-        console.log("hello")
-        console.log(data)
-        loadposts(data)
-    }
-    var course = "homepage"
-    console.log(course)
-    getcourseposts(course)
-</script>
-<div id = "postscontainer"></div>
+{% block maintitle %}Studyist{% endblock %}
+{% block title %}Studyist{% endblock %}
+{% block head %}
+    <script>
 
-{% for postings in postings %}
-<!-- <div class = "postdiv" type="submit" value = "{{ postings.postid }}" onClick="document.forms['post-form{{ postings.postid }}'].submit();">
-    <form name = "post-form{{ postings.postid }}", class = "postbuttonform", action = "/{{ postings.course }}/post/{{ postings.postid }}", method = "POST">
-        <input type="hidden" id="postId" name="postId" value="{{ postings.postid }}">
-    </form>
-    <h5>
-        {{ postings.course }}
-    </h5>
-    <h3>
-        {{ postings.title }}
-    </h3>
-</div> -->
-{% endfor %}
+
+        async function getcourseposts(course){
+            const response = await fetch('/getcourseposts', {
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                headers: {
+                    'Content-Type': 'application/json'
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: JSON.stringify(course) // body data type must match "Content-Type" header
+            })
+            const data = await response.json()
+            console.log("hello")
+            console.log(data)
+            loadposts(data)
+        }
+        var course = "homepage"
+        console.log(course)
+        getData()
+        getcourseposts(course)
+    </script>
+{% endblock %}
+{% block heading %}
+    <div id = "titlediv">
+        <h1 id = "title">
+            Homepage | Feed
+        </h1>
+    </div>
+{% endblock %}
+{% block body %}
+    <div id = "postscontainer"></div>
 {% endblock %}
