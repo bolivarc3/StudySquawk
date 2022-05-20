@@ -42,7 +42,7 @@ function loadposts(posts){
         username.innerText = `${posts[i][3]}`
 
         posttitle = document.createElement("h3")
-        posttitle.innerText = `${posts[i][5]}`
+        posttitle.innerText = `${posts[i][4]}`
 
         document.getElementById("postscontainer").appendChild(postdiv);
         postdiv.appendChild(form)
