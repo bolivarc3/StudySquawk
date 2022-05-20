@@ -19,20 +19,20 @@ function loadposts(posts){
         //postscontainer
         postdiv = document.createElement('div');
         postdiv.classList = "postdiv";
-        postdiv.setAttribute("onclick",`document.forms['post-form${posts[i][3]}'].submit()`);
+        postdiv.setAttribute("onclick",`document.forms['post-form${posts[i][1]}'].submit()`);
 
 
         var form = document.createElement("form")
         form.setAttribute("method", "POST");
         form.setAttribute("action", `/${posts[i][2]}/post/${posts[i][1]}`);
-        form.setAttribute("name", `post-form${posts[i][3]}`)
+        form.setAttribute("name", `post-form${posts[i][1]}`)
         form.classList = "postbuttonform"
         form.setAttribute("type", "submit");
 
         var input = document.createElement("input")
         form.setAttribute("method", "POST");
         form.setAttribute("action", `/${posts[i][2]}/post/${posts[i][1]}`);
-        form.setAttribute("name", `post-form${posts[i][3]}`)
+        form.setAttribute("name", `post-form${posts[i][1]}`)
 
 
         coursename = document.createElement("h5")

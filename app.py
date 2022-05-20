@@ -12,17 +12,16 @@ import boto3
 import botocore
 
 app = Flask(__name__)
-app.run(debug=True)
+app.debug = True
 # Ensure responses aren't cached
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 
-ENV = 'dev'
+ENV = 'prod'
 if ENV == 'dev':
     app.debug = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Tecra$2290@localhost/studyist'
 else:
-    app.debug = False
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://itcvgcvisexyny:d26e28ebfd32c57eddc7109790c28f97362c5613c4f8c8dd5282e599dfad72b8@ec2-3-231-82-226.compute-1.amazonaws.com:5432/d648svkf6ffm4r'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -32,7 +31,6 @@ app.secret_key = "super secret key"
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 db = SQLAlchemy(app)
 from models import Users, posts, images, files, replies, replyfiles, replyimages, materials
-    
 
 
 #s3
@@ -45,6 +43,7 @@ BUCKET_NAME='studyist'
 def getApp():
     return app
 
+from aws import upload, download_file
 
 @app.after_request
 def after_request(response):
@@ -52,6 +51,12 @@ def after_request(response):
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
     return response
+
+@app.errorhandler(404)
+def page_not_found(e):
+    error = "Page not found, return to the bright side"
+    url = "/homepage"
+    return render_template('error.html', error = error, url = url), 404
 
 #the intro homepage for the user
 @app.route("/", methods=["GET", "POST"])
@@ -160,7 +165,8 @@ def studyist():
         postings = db.session.query(posts).order_by(posts.date.desc(),posts.time.desc()).all()
         #return object looking like <posts> which is an object
         #index into it and . insert what you are looking for
-        return render_template("homepage.html", courses = courses,postings = postings)
+        course = "homepage"
+        return render_template("homepage.html", course = course, courses = courses,postings = postings)
 
 
 @app.route('/<course>', methods=["GET", "POST"])
@@ -173,8 +179,9 @@ def course(course):
 
     #if the class is not in the list, it will render an apology
     if courseavailible == False:
-        flash('Class is not availible. Select Class from Options')
-        return redirect(url_for(studyist))
+        error = 'Class is not availible. Select Class from Options'
+        url = "/homepage"
+        return render_template("error.html", error = error, url = url)
     #if there is a post request, it will redirect to a page where you can post
     # else it will render the course page requested
     checkclass(course, courses)
@@ -318,6 +325,12 @@ def viewpost(course, postid):
     postinfo = db.session.query(posts).filter(posts.postid == postid).first()
     #looks like -> <object> -inside -> <id:id#, postid:postid#, etc>
 
+    #If there is no post found
+    if postinfo == None:
+        error = 'post not availible'
+        url = "/" + str(course)
+        return render_template("error.html", error = error, url = url)
+
     imagesinfo = db.session.query(images.id,images.postid,images.images).filter(images.postid == postid).all()
     #looks like -> {id,postid,images}
 
@@ -327,12 +340,6 @@ def viewpost(course, postid):
 
     print(imagesinfo)
     # postduration = time_difference(post[5],post[6])
-
-    #If there is no post found
-    if postinfo == None:
-        flash('post not availible')
-        return redirect(request.url)
-
 
     repliesinfo = db.session.query(replies.id,replies.replyid,replies.postid,replies.course,replies.username,replies.title,replies.body,replies.time,replies.date).filter(replies.postid == postid).order_by(replies.date.desc(),replies.time.desc()).all()
     #looks like -> <object> -inside -> <id:id#, postid:postid#, etc>
@@ -387,16 +394,14 @@ def resources(route):
     print("route")
     print(route)
     
-    
-    
-    
     #saves route created and checks if peson put in a correct course
 
     #if the class is not in the list, it will render an apology
     if courseavailible == False:
-        flash('Class is not availible. Select Class from Options')
-        return redirect(url_for('course', course = course))
-    print("yo")
+        error = 'Class is not availible. Select Class from Options'
+        url = "/homepage"
+        return render_template("error.html", error = error, url = url)
+
     if request.method == "POST":
         print("hey")
         #gathers information for database entry
@@ -533,40 +538,6 @@ def resources(route):
     #grab the materials
 
     return render_template("resources.html",currentfolderrouteurl = currentfolderrouteurl, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route)
-
-
-from app import BUCKET_NAME
-def upload(filespath,filename,filedata):
-    #saving files to the s3 with a filepath and filename
-        filedata.save(filename)
-        s3.upload_file(
-            Bucket = BUCKET_NAME,
-            Filename=filename,
-            Key = filespath +  "/" + filename
-        )
-        return "Upload Done ! "
-
-def download_file(filespath, BUCKET_NAME):
-    #filepath for the folder creation
-    parentpath = os.getcwd()
-    folderpath = str(parentpath) + "/static/" + str(filespath)
-    print(folderpath)
-    if not os.path.isdir(folderpath):
-        os.makedirs(folderpath)
-    
-    #s3 information for downloads
-    s3_resource = boto3.resource('s3')
-    bucket = s3_resource.Bucket(BUCKET_NAME)
-
-    #grabs the objects from the s3 bucket and downloads them
-    objects = bucket.objects.filter(Prefix=filespath)
-    for obj in objects:
-        #from the objects, grab the paths and names
-        path, filename = os.path.split(obj.key)
-        #make the target path
-        target = str(parentpath) + '/static/' + str(filespath) + "/" + str(filename)
-        #download
-        bucket.download_file(obj.key, target)
 
 
 @app.route('/getcourses', methods=["GET", "POST"])

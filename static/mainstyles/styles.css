@@ -305,3 +305,9 @@ hr.solid {
     padding:1rem;
     background-color: #161B22;
 }
+
+#error_centering_div{
+    width:fit-content;
+    margin:auto;
+    color:#40798C;
+}
