@@ -21,6 +21,7 @@ p{
     background-color:#161b22;
     height:fit-content;
     display:flex;
+    margin:auto;
 
 }
 
@@ -32,6 +33,7 @@ p{
 
 /*Searchbar information */
 #searchbar-box{
+    width:auto;
     margin-left:1rem;
     margin-top: 1rem;
     padding:0;
@@ -50,7 +52,8 @@ p{
     border-color: transparent;
     border-radius: 2px;
     height: 2.5rem;
-    width: 30rem;
+    margin-right:auto;
+    width: 40vw;
 }
 
 .form::placeholder{
@@ -66,8 +69,9 @@ input, select, textarea{
     background-color: #0D1117;
     border-color: white;
     border-radius: 2px;
+    margin-right:auto;
     height: 2.5rem;
-    width: 30rem;
+    width: 40vw;
 }
 
 .form:focus{
@@ -77,12 +81,17 @@ input, select, textarea{
     outline:none;
     border-color: white;
     border-radius: 2px;
+    margin-right:auto;
     height: 2.5rem;
-    width: 30rem;
+    width: 40vw;
 }
 /*Form information including search bar*/
 
-
+#logo{
+    width: 7vw;
+    display:inline-block;
+    margin-bottom:0 0 1vw 0;
+}
 
 #titlediv{
     text-align:center;
@@ -154,15 +163,6 @@ a{
     background-color: #0D1117;
 }
 
-#logo{
-    height:5rem;
-    width:5rem;
-    display:inline-block;
-    margin-bottom:0;
-    margin-top:0;
-    margin-right:2rem;
-    margin-left:2rem;
-}
 
 
 
@@ -304,6 +304,13 @@ hr.solid {
 #bodydiv{
     padding:1rem;
     background-color: #161B22;
+}
+#navbarinfo{
+    white-space: nowrap;
+}
+.center{
+    width:auto;
+    margin:auto;
 }
 
 #error_centering_div{
