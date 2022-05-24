@@ -31,12 +31,19 @@
     <div id = "bodytext">
         <p>{{ postinfo["body"] }}</p>
     </div>
-    {% for imagesinfo in imagesinfo %}
-    <div id = "imagediv">
-        <link href="/static/userfiles/{{ imagesinfo[1] }}/{{ imagesinfo[2] }}">
-        <img src = "/static/userfiles/{{ imagesinfo[1] }}/{{ imagesinfo[2] }}">
+    <hr class="solid">
+    <div id = "image-view-div">
+        <ul id="image-horizontal-list">
+            <li>
+                {% for imagesinfo in imagesinfo %}
+                <div class = "imagecontainer">
+                    <link href="/static/userfiles/{{ imagesinfo[1] }}/{{ imagesinfo[2] }}">
+                    <img src = "/static/userfiles/{{ imagesinfo[1] }}/{{ imagesinfo[2] }}">
+                </div>
+                {% endfor %}
+            </li>
+        </ul>
     </div>
-    {% endfor %}
     <hr class="solid">
     {% for filesinfo in filesinfo %}
         <link href="/static/userfiles/{{ postinfo["postid"] }}/{{ filesinfo["files"] }}">

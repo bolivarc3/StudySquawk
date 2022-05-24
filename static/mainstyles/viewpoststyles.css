@@ -121,14 +121,31 @@ hr.solid {
      text-decoration:none;
 }
 
-#imagediv{
-    width:100%;
-    margin:auto;
+.imagecontainer{
+    display:inline;
+    width:100px;
+    height:100px;
+    max-width:100px;
+    max-height:100px;
+    background-size: cover;
 }
 
-#imagediv img{
-    display:block;
-    margin:auto;
-    margin-bottom:2rem;
-    width:60%;
+
+ul#image-horizontal-list {
+	min-width: 696px;
+	list-style: none;
+	padding-top: 20px;
+}
+
+#image-horizontal-list li{
+    display: inline;
+    float:left;
+}
+
+
+#image-view-div{
+    display: table;
+    width: 100%;
+    height: fit-content;
+    margin-bottom:2%;
 }
