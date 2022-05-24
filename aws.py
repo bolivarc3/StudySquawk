@@ -3,13 +3,18 @@ import os
 import boto3
 def upload(filespath,filename,filedata):
     #saving files to the s3 with a filepath and filename
-        filedata.save(filename)
-        s3.upload_file(
-            Bucket = BUCKET_NAME,
-            Filename=filename,
-            Key = filespath +  "/" + filename
-        )
-        return "Upload Done ! "
+    parentpath = os.getcwd()
+    folderpath = str(parentpath) + "/static/" + str(filespath)
+    if not os.path.isdir(folderpath):
+        os.makedirs(folderpath)
+    tofilepath = folderpath + "/" + str(filename)
+    filedata.save(tofilepath)
+    s3.upload_file(
+        Bucket = BUCKET_NAME,
+        Filename=tofilepath,
+        Key = filespath +  "/" + filename
+    )
+    return "Upload Done ! "
 
 def download_file(filespath, BUCKET_NAME):
     #filepath for the folder creation

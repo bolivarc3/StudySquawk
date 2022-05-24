@@ -17,12 +17,19 @@ app.debug = True
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 
-ENV = 'prod'
+#s3
+s3 = boto3.client('s3',
+                aws_access_key_id='AKIA4XOBDYJLMRYYW35I',
+                aws_secret_access_key= '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',
+                    )
+ENV = 'dev'
 if ENV == 'dev':
     app.debug = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Tecra$2290@localhost/studyist'
+    BUCKET_NAME='studyist-dev'
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://itcvgcvisexyny:d26e28ebfd32c57eddc7109790c28f97362c5613c4f8c8dd5282e599dfad72b8@ec2-3-231-82-226.compute-1.amazonaws.com:5432/d648svkf6ffm4r'
+    BUCKET_NAME='studyist'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 UPLOAD_FOLDER = '/Studyist/userfiles'
@@ -32,13 +39,6 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 db = SQLAlchemy(app)
 from models import Users, posts, images, files, replies, replyfiles, replyimages, materials
 
-
-#s3
-s3 = boto3.client('s3',
-                aws_access_key_id='AKIA4XOBDYJLMRYYW35I',
-                aws_secret_access_key= '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',
-                    )
-BUCKET_NAME='studyist'
 
 def getApp():
     return app
@@ -61,7 +61,7 @@ def page_not_found(e):
 #the intro homepage for the user
 @app.route("/", methods=["GET", "POST"])
 def index():
-
+    print(BUCKET_NAME)
     session.clear()
     # if the form is submitted
     if request.method == "POST":

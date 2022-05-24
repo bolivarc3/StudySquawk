@@ -39,13 +39,13 @@
     {% endfor %}
     <hr class="solid">
     {% for filesinfo in filesinfo %}
-        <link href="/static/userfiles/{{ postinfo["postid"] }}/{{ filesinfo["id"] }}">
+        <link href="/static/userfiles/{{ postinfo["postid"] }}/{{ filesinfo["files"] }}">
         <div id = filesdiv>
-            <a href="/static/userfiles/{{ postinfo["postid"] }}/{{ filesinfo["id"] }}" target="_blank">
+            <a href="/static/userfiles/{{ postinfo["postid"] }}/{{ filesinfo["files"] }}" target="_blank">
                 <div id = "fileviewdiv">
                     <img src = "/static/images/file.png">
                     <div>
-                        {{ filesinfo["id"] }}
+                        {{ filesinfo["files"] }}
                     </div>
                 </div>
             </a>
