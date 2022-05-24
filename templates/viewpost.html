@@ -34,15 +34,20 @@
     <hr class="solid">
     <div id = "image-view-div">
         <ul id="image-horizontal-list">
-            <li>
                 {% for imagesinfo in imagesinfo %}
-                <div class = "imagecontainer">
-                    <link href="/static/userfiles/{{ imagesinfo[1] }}/{{ imagesinfo[2] }}">
-                    <img src = "/static/userfiles/{{ imagesinfo[1] }}/{{ imagesinfo[2] }}">
-                </div>
+                <li>
+                    <div class = "imagecontainer">
+                        <a onclick = "showimage('/static/userfiles/{{ imagesinfo[1] }}/{{ imagesinfo[2] }}');">
+                            <link href="/static/userfiles/{{ imagesinfo[1] }}/{{ imagesinfo[2] }}" onlick = "showimage();">
+                            <img src = "/static/userfiles/{{ imagesinfo[1] }}/{{ imagesinfo[2] }}" onlick = "showimage();">
+                        </a>
+                    </div>
+                </li>
                 {% endfor %}
-            </li>
         </ul>
+    </div>
+    <div id = "overlay" onclick = "overlay_off();">
+
     </div>
     <hr class="solid">
     {% for filesinfo in filesinfo %}
@@ -59,7 +64,6 @@
         </div>
     {% endfor %}
 </div>
-
 {% endblock %}
 
 {% block reply %}

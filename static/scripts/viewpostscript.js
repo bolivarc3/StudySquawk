@@ -40,3 +40,23 @@ function showPreview(event){
         }
     }
 }
+
+function showimage(imagepath){
+    console.log(imagepath)
+    img = document.createElement('img');
+    img.id = "popupimage"
+    img.src = imagepath;
+    
+    overlay = document.getElementById("overlay")
+    overlay.removeChild(overlay.lastChild)
+    overlay.appendChild(img)
+    overlay_on()
+}
+
+function overlay_on() {
+    document.getElementById("overlay").style.display = "block";
+  }
+  
+  function overlay_off() {
+    document.getElementById("overlay").style.display = "none";
+  } 
