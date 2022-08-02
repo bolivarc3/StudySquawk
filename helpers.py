@@ -6,6 +6,7 @@ import requests
 import urllib.parse
 from flask import redirect, render_template, request, session
 from functools import wraps
+import csv
 
 def login_required(f):
     """
@@ -33,16 +34,12 @@ def connectdb(db):
 
 def grabclasses():
     #grabs all the classes and converts it to an array
-    dbinfo = connectdb("classes.db")
-    coursecursor = dbinfo[0]
-    courseconnect = dbinfo[1]
-    coursecursor.execute("SELECT name FROM classes");
-    coursesdb = coursecursor.fetchall()
     courses = []
-    #converts all data into an array
-    for i in range(len(coursesdb)):
-        data = coursesdb[i][0]
-        courses.append(data)
+    with open('databases/classes.csv', newline='') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        for row in spamreader:
+            if row[2] != "name":
+                courses.append(row[2])
     return courses;
 
 

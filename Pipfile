@@ -32,6 +32,7 @@ SQLAlchemy = "==1.4.32"
 Werkzeug = "==2.0.3"
 flask-s3 = "*"
 boto3 = "*"
+flask-migrate = "*"
 
 [dev-packages]
 

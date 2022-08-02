@@ -22,7 +22,7 @@ s3 = boto3.client('s3',
                 aws_access_key_id='AKIA4XOBDYJLMRYYW35I',
                 aws_secret_access_key= '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',
                     )
-ENV = 'dev'
+ENV = 'prod'
 if ENV == 'dev':
     app.debug = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Tecra$2290@localhost/studyist'

@@ -1,0 +1,48 @@
+id,type,name
+1,Math,Pre-Algebra
+2,Math,Algebra 1
+3,Math,Geometry
+4,Math,Algebra 2
+5,Math,Algebra 3
+6,Math,Precalculus
+7,Math,AP Calculus AB
+8,Math,AP Calculus BC
+9,Math,AP Statistics
+10,English,English 1
+11,English,English 2
+12,English,English 3
+13,English,English 3
+14,English,AP English And Language
+15,Science,Physical Science
+16,Science,AP Biology
+17,Science,AP Chemistry
+18,Science,AP Physics 1
+19,Science,AP Physics 2
+20,Science,AP Physics C
+21,Science,AP Environmental Science
+22,Science,Anatomy & Physiology 
+23,Science,AP Environmental Science
+24,Social Studies,AP Human Geography
+25,Social Studies,Civics
+26,Social Studies,AP World History
+27,Social Studies,AP Government and Politics
+28,Social Studies,AP US History
+29,Social Studies,Economics
+30,Social Studies,Personal Finance
+31,Social Studies,AP Psychology
+32,Social Studies,AP Human Geography
+33,World Languages,Chinese 1
+34,World Languages,Chinese 2
+35,World Languages,Chinese 3
+36,World Languages,French 1
+37,World Languages,French 2
+38,World Languages,French 3
+39,World Languages,AP French Language
+40,World Languages,Spanish 1
+41,World Languages,Spanish 2
+42,World Languages,Spanish 3
+43,World Languages,Spanish 4
+44,World Languages,AP Spanish Language and Literature
+45,Computer Science,AP Computer Science Principles
+46,Computer Science,AP Computer Science A
+47,Other,School Blogs
