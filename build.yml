@@ -1,0 +1,6 @@
+version: 0.2
+phases:
+  build:
+    commands:
+      - echo "Zipping deployment package..."
+      - zip -g deployment_package.zip .
