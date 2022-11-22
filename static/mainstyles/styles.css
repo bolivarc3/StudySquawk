@@ -25,13 +25,13 @@ p{
 }
 
 /* This is a navbox styles */
-#navbox{
+nav{
     display: flex;
     align-items:center;
+    justify-content: space-evenly;
     position: sticky;
     padding-left:1rem;
-    padding-top:0.5rem;
-    padding-bottom:0.5rem;
+    padding: .5rem;
     background-color: var(--dark-gray);
     height:fit-content;
     top:0;
@@ -40,7 +40,7 @@ p{
     box-shadow: 0px 5px 5px 0px var(--dark-blue-black);
 }
 
-#navbox li{
+nav li{
     display:inline-block;
 }
 
@@ -48,10 +48,10 @@ p{
 
 /*Searchbar information */
 #searchbar-box{
-    width:auto;
+    width:50%;
     margin-left:1rem;
-    margin-top: 1rem;
     padding:0;
+    margin:auto
 }
 
 #submitsearch{
@@ -336,4 +336,22 @@ hr.solid {
 .menu-icon{
     width:30px;
     height:30px;
+}
+
+@media only screen and (max-width: 600px){
+    .show-mobile{
+        display: block;
+    }
+    .show-desktop{
+        display:none;
+    }
+}
+
+@media only screen and (min-width: 600px){
+    .show-mobile{
+        display: none;
+    }
+    .show-desktop{
+        display: block;
+    }
 }

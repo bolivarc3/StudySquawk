@@ -70,7 +70,7 @@ def index():
         form = request.form.get("form-name")
         if form == "signupform":
             email = request.form.get("email")
-            username = request.form.get("username")
+            username = request.form.get("username")      
             password = request.form.get("password")
             confirmation = request.form.get("confirmation")
 
@@ -159,7 +159,7 @@ def studyist():
             flash('Class is not availible. Select Class from Options')
             return redirect(url_for(studyist))
         #checks if the course requested is the same as one in the array
-        return redirect(url_for('course', course = course))
+        return redirect( )
 
     else:
         postings = db.session.query(posts).order_by(posts.date.desc(),posts.time.desc()).all()

@@ -46,6 +46,7 @@ def grabclasses():
 def checkclass(course, courses):
     availible = False
     for i in range(len(courses)):
+        print(courses[i])
         if course == courses[i]:
             availible = True
     if availible != True:
