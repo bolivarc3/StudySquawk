@@ -5,8 +5,8 @@ phases:
     commands:
       - echo "Zipping deployment package..."
       - zip -r deployment_package.zip . -x buildspec.yml
-  artifacts:
-    files:
-      - '**/*'
-    discard-paths: no
-    base-directory: ./
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: no
+  base-directory: ./
