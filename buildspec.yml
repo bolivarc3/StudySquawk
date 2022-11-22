@@ -1,0 +1,18 @@
+version: 0.2
+phases:
+  build:
+    commands:
+
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - echo "Zipping deployment package..."
+      - zip -r deployment_package.zip . -x buildspec.yml
+
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: no
+  base-directory: ./

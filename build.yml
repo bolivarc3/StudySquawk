@@ -1,6 +1,0 @@
-version: 0.2
-phases:
-  build:
-    commands:
-      - echo "Zipping deployment package..."
-      - zip -r deployment_package.zip . -x build.yml
