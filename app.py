@@ -28,7 +28,7 @@ if ENV == 'dev':
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Tecra$2290@localhost/studyist'
     BUCKET_NAME='studyist-dev'
 else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://itcvgcvisexyny:d26e28ebfd32c57eddc7109790c28f97362c5613c4f8c8dd5282e599dfad72b8@ec2-3-231-82-226.compute-1.amazonaws.com:5432/d648svkf6ffm4r'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://studyist:wP3d62y*mKzBamm3@studyist.cqdyic3h8igs.us-east-1.rds.amazonaws.com:5432/studyist'
     BUCKET_NAME='studyist'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -160,7 +160,7 @@ def studyist():
             flash('Class is not availible. Select Class from Options')
             return redirect(url_for(studyist))
         #checks if the course requested is the same as one in the array
-        return redirect( )
+        return redirect(course)
 
     else:
         postings = db.session.query(posts).order_by(posts.date.desc(),posts.time.desc()).all()
