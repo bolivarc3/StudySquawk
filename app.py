@@ -59,7 +59,7 @@ def page_not_found(e):
     return render_template('error.html', error = error, url = url), 404
 
 #the intro homepage for the user
-#test 5
+#test1
 @app.route("/", methods=["GET", "POST"])
 def index():
     print(BUCKET_NAME)
