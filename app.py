@@ -62,6 +62,8 @@ def page_not_found(e):
 #test1
 @app.route("/", methods=["GET", "POST"])
 def index():
+    db.create_all()
+    db.session.commit()
     print(BUCKET_NAME)
     session.clear()
     # if the form is submitted
