@@ -37,9 +37,9 @@
                 {% for imagesinfo in imagesinfo %}
                 <li>
                     <div class = "imagecontainer">
-                        <a onclick = "showimage('/static/userfiles/{{ imagesinfo[1] }}/{{ imagesinfo[2] }}');">
-                            <link href="/static/userfiles/{{ imagesinfo[1] }}/{{ imagesinfo[2] }}" onlick = "showimage();">
-                            <img src = "/static/userfiles/{{ imagesinfo[1] }}/{{ imagesinfo[2] }}" onlick = "showimage();">
+                        <a onclick = "showimage('https://studyist.s3.us-east-2.amazonaws.com/userfiles/{{ imagesinfo[1] }}/{{ imagesinfo[2] }}');">
+                            <link href="https://studyist.s3.us-east-2.amazonaws.com/userfiles/{{ imagesinfo[1] }}/{{ imagesinfo[2] }}" onlick = "showimage();">
+                            <img src = "https://studyist.s3.us-east-2.amazonaws.com/userfiles/{{ imagesinfo[1] }}/{{ imagesinfo[2] }}" onlick = "showimage();">
                         </a>
                     </div>
                 </li>

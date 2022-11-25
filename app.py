@@ -367,10 +367,10 @@ def viewpost(course, postid):
             filespath = "userfiles-replies/" + str(repliesimagesinfo[i].replyid)
             download_file(filespath,BUCKET_NAME)
     
-    if len(imagesinfo) != 0:
-        filespath = "userfiles/" + str(imagesinfo[0].postid)
-        print(filespath)
-        download_file(filespath,BUCKET_NAME)
+    # if len(imagesinfo) != 0:
+    #     filespath = "userfiles/" + str(imagesinfo[0].postid)
+    #     print(filespath)
+    #     download_file(filespath,BUCKET_NAME)
     
     if len(filesinfo) != 0:
         filespath = "userfiles/" + str(filesinfo[0].postid)
@@ -520,27 +520,29 @@ def resources(route):
             os.makedirs(folderpath)
     for j in range(len(foldersinfo)):
         parentpath = os.getcwd()
-        folderpath = str(parentpath) + "/static/resources/" + str(foldersinfo[i][2])
+        folderpath = str(parentpath) + "/static/resources/" + str(foldersinfo[j][2])
         print(folderpath)
         if not os.path.isdir(folderpath):
             os.makedirs(folderpath)
     #grab the folders
+    aws_resource_list = []
+    count = 0
     for i in range(len(materialsinfo)):
         print("yesss")
         parentpath = os.getcwd()
-        if materialsinfo[i][3] == "folder":
-            folderpath = str(parentpath) + "/static/" + str(materialsinfo[i][2])
-            print(folderpath)
-            if not os.path.isdir(folderpath):
-                os.makedirs(folderpath)
-        else:
-            key = "resources" + str(materialsinfo[i][2]) + "/" + str(materialsinfo[i][6])
-            print(key)
-            localfolder = str(parentpath) + '/static/' + str(key)
-            s3.download_file(BUCKET_NAME,key,localfolder)
+        material_info_data = []
+        if materialsinfo[i][3] != "folder":
+            material_info_data.append(materialsinfo[i][6])
+            material_info_data.append(materialsinfo[i][8])
+            material_info_data.append(materialsinfo[i][5])
+            aws_course = materialsinfo[i][2].replace(" ", "+")
+            aws_key = materialsinfo[i][6].replace(" ", "+")
+            aws__route = "resources" + str(aws_course) + "/" + str(aws_key)
+            material_info_data.append(aws__route)
+            count+=1
+        aws_resource_list.append(material_info_data)
     #grab the materials
-
-    return render_template("resources.html",currentfolderrouteurl = currentfolderrouteurl, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route)
+    return render_template("resources.html",aws_resource_list = aws_resource_list, currentfolderrouteurl = currentfolderrouteurl, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route)
 
 
 @app.route('/getcourses', methods=["GET", "POST"])

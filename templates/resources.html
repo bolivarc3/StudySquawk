@@ -128,13 +128,13 @@
             <td id = "tablecells"><a href="/static/resources/Algebra 1/Capture - Copy.PNG" >{{ foldersinfo[5] }}</a></td>
         </tr>
         {% endfor %}
-        {% for materialsinfo in materialsinfo %}
+        {% for aws_resource_list in aws_resource_list %}
         <tr id = "rowbox">
             <td id = "checkbox"><i class="fa-solid fa-circle-check"></td>
             <td id = "tablecells"><i class="fa-solid fa-file"></i></td>
-            <td id = "tablecells"><a href="/static/resources/{{ route }}/{{ materialsinfo[6] }}" target="_blank">{{ materialsinfo[6] }}</a></td>
-            <td id = "tablecells"><a href="/static/resources/{{ route }}/{{ materialsinfo[6] }}" target="_blank">{{ materialsinfo[8] }}</a></td>
-            <td id = "tablecells"><a href="/static/resources/{{ route }}/{{ materialsinfo[6] }}" target="_blank">{{ materialsinfo[5] }}</a></td>
+            <td id = "tablecells"><a href="https://studyist.s3.us-east-2.amazonaws.com/{{aws_resource_list[3]}}" target="_blank">{{aws_resource_list[0]}}</a></td>
+            <td id = "tablecells"><a href="https://studyist.s3.us-east-2.amazonaws.com{{aws_resource_list[3]}}" target="_blank">{{aws_resource_list[1]}}</a></td>
+        <td id = "tablecells"><a href="https://studyist.s3.us-east-2.amazonaws.com{{aws_resource_list[3]}}" target="_blank">{{aws_resource_list[2]}}</a></td>
         </tr>
         {% endfor %}
     </table>
