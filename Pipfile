@@ -31,6 +31,7 @@ flask-s3 = "*"
 boto3 = "*"
 flask-migrate = "*"
 pip = "*"
+psycopg2 = "*"
 
 [dev-packages]
 
