@@ -28,12 +28,12 @@ if ENV == 'dev':
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Tecra$2290@localhost/studyist'
     BUCKET_NAME='studyist-dev'
 else:
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@{}:{}/{}'.format(
-             os.environ['RDS_USERNAME'], 
-             os.environ['RDS_PASSWORD'],
-             os.environ['RDS_HOSTNAME'],
-             os.environ['RDS_PORT'],
-             os.environ['RDS_DB_NAME']) 
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://{}:{}@{}:{}/{}'.format(
+        os.environ['RDS_USERNAME'], 
+        os.environ['RDS_PASSWORD'],
+        os.environ['RDS_HOSTNAME'],
+        os.environ['RDS_PORT'],
+        os.environ['RDS_DB_NAME']) 
     BUCKET_NAME='studyist'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
