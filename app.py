@@ -16,29 +16,30 @@ app.debug = True
 # Ensure responses aren't cached
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-
+# app.config.from_pyfile('settings.py')
 #s3
 s3 = boto3.client('s3',
-                aws_access_key_id='AKIA4XOBDYJLMRYYW35I',
-                aws_secret_access_key= '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',
+                aws_access_key_id = os.environ.get('AWS_S3_ACCESS_KEY'),
+                aws_secret_access_key = os.environ.get('AWS_S3_SECRET_ACCESS_KEY'),
                     )
-ENV = 'prod'
+ENV = os.environ.get('APPLICATION_ENV')
 if ENV == 'dev':
     app.debug = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Tecra$2290@localhost/studyist'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@{}:{}/{}'.format(
+        os.environ.get('POSTGRES_DEV_USERNAME'),
+        os.environ.get('POSTGRES_DEV_PASSWORD'),
+        os.environ.get('POSTGRES_DEV_HOSTNAME'),
+        os.environ.get('POSTGRES_DEV_PORT'),
+        os.environ.get('POSTGRES_DEV_DB_NAME')
+        )
     BUCKET_NAME='studyist-dev'
 else:
-    RDS_USERNAME = os.environ.get('RDS_USERNAME')
-    RDS_HOSTNAME = os.environ.get('RDS_HOSTNAME')
-    RDS_PASSWORD = os.environ.get('RDS_PASSWORD')
-    RDS_PORT = os.environ.get('RDS_PORT')
-    RDS_DB_NAME = os.environ.get('RDS_DB_NAME')
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@{}:{}/{}'.format(
-        RDS_USERNAME,
-        RDS_PASSWORD,
-        RDS_HOSTNAME,
-        RDS_PORT,
-        RDS_DB_NAME
+        os.environ.get('RDS_USERNAME'),
+        os.environ.get('RDS_PASSWORD'),
+        os.environ.get('RDS_HOSTNAME'),
+        os.environ.get('RDS_PORT'),
+        os.environ.get('RDS_DB_NAME')
         )
 
     BUCKET_NAME='studyist'
