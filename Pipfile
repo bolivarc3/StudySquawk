@@ -32,6 +32,8 @@ boto3 = "*"
 flask-migrate = "*"
 pip = "*"
 psycopg2-binary = "*"
+install = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
