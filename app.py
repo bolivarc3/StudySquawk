@@ -10,51 +10,67 @@ import os
 import sqlite3
 import boto3
 import botocore
+from dotenv import load_dotenv
+import psycopg2
 
 app = Flask(__name__)
 app.debug = True
 # Ensure responses aren't cached
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+load_dotenv()
 # app.config.from_pyfile('settings.py')
 #s3
 s3 = boto3.client('s3',
                 aws_access_key_id = os.environ.get('AWS_S3_ACCESS_KEY'),
                 aws_secret_access_key = os.environ.get('AWS_S3_SECRET_ACCESS_KEY'),
                     )
+
 ENV = os.environ.get('APPLICATION_ENV')
 if ENV == 'dev':
-    app.debug = True
+    app.config.debug = True
+    conn = psycopg2.connect(
+        host=os.environ.get('POSTGRES_DEV_HOSTNAME'),
+        database=os.environ.get('POSTGRES_DEV_DB_NAME'),
+        user=os.environ.get('POSTGRES_DEV_USERNAME'),
+        password=os.environ.get('POSTGRES_DEV_PASSWORD')
+    )
+    cursor = conn.cursor()
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@{}:{}/{}'.format(
         os.environ.get('POSTGRES_DEV_USERNAME'),
         os.environ.get('POSTGRES_DEV_PASSWORD'),
         os.environ.get('POSTGRES_DEV_HOSTNAME'),
         os.environ.get('POSTGRES_DEV_PORT'),
         os.environ.get('POSTGRES_DEV_DB_NAME')
-        )
+    )
     BUCKET_NAME='studyist-dev'
 else:
+    conn = psycopg2.connect(
+        host=os.environ.get('RDS_PORT'),
+        database=os.environ.get('RDS_DB_NAME'),
+        user=os.environ.get('RDS_USERNAME'),
+        password= os.environ.get('RDS_PASSWORD')
+    )
+    cursor = conn.cursor()
+    BUCKET_NAME='studyist'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@{}:{}/{}'.format(
         os.environ.get('RDS_USERNAME'),
         os.environ.get('RDS_PASSWORD'),
         os.environ.get('RDS_HOSTNAME'),
         os.environ.get('RDS_PORT'),
         os.environ.get('RDS_DB_NAME')
-        )
-
-    BUCKET_NAME='studyist'
+    )
+    
+db_creation = SQLAlchemy(app)
+from models import Users, posts, images, files, replies, replyfiles, replyimages, materials
+db_creation.create_all()
+db_creation.session.commit()
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 UPLOAD_FOLDER = '/Studyist/userfiles'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = "super secret key"
 app.config["TEMPLATES_AUTO_RELOAD"] = True
-db = SQLAlchemy(app)
-from models import Users, posts, images, files, replies, replyfiles, replyimages, materials
-
-
-def getApp():
-    return app
 
 from aws import upload, download_file
 
@@ -75,10 +91,6 @@ def page_not_found(e):
 #test1
 @app.route("/", methods=["GET", "POST"])
 def index():
-    db.create_all()
-    db.session.commit()
-    print(BUCKET_NAME)
-    session.clear()
     # if the form is submitted
     if request.method == "POST":
 
@@ -111,16 +123,13 @@ def index():
                 return render_template("intro.html")
 
             #goes to function that connects db
-            dbinfo = connectdb("userinfo.db")
+            db = connectdb()
             #seperate list into db objects
-            userinfocursor = dbinfo[0]
-            userinfoconnect = dbinfo[1]
 
             #checks if email is already in the system | cant be 2 of the same email
             # userinfocursor.execute("SELECT email FROM users WHERE email = ?", (email, ));
             # stored_email = userinfocursor.fetchone()
-
-            if db.session.query(Users).filter(Users.email == email).count() != 0:
+            if db.execute("SELECT * FROM Users WHERE email = ?", (email, )).count() != 0:
                 error = "invalid email address"
                 flash('email already has been used')
                 return redirect(url_for('index'))
@@ -130,7 +139,7 @@ def index():
             # stored_username = userinfocursor.fetchone()
             # userinfoconnect.close()
 
-            if db.session.query(Users).filter(Users.username == username).count() != 0:
+            if db.execute("SELECT username FROM users WHERE username = ?", (username, )).count() != 0:
                 error = "invalid email address"
                 flash("username already has been used")
                 return redirect(url_for('index'))
@@ -140,18 +149,25 @@ def index():
             return redirect("/")
 
         if form == "loginform":
+            db = connectdb()
             email = request.form.get("email")
             password = request.form.get("password")
 
             #if email is not in system, return error
-            if db.session.query(Users).filter(Users.email == email).count() == 0:
+            db.execute('SELECT COUNT(*) FROM "Users" WHERE email=%s',(email,))
+            count = db.fetchone()[0]
+            if count == 0:
                 flash("Email and User not found")
                 return render_template("intro.html")
 
-            User = db.session.query(Users).filter(Users.email == email, Users.password == password).first()
-            username = User.username
+            username = db.execute("""
+            SELECT username 
+            FROM "Users" 
+            WHERE email=%(email)s,password=%(password)s
+            """,
+            (email,password));
             #if password is not the same as the user with the email, return error
-            if db.session.query(Users).filter(Users.email == email, Users.password == password).count() == 0:
+            if db.execute("SELECT * FROM Users WHERE email=?,password=?",(email,password, )).count() == 0:
                 flash("Password is Incorrect")
                 return render_template("intro.html")
 
@@ -407,9 +423,6 @@ def resources(route):
     course = routeparts[0]
     courses = grabclasses()
     courseavailible = checkclass(course, courses)
-    print("route")
-    print(route)
-    
     #saves route created and checks if peson put in a correct course
 
     #if the class is not in the list, it will render an apology
@@ -555,7 +568,7 @@ def resources(route):
             count+=1
         aws_resource_list.append(material_info_data)
     #grab the materials
-    return render_template("resources.html",aws_resource_list = aws_resource_list, currentfolderrouteurl = currentfolderrouteurl, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route)
+    return render_template("resources.html",BUCKET_NAME= BUCKET_NAME,aws_resource_list = aws_resource_list, currentfolderrouteurl = currentfolderrouteurl, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route)
 
 
 @app.route('/getcourses', methods=["GET", "POST"])
