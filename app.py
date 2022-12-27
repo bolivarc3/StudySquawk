@@ -20,7 +20,57 @@ s3 = boto3.client('s3',
     aws_access_key_id = os.environ.get('AWS_S3_ACCESS_KEY'),
     aws_secret_access_key = os.environ.get('AWS_S3_SECRET_ACCESS_KEY'),
         )
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+load_dotenv()
+# app.config.from_pyfile('settings.py')
+#s3
+
+ENV = os.environ.get('APPLICATION_ENV')
+if ENV == 'dev':
+    conn = psycopg2.connect(
+        host=os.environ.get('POSTGRES_DEV_HOSTNAME'),
+        database=os.environ.get('POSTGRES_DEV_DB_NAME'),
+        user=os.environ.get('POSTGRES_DEV_USERNAME'),
+        password=os.environ.get('POSTGRES_DEV_PASSWORD')
+    )
+    cursor = conn.cursor()
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@{}:{}/{}'.format(
+        os.environ.get('POSTGRES_DEV_USERNAME'),
+        os.environ.get('POSTGRES_DEV_PASSWORD'),
+        os.environ.get('POSTGRES_DEV_HOSTNAME'),
+        os.environ.get('POSTGRES_DEV_PORT'),
+        os.environ.get('POSTGRES_DEV_DB_NAME')
+    )
+    BUCKET_NAME='studyist-dev'
+else:
+    conn = psycopg2.connect(
+        host=os.environ.get('RDS_PORT'),
+        database=os.environ.get('RDS_DB_NAME'),
+        user=os.environ.get('RDS_USERNAME'),
+        password= os.environ.get('RDS_PASSWORD')
+    )
+    cursor = conn.cursor()
+    BUCKET_NAME='studyist'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@{}:{}/{}'.format(
+        os.environ.get('RDS_USERNAME'),
+        os.environ.get('RDS_PASSWORD'),
+        os.environ.get('RDS_HOSTNAME'),
+        os.environ.get('RDS_PORT'),
+        os.environ.get('RDS_DB_NAME')
+    )
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db_creation = SQLAlchemy(app)
+from models import Users, posts, images, files, replies, replyfiles, replyimages, materials
+db_creation.create_all()
+db_creation.session.commit()
+
+UPLOAD_FOLDER = '/Studyist/userfiles'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.secret_key = "super secret key"
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+
+from aws import upload, download_file
 # Ensure responses aren't cached
 @app.after_request
 def after_request(response):
@@ -558,58 +608,3 @@ def getfolders():
     print(foldersinfo)
     folders = jsonify(foldersinfo)
     return(folders)
-
-
-if __name__ == '__main__':
-    app.config["SESSION_PERMANENT"] = False
-    app.config["SESSION_TYPE"] = "filesystem"
-    load_dotenv()
-    # app.config.from_pyfile('settings.py')
-    #s3
-
-    ENV = os.environ.get('APPLICATION_ENV')
-    if ENV == 'dev':
-        conn = psycopg2.connect(
-            host=os.environ.get('POSTGRES_DEV_HOSTNAME'),
-            database=os.environ.get('POSTGRES_DEV_DB_NAME'),
-            user=os.environ.get('POSTGRES_DEV_USERNAME'),
-            password=os.environ.get('POSTGRES_DEV_PASSWORD')
-        )
-        cursor = conn.cursor()
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@{}:{}/{}'.format(
-            os.environ.get('POSTGRES_DEV_USERNAME'),
-            os.environ.get('POSTGRES_DEV_PASSWORD'),
-            os.environ.get('POSTGRES_DEV_HOSTNAME'),
-            os.environ.get('POSTGRES_DEV_PORT'),
-            os.environ.get('POSTGRES_DEV_DB_NAME')
-        )
-        BUCKET_NAME='studyist-dev'
-    else:
-        conn = psycopg2.connect(
-            host=os.environ.get('RDS_PORT'),
-            database=os.environ.get('RDS_DB_NAME'),
-            user=os.environ.get('RDS_USERNAME'),
-            password= os.environ.get('RDS_PASSWORD')
-        )
-        cursor = conn.cursor()
-        BUCKET_NAME='studyist'
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@{}:{}/{}'.format(
-            os.environ.get('RDS_USERNAME'),
-            os.environ.get('RDS_PASSWORD'),
-            os.environ.get('RDS_HOSTNAME'),
-            os.environ.get('RDS_PORT'),
-            os.environ.get('RDS_DB_NAME')
-        )
-        
-    from models import Users, posts, images, files, replies, replyfiles, replyimages, materials
-    db_creation.create_all()
-    db_creation.session.commit()
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-    UPLOAD_FOLDER = '/Studyist/userfiles'
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-    app.secret_key = "super secret key"
-    app.config["TEMPLATES_AUTO_RELOAD"] = True
-
-    from aws import upload, download_file
-    app.run(debug =True)
