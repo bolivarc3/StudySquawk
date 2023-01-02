@@ -127,7 +127,10 @@ def index():
             #checks if email is already in the system | cant be 2 of the same email
             # userinfocursor.execute("SELECT email FROM users WHERE email = ?", (email, ));
             # stored_email = userinfocursor.fetchone()
-            if db.execute("SELECT * FROM Users WHERE email = ?", (email, )).count() != 0:
+            db.execute('SELECT * FROM "Users" WHERE email = %s', (email, ))
+            users = db.fetchall()
+            count = len(users)
+            if count != 0:
                 error = "invalid email address"
                 flash('email already has been used')
                 return redirect(url_for('index'))
@@ -136,14 +139,15 @@ def index():
             # userinfocursor.execute("SELECT username FROM users WHERE username = ?", (username, ));
             # stored_username = userinfocursor.fetchone()
             # userinfoconnect.close()
-
-            if db.execute("SELECT username FROM users WHERE username = ?", (username, )).count() != 0:
+            db.execute('SELECT username FROM "Users" WHERE username = %s', (username, ))
+            users = db.fetchall()
+            count = len(users)
+            if count != 0:
                 error = "invalid email address"
                 flash("username already has been used")
                 return redirect(url_for('index'))
-            data = Users(username, password, email)
-            db.session.add(data)
-            db.session.commit()
+            db.execute('''INSERT INTO "Users"(username, password, email)
+                        VALUES (%s, %s, %s);'''(username,password,email, ))
             return redirect("/")
 
         if form == "loginform":
@@ -152,18 +156,18 @@ def index():
             password = request.form.get("password")
 
             #if email is not in system, return error
-            db.execute('SELECT COUNT(*) FROM "Users" WHERE email=%s',(email,))
-            count = db.fetchall()[0]
+            db.execute('SELECT * FROM "Users" WHERE email=%s',(email,))
+            users = db.fetchall()
+            count = len(users)
             if count == 0:
                 flash("Email and User not found")
                 return render_template("intro.html")
 
             db.execute('SELECT username FROM "Users" WHERE email=%s AND password=%s',(email,password));
             username = db.fetchall()
-            length = len(username)
-            print(username[0][0])
+            count = len(username)
             #if password is not the same as the user with the email, return error
-            if user == 0:
+            if count == 0:
                 flash("Password is Incorrect")
                 return render_template("intro.html")
 
