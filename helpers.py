@@ -40,7 +40,8 @@ def connectdb():
             password= os.environ.get('RDS_PASSWORD')
         )
     cursor = conn.cursor()
-    return cursor;
+    list = [cursor,conn]
+    return list;
 
 
 

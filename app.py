@@ -15,7 +15,6 @@ import psycopg2
 
 app = Flask(__name__)
 
-BUCKET_NAME = "none"
 s3 = boto3.client('s3',
     aws_access_key_id = os.environ.get('AWS_S3_ACCESS_KEY'),
     aws_secret_access_key = os.environ.get('AWS_S3_SECRET_ACCESS_KEY'),
@@ -121,7 +120,9 @@ def index():
                 return render_template("intro.html")
 
             #goes to function that connects db
-            db = connectdb()
+            db_info = connectdb()
+            db = db_info[0]
+            db_conn = db_info[1]
             #seperate list into db objects
 
             #checks if email is already in the system | cant be 2 of the same email
@@ -146,12 +147,16 @@ def index():
                 error = "invalid email address"
                 flash("username already has been used")
                 return redirect(url_for('index'))
-            db.execute('''INSERT INTO "Users"(username, password, email)
-                        VALUES (%s, %s, %s);'''(username,password,email, ))
+            db.execute('INSERT INTO "Users"(username, password, email) VALUES (?, ?, ?)',(username,password,email, ))
+            db_conn.commit()
+            db.close()
+            db_conn.close()
             return redirect("/")
 
         if form == "loginform":
-            db = connectdb()
+            db_info = connectdb()
+            db = db_info[0]
+            db_conn = db_info[1]
             email = request.form.get("email")
             password = request.form.get("password")
 
@@ -166,13 +171,15 @@ def index():
             db.execute('SELECT username FROM "Users" WHERE email=%s AND password=%s',(email,password));
             username = db.fetchall()
             count = len(username)
+            db.close()
+            db_conn.close()
             #if password is not the same as the user with the email, return error
             if count == 0:
                 flash("Password is Incorrect")
                 return render_template("intro.html")
 
             #set the session
-            session["user_id"] = username
+            session["user_id"] = username[0][0]
             return redirect("homepage")
     else:
         return render_template("intro.html")
@@ -194,7 +201,11 @@ def studyist():
         return redirect(course)
 
     else:
-        postings = db.session.query(posts).order_by(posts.date.desc(),posts.time.desc()).all()
+        db_info = connectdb()
+        db = db_info[0]
+        db_conn = db_info[1]
+        db.execute('SELECT * FROM "posts" ORDER BY date DESC, time DESC')
+        postings = db.fetchall()
         #return object looking like <posts> which is an object
         #index into it and . insert what you are looking for
         course = "homepage"
@@ -206,7 +217,6 @@ def course(course):
 
     #grabs the classes and checks if class is a class in db
     courses = grabclasses()
-    print(course)
     courseavailible = checkclass(course, courses)
 
     #if the class is not in the list, it will render an apology
@@ -225,7 +235,6 @@ def course(course):
         body = request.form.get("text")
         body = str(body)
         username = session["user_id"]
-
         now = datetime.now()
         date = now.strftime("%m/%d/%Y")
         time = now.strftime("%H:%M:%S")
@@ -243,8 +252,11 @@ def course(course):
         filedata = request.files.getlist("file")
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
-
-        id = db.session.query(posts).count() +1
+        db_info = connectdb()
+        db = db_info[0]
+        db_conn = db_info[1]
+        db.execute('SELECT * FROM "posts"')
+        id = len(db.fetchall())+1
         #grabs the postid
         # #makes a new folder for the images. This makes it so that it can conserve it's name
         filespath = "userfiles/" + str(id)
@@ -260,24 +272,23 @@ def course(course):
                 if file_extension in imagefileextensions:
                     filename = secure_filename(file.filename)
                     fileupload = upload(filespath,filename,file)
-                    imagedata = images(id,filename)
-                    db.session.add(imagedata)
-                    db.session.commit()
+                    db.execute('INSERT INTO "images"(postid, images) VALUES (%s, %s)',(id,filename, ))
+                    db_conn.commit()
                 else:
                     filename = secure_filename(file.filename)
                     fileupload = upload(filespath,filename,file)
-
-                    filedata = files(id,filename)
-                    db.session.add(filedata)
-                    db.session.commit()
-
-        postsdata = posts(id, course, username, title, body, time, date)
-        db.session.add(postsdata)
-        db.session.commit()
-
+                    db.execute('INSERT INTO "files"(postid, files) VALUES (%s, %s)',(id,filename, ))
+                    db_conn.commit()
+        db.execute('INSERT INTO "posts"(postid, course, username, title, body, time, date) VALUES(%s,%s,%s,%s,%s,%s,%s)',(id, course, username, title, body, time, date, ))            
+        db_conn.commit()
+        db_conn.close()
+        db.close()
         return redirect(url_for('course', course = course))
-
-    postings = db.session.query(posts).filter(posts.course == course).order_by(posts.date.desc(),posts.time.desc()).all()
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    db.execute('SELECT * FROM "posts" WHERE course=%s ORDER BY date DESC, time DESC',(course,))
+    postings = db.fetchall()
     return render_template("coursemain.html", course = course, courses = courses, postings = postings)
 
 
@@ -310,14 +321,15 @@ def viewpost(course, postid):
                 error = "No input to the post"
                 flash('No input to the post')
                 return redirect(request.url)
-
-            repliesquery = db.session.query(replies).order_by(replies.date.desc(),replies.time.desc()).all()
+            db_info = connectdb()
+            db = db_info[0]
+            db_conn = db_info[1]
+            db.execute('SELECT * from "replies" ORDER BY date DESC, time DESC')
+            repliesquery = db.fetchall()
             replieslength = len(repliesquery)
             id = replieslength + 1
 
-            data = replies(id, postid,course, username, title, body, time, date)
-            db.session.add(data)
-            db.session.commit()
+            db.execute('INSERT INTO "replies"(replyid, postid, course, username, title, body, time, date) VALUES(%s,%s, %s, %s,%s, %s, %s,%s)',(id, postid, course, username, title, body, time, date,))
             file = request.files['file']
             filedata = request.files.getlist("file")
             filespath = "userfiles-replies/" + str(id)
@@ -334,28 +346,27 @@ def viewpost(course, postid):
                     if file_extension in imagefileextensions:
                         filename = secure_filename(file.filename)
                         fileupload = upload(filespath,filename,file)
-
-                        imagedata = replyimages(id,postid,filename)
-                        db.session.add(imagedata)
-                        db.session.commit()
+                        db.execute('INSERT INTO "replyimages"(replyid, postid, images) VALUES (%s, %s, %s)',(id,postid,filename, ))
+                        db_conn.commit()
 
                     else:
                         filename = secure_filename(file.filename)
                         fileupload = upload(filespath,filename,file)
-
-                        filedata = replyfiles(id,postid,filename)
-                        db.session.add(filedata)
-                        db.session.commit()
-
+                        db.execute('INSERT INTO "replyfiles"(replyid, postid, files) VALUES (%s, %s, %s)',(id,postid,filename, ))
+                        db_conn.commit()
+            db.close()
+            db_conn.close()
 
         return redirect(url_for('viewpost', course = course, postid = postid))
 
 
     #grab all of the courses
     courses = grabclasses()
-
-    postinfo = db.session.query(posts).filter(posts.postid == postid).first()
-    #looks like -> <object> -inside -> <id:id#, postid:postid#, etc>
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    db.execute('SELECT * FROM "posts" WHERE postid=%s',(postid,))
+    postinfo = db.fetchone()
 
     #If there is no post found
     if postinfo == None:
@@ -363,51 +374,26 @@ def viewpost(course, postid):
         url = "/" + str(course)
         return render_template("error.html", error = error, url = url)
 
-    imagesinfo = db.session.query(images.id,images.postid,images.images).filter(images.postid == postid).all()
+    db.execute('SELECT * FROM "images" WHERE postid=%s',(postid,))
+    imagesinfo = db.fetchall()
     #looks like -> {id,postid,images}
-
-    filesinfo = db.session.query(files.id,files.postid,files.files).filter(files.postid == postid).all()
-    #looks like -> {id,postid,images}
-
-
-    print(imagesinfo)
+    db.execute('SELECT * FROM "files" WHERE postid=%s',(postid,))
+    filesinfo = db.fetchall()
+             
     # postduration = time_difference(post[5],post[6])
+    db.execute('SELECT * FROM "replies" WHERE postid=%s ORDER BY date DESC, time DESC',(postid,))
+    repliesinfo = db.fetchall()
 
-    repliesinfo = db.session.query(replies.id,replies.replyid,replies.postid,replies.course,replies.username,replies.title,replies.body,replies.time,replies.date).filter(replies.postid == postid).order_by(replies.date.desc(),replies.time.desc()).all()
-    #looks like -> <object> -inside -> <id:id#, postid:postid#, etc>
+    db.execute('SELECT * FROM "replyimages" WHERE postid=%s',(postid,))
+    repliesimagesinfo = db.fetchall()
 
+    db.execute('SELECT * FROM "replyfiles" WHERE postid=%s',(postid,))
+    repliesfilesinfo = db.fetchall()
 
-    repliesimagesinfo = db.session.query(replyimages.id,replyimages.replyid,replyimages.postid,replyimages.images).filter(replyimages.postid == postid).all()
-    #looks like -> {id,postid,images}
-
-    repliesfilesinfo = db.session.query(replyfiles.id,replyfiles.replyid,replyfiles.postid,replyfiles.files).filter(replyfiles.postid == postid).all()
-    #looks like -> {id,postid,files}
-    print("replies")
-    print(len(repliesfilesinfo))
-
-    #if there are images or files that need to be downloaded, download them. 
-    if len(repliesfilesinfo) != 0:
-        for i in range(len(repliesfilesinfo)):
-            filespath = "userfiles-replies/" + str(repliesfilesinfo[i].replyid)
-            download_file(filespath,BUCKET_NAME)
-
-    if len(repliesimagesinfo) != 0:
-        for i in range(len(repliesimagesinfo)):
-            filespath = "userfiles-replies/" + str(repliesimagesinfo[i].replyid)
-            download_file(filespath,BUCKET_NAME)
-    
-    # if len(imagesinfo) != 0:
-    #     filespath = "userfiles/" + str(imagesinfo[0].postid)
-    #     print(filespath)
-    #     download_file(filespath,BUCKET_NAME)
-    
-    if len(filesinfo) != 0:
-        filespath = "userfiles/" + str(filesinfo[0].postid)
-        download_file(filespath,BUCKET_NAME)
-    #if there are images or files that need to be downloaded, download them. 
-
+    db.close()
+    db_conn.close()
     userid = session["user_id"]
-    return render_template("viewpost.html", postid = postid, postinfo = postinfo, imagesinfo = imagesinfo, filesinfo = filesinfo, repliesinfo = repliesinfo, repliesimagesinfo = repliesimagesinfo, courses = courses, course = course, userid = userid, )
+    return render_template("viewpost.html", postid = postid, postinfo = postinfo, imagesinfo = imagesinfo, filesinfo = filesinfo, repliesinfo = repliesinfo, repliesimagesinfo = repliesimagesinfo, repliesfilesinfo = repliesfilesinfo, courses = courses, course = course, userid = userid,BUCKET_NAME = BUCKET_NAME)
 
 
 
@@ -425,6 +411,9 @@ def resources(route):
     courseavailible = checkclass(course, courses)
     #saves route created and checks if peson put in a correct course
 
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
     #if the class is not in the list, it will render an apology
     if courseavailible == False:
         error = 'Class is not availible. Select Class from Options'
@@ -432,7 +421,6 @@ def resources(route):
         return render_template("error.html", error = error, url = url)
 
     if request.method == "POST":
-        print("hey")
         #gathers information for database entry
         type_of_form = request.form.get("type_of_form")
         username = session["user_id"]
@@ -441,8 +429,8 @@ def resources(route):
         now = datetime.now()
         date = now.strftime("%m/%d/%Y")
         time = now.strftime("%H:%M:%S")
-
-        id = db.session.query(materials).count()
+        db.execute('SELECT * FROM "materials"')
+        id = len(db.fetchall())
 
         #grabs the postid
 
@@ -466,10 +454,6 @@ def resources(route):
 
             #makes a new folder for the images. This makes it so that it can conserve it's name
             filespath = "static/resources/" + str(course)
-            if os.path.exists(filespath):
-                print("it exists")
-            else:
-                print("hey")
                 
             #makes a new upload folder if the upload folder does not exist
             UPLOAD_FOLDER = "static/resources/" + str(route)
@@ -479,7 +463,6 @@ def resources(route):
             #makes a new upload folder if the upload folder does not exist
 
             filespath = "resources" + str(route)
-            print(filespath)
             for file in filedata:
                 if file.filename != "":
                     split_tup = os.path.splitext(file.filename)
@@ -493,18 +476,20 @@ def resources(route):
                         objecttype = "image"
                         filename = secure_filename(file.filename)
                         fileupload = upload(filespath,filename,file)
-                        print("hey")
-                        materialdata = materials(id,objectroute,objecttype,course,username,filename,time,date)
-                        db.session.add(materialdata)
-                        db.session.commit()
+
+                        db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)'''
+                        ,(id,objectroute,objecttype,course,username,filename,time,date,))
+
+                        db_conn.commit()
                     else:
                         objecttype = "file"
                         filename = secure_filename(file.filename)
                         fileupload = upload(filespath,filename,file)
-                        materialdata = materials(id,objectroute,objecttype,course,username,filename,time,date)
-                        db.session.add(filedata)
-                        db.session.commit()
 
+                        db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)'''
+                        ,(id,objectroute,objecttype,course,username,filename,time,date,))
+
+                        db_conn.commit()
         if type_of_form == "newfolder":
             foldername = request.form.get("name_of_folder")
             foldername = str(foldername)
@@ -527,35 +512,24 @@ def resources(route):
 
             objecttype = "folder"
             #enter folder information into database
-            materialdata = materials(id,objectroute,objecttype,course,username,foldername,time,date)
-            db.session.add(materialdata)
-            db.session.commit()
-    
+
+            db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)'''
+                        ,(id,objectroute,objecttype,course,username,foldername,time,date,))
+            db_conn.commit()
     #grab the materials
-    materialsinfo = db.session.query(materials.id,materials.resourceid,materials.objectroute,materials.objecttype,materials.course,materials.username,materials.name,materials.time,materials.date).filter(or_(materials.objecttype == "file", materials.objecttype == "image"), materials.objectroute ==  route).all()
-    print(materialsinfo)
-    materialsinfocount = db.session.query(materials.id,materials.resourceid,materials.objectroute,materials.objecttype,materials.course,materials.username,materials.name,materials.time,materials.date).filter(materials.objecttype == "file", materials.objecttype == "image", materials.objectroute ==  route).count()
-    print(materialsinfocount)
-        #grab the folders
-    foldersinfo = db.session.query(materials.id,materials.resourceid,materials.objectroute,materials.objecttype,materials.course,materials.username,materials.name,materials.time,materials.date).filter(materials.objecttype == "folder", materials.objectroute == route).all()
-    parentpath = os.getcwd()
-    folderpath = str(parentpath) + "/static/resources" + route
-    print("folderpath")
-    print(folderpath)
-    if not os.path.isdir(folderpath):
-            os.makedirs(folderpath)
-    for j in range(len(foldersinfo)):
-        parentpath = os.getcwd()
-        folderpath = str(parentpath) + "/static/resources/" + str(foldersinfo[j][2])
-        print(folderpath)
-        if not os.path.isdir(folderpath):
-            os.makedirs(folderpath)
+    db.execute('SELECT * FROM "materials" WHERE (objecttype=%s OR objecttype=%s) AND objectroute=%s',('image','file', route,))
+    materialsinfo = db.fetchall()
+    materialsinfocount = len(materialsinfo)
+
+    db.execute('SELECT * FROM "materials" WHERE objecttype=%s AND objectroute=%s',('folder', route,))
+    foldersinfo = db.fetchall()
+
+    db.close()
+    db_conn.close()
     #grab the folders
     aws_resource_list = []
     count = 0
     for i in range(len(materialsinfo)):
-        print("yesss")
-        parentpath = os.getcwd()
         material_info_data = []
         if materialsinfo[i][3] != "folder":
             material_info_data.append(materialsinfo[i][6])
@@ -568,7 +542,7 @@ def resources(route):
             count+=1
         aws_resource_list.append(material_info_data)
     #grab the materials
-    return render_template("resources.html",BUCKET_NAME= BUCKET_NAME,aws_resource_list = aws_resource_list, currentfolderrouteurl = currentfolderrouteurl, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route)
+    return render_template("resources.html",BUCKET_NAME= BUCKET_NAME,aws_resource_list = aws_resource_list, currentfolderrouteurl = currentfolderrouteurl, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route,)
 
 
 @app.route('/getcourses', methods=["GET", "POST"])
@@ -587,9 +561,19 @@ def getcourseposts():
         now = datetime.now()
         nowdate = now.strftime("%m/%d/%Y")
         nowdate = datetime.strptime(nowdate,"%m/%d/%Y")
-        postings = db.session.query(posts.id,posts.postid,posts.course,posts.username,posts.title,posts.body,posts.time,posts.date).order_by(posts.date.desc(),posts.time.desc()).all()
+        db_info = connectdb()
+        db = db_info[0]
+        db_info = db_info[1]
+        db.execute('SELECT * FROM "posts" ORDER BY date DESC, time DESC')
+        postings = db.fetchall()
     else:
-        postings = db.session.query(posts.id,posts.postid,posts.course,posts.username,posts.title,posts.body,posts.time,posts.date).filter(posts.course == course).order_by(posts.date.desc(),posts.time.desc()).all()
+        db_info = connectdb()
+        db = db_info[0]
+        db_conn = db_info[1]
+        db.execute('SELECT * FROM "posts" WHERE course=%s ORDER BY date DESC, time DESC',(course,))
+        postings = db.fetchall()
+        db.close()
+        db_conn.close()
     postlist = [tuple(row) for row in postings]
     postings = json.dumps(postlist, indent=4, sort_keys=True, default=str)
     return(postings)
@@ -598,17 +582,27 @@ def getcourseposts():
 def getresources():
     course = request.json
     #grab the materials
-    materialsinfo = db.session.query(materials.id,materials.resourceid,materials.objectroute,materials.objecttype,materials.course,materials.username,materials.name,materials.time,materials.date).filter(materials.objecttype == "file", materials.objecttype == "image", materials.course == course).all()
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    db.execute('SELECT * FROM "materials" WHERE objecttype=%s OR objecttype=%s AND course=%s',('image','file',course, ))
     #grab the materials
-
+    materialsinfo = db.fetchall()
+    db.close()
+    db_conn.close()
     resources = jsonify(materialsinfo)
     return(resources)
 
 @app.route('/getfolders', methods=["GET", "POST"])
 def getfolders():
     course = request.json
-    print(course)
-    foldersinfo = db.session.query(materials.id,materials.resourceid,materials.objectroute,materials.objecttype,materials.course,materials.username,materials.name,materials.time,materials.date).filter(materials.objecttype == "folder", materials.course == course).all()
-    print(foldersinfo)
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    db.execute('SELECT * FROM "materials" WHERE (objecttype=%s and course=%s)',('folder',course, ))
+    #grab the materials
+    foldersinfo = db.fetchall()
+    db.close()
+    db_conn.close()
     folders = jsonify(foldersinfo)
     return(folders)

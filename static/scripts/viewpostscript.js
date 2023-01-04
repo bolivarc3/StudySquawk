@@ -3,9 +3,7 @@ function checktext(){
     var blank = "";
     var form = document.getElementById("inputbodytext").value;
 
-    console.log("hellow")
     if (blank != form){
-        console.log("hello")
         document.getElementById("submitbutton").className = "active";
     }
     else{
@@ -42,7 +40,6 @@ function showPreview(event){
 }
 
 function showimage(imagepath){
-    console.log(imagepath)
     img = document.createElement('img');
     img.id = "popupimage"
     img.src = imagepath;

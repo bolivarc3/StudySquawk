@@ -38,7 +38,6 @@ async function getfolders(course){
         body: JSON.stringify(course) // body data type must match "Content-Type" header
     })
     const data = await response.json()
-    console.log(data);
     createfolders(data)
     getresources(course)
 }
@@ -53,7 +52,6 @@ async function getresources(course){
         body: JSON.stringify(course) // body data type must match "Content-Type" header
     })
     const data = await response.json()
-    console.log(data);
     createresources(data)
 }
 
@@ -64,7 +62,6 @@ function createresources(materials){
         for(let i = 0; i < length; i++){
             //makes a container for the seperate images
             document.getElementById("routing").innerHTML = materials[i][1]
-            console.log(materials[i][0])
 
             tablerow = document.createElement('tr');
             tablerow.id = "rowbox" + Number(materials[i][0])
@@ -124,14 +121,11 @@ function createresources(materials){
 
 function createfolders(materials){
     var length = materials.length
-    console.log("length")
-    console.log(length)
     if(length > 0){
         //for the amount of images
         for(let i = 0; i < length; i++){
             //makes a container for the seperate images
             document.getElementById("routing").innerHTML = materials[i][1]
-            console.log(materials[i][0])
 
             tablerow = document.createElement('tr');
             tablerow.id = "rowbox" + Number(materials[i][0])
@@ -161,13 +155,11 @@ function createfolders(materials){
             link.innerHTML = materials[i][5]
             link.target = "_blank"
             newfilepath = materials[i][1] + "/" + materials[i][5]
-            console.log(newfilepath)
             link.addEventListener("click",function() {
                     getfolders(newfilepath)
                 }
             );
             const formroutings = Array.from(document.getElementsByName('route'))
-            console.log(formroutings)
             formroutinglengths = formroutings.length
             for (i = 0; i < formroutinglengths; i++) {
                 formroutings[i].value = newfilepath
