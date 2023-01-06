@@ -20,12 +20,8 @@
 {% block resources %}
 <script>
     document.addEventListener('DOMContentLoaded', function(){
-        console.log("{{course}}")
-        console.log("hello")
         var course = "{{course}}"
-        console.log(course)
         getfolders("/" + course)
-        console.log("folders")
     });
 </script>
 

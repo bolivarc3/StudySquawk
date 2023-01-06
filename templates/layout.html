@@ -52,7 +52,6 @@
 					async function getData(){
 						const response = await fetch('/getcourses')
 						var courses = await response.json()
-						console.log(courses);
 						return courses
 					}
 					const autoCompleteJS = new autoComplete({

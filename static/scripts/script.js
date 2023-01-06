@@ -7,12 +7,10 @@ async function getData(){
         },
         body: JSON.stringify(course) // body data type must match "Content-Type" header
     })
-    console.log(data);
+    ;
 }
 
 function loadposts(posts){
-    console.log("hello")
-    console.log(posts)
     length = posts.length
 
     for(let i = 0; i < length; i++){

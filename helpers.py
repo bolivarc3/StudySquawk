@@ -7,6 +7,7 @@ import urllib.parse
 from flask import redirect, render_template, request, session
 from functools import wraps
 import csv
+import psycopg2
 
 def login_required(f):
     """
@@ -22,12 +23,24 @@ def login_required(f):
     return decorated_function
 
 
-def connectdb(db):
-    #input is name of db
-    connect = sqlite3.connect("databases/" + db)
-    cursor = connect.cursor()
-    list = [cursor,connect]
-    #returns db information
+def connectdb():
+    ENV = os.environ.get('APPLICATION_ENV')
+    if ENV == 'dev':
+        conn = psycopg2.connect(
+            host=os.environ.get('POSTGRES_DEV_HOSTNAME'),
+            database=os.environ.get('POSTGRES_DEV_DB_NAME'),
+            user=os.environ.get('POSTGRES_DEV_USERNAME'),
+            password=os.environ.get('POSTGRES_DEV_PASSWORD')
+        )
+    else:
+        conn = psycopg2.connect(
+            host=os.environ.get('RDS_PORT'),
+            database=os.environ.get('RDS_DB_NAME'),
+            user=os.environ.get('RDS_USERNAME'),
+            password= os.environ.get('RDS_PASSWORD')
+        )
+    cursor = conn.cursor()
+    list = [cursor,conn]
     return list;
 
 
@@ -95,7 +108,6 @@ def upload(filespath,filename):
         img = request.files['file']
         if img:
             filename = secure_filename(img.filename)
-            img.save(filename)
             s3.upload_file(
                 Bucket = BUCKET_NAME,
                 Filename=filename,
