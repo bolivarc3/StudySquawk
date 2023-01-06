@@ -106,10 +106,10 @@
                         {% if repliesinfo[1] == repliesimagesinfo[1] %}
                             <li>
                                 <div class = "imagecontainer">
-                                    <a onclick = "showimage('https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/userfiles-replies/{{ repliesinfo[1] }}/{{ repliesimagesinfo[3] }}');"></a>
-                                    <link href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/userfiles-replies/{{ repliesinfo[1] }}/{{ repliesimagesinfo[3] }}"onlick = "showimage();">
-                                    <img src = "https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/userfiles-replies/{{ repliesinfo[1] }}/{{ repliesimagesinfo[3] }}"onlick = "showimage();">
-        
+                                    <a onclick = "showimage('https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/userfiles-replies/{{ repliesinfo[1] }}/{{ repliesimagesinfo[3] }}');">
+                                        <link href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/userfiles-replies/{{ repliesinfo[1] }}/{{ repliesimagesinfo[3] }}" onlick = "showimage();">
+                                        <img src = "https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/userfiles-replies/{{ repliesinfo[1] }}/{{ repliesimagesinfo[3] }}" onlick = "showimage();">
+                                    </a>
                                 </div>
                             </li>
                         {% endif %}

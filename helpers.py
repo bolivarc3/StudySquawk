@@ -108,7 +108,6 @@ def upload(filespath,filename):
         img = request.files['file']
         if img:
             filename = secure_filename(img.filename)
-            img.save(filename)
             s3.upload_file(
                 Bucket = BUCKET_NAME,
                 Filename=filename,
