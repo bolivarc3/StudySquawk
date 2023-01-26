@@ -1,13 +1,14 @@
 html, body {
   margin: 0;
   padding: 0;
-  background-color: var(--dark-blue-black);
+  background-color: var(--background-color);
 }
 
 :root {
     --accent-color: #d7dadc;
     --dark-gray: #1B212A;
     --dark-blue-black: #161b22;
+    --background-color: #121212;
 }
 
 p{
@@ -37,7 +38,7 @@ nav{
     top:0;
     display:flex;
     margin:auto;
-    box-shadow: 0px 5px 5px 0px var(--dark-blue-black);
+    /* box-shadow: 0px 5px 5px 0px var(--dark-blue-black); */
 }
 
 nav li{
@@ -228,7 +229,7 @@ ul#horizontal-list {
     margin-top: 5rem;
     width: 90%;
     height: fit-content;
-    background-color: #121212;
+    background-color: var(--dark-blue-black);
     color:var(--accent-color);
     border:3px solid #2c2c2c;
     border-radius:5px;

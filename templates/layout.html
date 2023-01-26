@@ -9,7 +9,9 @@
 	<link href="/static/images/nerdpic.png" rel="icon">
 	<link href="/static/images/logo.jpeg">
 	<link href="/static/mainstyles/styles.css" rel="stylesheet">
+	<link HREF="/static/minorstyles/sidebar.css" rel="stylesheet">
 	<link rel="stylesheet" href = "/static/minorstyles/autoComplete.css">
+	<script type="text/javascript" src="/static/scripts/sidebar.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.6/dist/autoComplete.min.js"></script>
 	<meta name="viewport" content="width=device-width" />
 	{% block head %}
@@ -31,70 +33,84 @@
         {% endfor %}
       {% endif %}
 {% endwith %}
-
-<nav>
-	<div>
-		<a href = "/homepage"><img id = "logo" src="/static/images/placeholder.png"></a>
-	</div>
-	<div id = "searchbar-box">
-		<form action = "/homepage" method = "POST" id = "searchform">
-			<div class = "autoComplete_wrapper">
-				<input  dir="ltr" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" name = "name" class = "form" type="text" id="autoComplete" placeholder = "Choose a Class!">
-				<input id = "submitsearch" type = "submit">
-			</div>
-				<script>
-					document.getElementById("autoComplete").addEventListener("keyup", function(event) {
-						if (event.keyCode === 13) {
-							document.getElementById("searchform").submit();
+<header class="header">
+	<!-- This is the sidebar -->
+	<nav>
+		<button class="menu-icon-btn" data-menu-icon-btn>
+			<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="menu-icon"><g ><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></g></svg>
+		</button>
+		<!-- logo -->
+		<div>
+			<a href = "/homepage"><img id = "logo" src="/static/images/placeholder.png"></a>
+		</div>
+		<!-- searchbox -->
+		<div id = "searchbar-box">
+			<form action = "/homepage" method = "POST" id = "searchform">
+				<div class = "autoComplete_wrapper">
+					<input  dir="ltr" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" name = "name" class = "form" type="text" id="autoComplete" placeholder = "Choose a Class!">
+					<input id = "submitsearch" type = "submit">
+				</div>
+					<script>
+						document.getElementById("autoComplete").addEventListener("keyup", function(event) {
+							if (event.keyCode === 13) {
+								document.getElementById("searchform").submit();
+							}
+						});
+						var courses = getData()
+						async function getData(){
+							const response = await fetch('/getcourses')
+							var courses = await response.json()
+							return courses
 						}
-					});
-					var courses = getData()
-					async function getData(){
-						const response = await fetch('/getcourses')
-						var courses = await response.json()
-						return courses
-					}
-					const autoCompleteJS = new autoComplete({
-						selector: "#autoComplete",
-						data: {
-							src: courses,
-							cache: true,
-						},
-						resultsList: {
-							element: (list, data) => {
-								if (!data.results.length) {
-									// Create "No Results" message element
-									const message = document.createElement("div");
-									// Add class to the created element
-									message.setAttribute("class", "no_result");
-									// Add message text content
-									message.innerHTML = `<span>Found No Results for "${data.query}"</span>`;
-									// Append message element to the results list
-									list.prepend(message);
-								}
+						const autoCompleteJS = new autoComplete({
+							selector: "#autoComplete",
+							data: {
+								src: courses,
+								cache: true,
 							},
-							noResults: true,
-						},
-						resultItem: {
-							highlight: true
-						},
-						events: {
-							input: {
-								selection: (event) => {
-									const selection = event.detail.selection.value;
-									autoCompleteJS.input.value = selection;
+							resultsList: {
+								element: (list, data) => {
+									if (!data.results.length) {
+										// Create "No Results" message element
+										const message = document.createElement("div");
+										// Add class to the created element
+										message.setAttribute("class", "no_result");
+										// Add message text content
+										message.innerHTML = `<span>Found No Results for "${data.query}"</span>`;
+										// Append message element to the results list
+										list.prepend(message);
+									}
+								},
+								noResults: true,
+							},
+							resultItem: {
+								highlight: true
+							},
+							events: {
+								input: {
+									selection: (event) => {
+										const selection = event.detail.selection.value;
+										autoCompleteJS.input.value = selection;
+									}
 								}
 							}
-						}
-					});
-				</script>
-		</form>
-	</div>
-	    {% block postbutton %}
-	    {% endblock %}
-	</div>
-</nav>
-<body>
+						});
+					</script>
+			</form>
+		</div>
+			{% block postbutton %}
+			{% endblock %}
+		</div>
+	</nav>
+</header>
+<div class="container">
+	<aside class="sidebar">
+		<div class="top-sidebar"></div>
+		<div class="middle-sidebar">Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni libero rerum hic incidunt iure ratione facere aut. Aspernatur voluptates, recusandae saepe molestiae voluptatibus aperiam possimus natus! A voluptatem ratione qui velit, doloribus aperiam, hic consequatur nesciunt tempore nam, inventore provident ipsum dolores modi quas commodi nisi officiis architecto placeat illo dolor pariatur. Voluptas eius soluta quis a odio maiores possimus, suscipit ullam eveniet facere illum molestiae quos doloremque aperiam nulla quas, iusto fugiat. Nostrum eos laudantium omnis iure libero iusto, dicta architecto. Tempora recusandae delectus numquam saepe voluptatum atque, blanditiis obcaecati aut ullam sequi adipisci illum facere culpa quas, accusamus quam magni nostrum fugiat similique labore cum placeat quia eius! Tempore similique neque exercitationem, dolores distinctio quas quod libero explicabo inventore id maxime facere rem commodi placeat eum debitis nam laudantium fuga facilis reprehenderit, rerum quia ut ea? Est qui maxime hic porro culpa corrupti modi distinctio, voluptate iusto ducimus obcaecati debitis, architecto iste dolorum sapiente facere? Delectus ipsam labore molestiae recusandae vel ab nemo vero doloremque, iste impedit. Neque quod quidem veniam perferendis enim necessitatibus, expedita nisi perspiciatis odit commodi eaque quo. Corporis necessitatibus pariatur repellendus numquam nemo, odit temporibus maxime, aut aliquid dolores atque itaque sequi molestias harum, fugit sunt. Fugiat aut inventore soluta quam laboriosam illo nihil quas eveniet dolore praesentium, asperiores consectetur officiis quo veritatis eum sunt incidunt voluptates laudantium error maxime nesciunt optio facilis vitae deleniti. Qui debitis esse magni ab architecto incidunt, consectetur tempore nisi tenetur animi aliquam eveniet commodi voluptatem fugiat a ad dolor sed maxime quia earum! Fuga, cumque ipsa odit voluptatem eaque maiores unde recusandae aliquam explicabo at. Cum consequuntur nemo, delectus, sunt commodi repudiandae quod ducimus illum harum veritatis consequatur quibusdam dolores vel architecto corporis tenetur, perspiciatis officia. Iure, esse. Nesciunt aspernatur maiores sed, impedit quis soluta magni ipsa excepturi quasi repudiandae eum. Veritatis atque eveniet ratione assumenda nesciunt. Ipsam praesentium expedita, ipsum libero animi eaque modi sint nemo error reiciendis? Unde recusandae aliquid culpa id, quisquam illo est, praesentium atque quos ratione quibusdam. Similique necessitatibus adipisci obcaecati voluptas voluptatibus ea veritatis? Possimus cum porro nobis reiciendis assumenda unde, sequi nisi atque. Amet pariatur cum illum ex accusantium culpa neque ut in ipsum nemo! Ullam enim voluptatibus fugit quisquam expedita, vero corporis, reiciendis tempora explicabo deserunt neque rerum deleniti placeat laboriosam! Aliquam aliquid temporibus consequuntur facere nihil earum eum obcaecati laborum quibusdam possimus sit reprehenderit, modi autem voluptatum debitis, exercitationem nam, ducimus necessitatibus id? Impedit, sapiente, eum tempore repudiandae blanditiis possimus aperiam nesciunt itaque atque, cupiditate voluptatum suscipit corporis ut at modi! Deleniti dolorum recusandae voluptatem dolore. Facere, non. Tempora, sit nisi fuga tempore itaque nobis! Perferendis, culpa voluptatum deserunt nulla esse atque odit harum ullam veritatis totam quis mollitia beatae id maiores eligendi doloribus dicta modi asperiores, omnis temporibus aperiam itaque nam. Voluptate quidem incidunt perspiciatis labore voluptatum porro at nisi minima architecto, blanditiis corporis harum nulla facilis assumenda quo soluta necessitatibus. Quis autem adipisci distinctio dolore impedit, dicta, repellendus ab quae quam vitae facilis amet. Amet iusto recusandae non id iure architecto, modi eius doloribus molestiae. Itaque expedita ut officia consectetur repellat placeat culpa numquam ipsa! Quidem dolores doloribus non laborum quis eos debitis qui nisi quos labore animi fugit tenetur, accusamus ducimus, sed, cum totam maiores numquam? Necessitatibus qui ipsum maxime consequuntur accusantium soluta dignissimos omnis quaerat unde sequi aliquid incidunt voluptate sunt, perferendis quia, maiores autem numquam, hic voluptatibus dolorum? Magnam, ratione totam? Aspernatur inventore esse, architecto voluptatum eligendi iure, facilis sed, autem perferendis impedit mollitia adipisci. Libero deleniti quae reprehenderit. Accusantium saepe labore delectus? Animi, porro nobis incidunt ducimus laboriosam optio deserunt. Delectus sint a praesentium. Deleniti provident vero enim neque blanditiis consectetur odio nobis labore at placeat quam cum tempore exercitationem iure asperiores reprehenderit hic sequi odit vel magnam eius, dolorem autem! Aut neque odit repudiandae beatae consequatur id rem, quibusdam quo officiis ipsum quas expedita deserunt voluptas perspiciatis recusandae consectetur a blanditiis vel? Totam excepturi enim atque inventore at aspernatur reiciendis dignissimos tempora doloremque. Dolorum omnis ad hic obcaecati molestias, culpa harum, corporis, commodi accusamus ducimus unde atque possimus esse iusto quia molestiae officiis distinctio expedita fugiat fugit. Praesentium laboriosam aliquam modi nobis enim voluptate harum necessitatibus aliquid numquam, eos ipsam vero, eius quibusdam distinctio magnam ipsa officia incidunt commodi quos voluptas repudiandae non placeat ducimus? Maiores, ullam omnis necessitatibus fugiat magnam incidunt nulla sit? Minus animi fuga blanditiis nostrum ipsa suscipit ipsum deserunt facilis, soluta, ex laborum iste itaque quidem sapiente laboriosam exercitationem. Veritatis porro architecto voluptatem vitae vero neque expedita autem, dolores culpa amet, incidunt mollitia sequi quia et voluptas nisi. Debitis, laboriosam nemo. Perspiciatis velit aliquam suscipit mollitia debitis sint dolorem soluta eos at sequi harum pariatur accusantium optio molestiae nostrum, quidem odio itaque labore tempore doloribus illo voluptatum cumque magni necessitatibus? Fuga sapiente magnam modi totam recusandae sunt molestias eligendi id dolor, non accusamus, atque voluptatum dignissimos nihil! Non molestiae blanditiis ad architecto ab necessitatibus eligendi cumque! Deserunt cumque aperiam neque architecto nihil. Culpa quidem ut asperiores odit architecto suscipit reprehenderit saepe. Dolore corporis nostrum assumenda alias quasi vero ducimus quisquam. Numquam perferendis quo sequi eum omnis, pariatur repudiandae temporibus neque facilis earum reiciendis eius nam officiis mollitia rerum accusamus, ut nesciunt qui quisquam voluptates placeat odio? Expedita harum reprehenderit quos? Animi sint amet et tempora doloremque eligendi quis, tenetur id soluta exercitationem ab corrupti esse voluptas voluptatum. Impedit accusantium nobis libero obcaecati culpa hic alias praesentium aperiam rem enim maxime quae atque rerum et animi tenetur numquam ipsam illum itaque, vel esse dicta minus amet dignissimos! Labore, illum expedita! Dolorem omnis esse nesciunt maiores. Laudantium accusantium nihil possimus in eligendi impedit atque tempora alias perspiciatis culpa et fugit vitae exercitationem ea eveniet, enim deserunt cum expedita eum. Voluptas libero fugiat in tempora saepe eaque exercitationem odio, at quibusdam earum vitae placeat, dicta aliquam minima inventore repellat cum voluptatibus ad ea aliquid. Quasi aspernatur, cum voluptates voluptate, nemo excepturi sunt iure quae sit eos dolor vitae, qui in autem eligendi ut ex temporibus reiciendis doloribus vel aliquid reprehenderit nesciunt?</div>
+		<div class="bottom-sidebar"></div>
+	</aside>
+	<main class="content">
+		<body>
 	<div class="body-div">
 		{% block heading %}
 		{% endblock %}
@@ -107,5 +123,7 @@
 	{% block resources %}
 	{% endblock %}
 </body>
+	</main>
+</div>
 
 
