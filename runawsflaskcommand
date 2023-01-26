@@ -1,0 +1,5 @@
+flask run -h 0.0.0.0 -p 8080
+
+Then fill the url bar with studyist
+click enter
+then open in new tabletake out the everything after static study

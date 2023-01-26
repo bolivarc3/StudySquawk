@@ -148,7 +148,7 @@ def index():
                 error = "invalid email address"
                 flash("username already has been used")
                 return redirect(url_for('index'))
-            db.execute('INSERT INTO "Users"(username, password, email) VALUES (?, ?, ?)',(username,password,email, ))
+            db.execute('INSERT INTO "Users"(username, password, email) VALUES (%s, %s, %s)',(username,password,email, ))
             db_conn.commit()
             db.close()
             db_conn.close()
