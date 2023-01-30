@@ -6,9 +6,9 @@ html, body {
 
 :root {
     --accent-color: #d7dadc;
-    --dark-gray: #1B212A;
-    --dark-blue-black: #161b22;
-    --background-color: #121212;
+    --light-gray: #161b22;
+    --medium-gray: #0d1117;
+    --background-color: #010409;
 }
 
 p{
@@ -33,7 +33,7 @@ nav{
     position: sticky;
     padding-left:1rem;
     padding: .5rem;
-    background-color: var(--dark-gray);
+    background-color: var(--light-gray);
     height:fit-content;
     top:0;
     display:flex;
@@ -93,7 +93,7 @@ input, select, textarea{
 .form:focus{
     font-family: 'Teko', sans-serif;
     font-size:17;
-    background-color: var(--dark-gray);
+    background-color: var(--light-gray);
     outline:none;
     border-color: white;
     border-radius: 2px;
@@ -229,7 +229,7 @@ ul#horizontal-list {
     margin-top: 5rem;
     width: 90%;
     height: fit-content;
-    background-color: var(--dark-blue-black);
+    background-color: var(--medium-gray);
     color:var(--accent-color);
     border:3px solid #2c2c2c;
     border-radius:5px;
@@ -259,7 +259,7 @@ ul#horizontal-list {
 
 /*tab bars*/
 #tabbar{
-    background-color: var(--dark-gray);
+    background-color: var(--light-gray);
     position: relative;
     height:fit-content;
     width:100%;
@@ -290,7 +290,7 @@ ul#horizontal-list {
 }
 
 #disabledtab{
-    background-color: var(--dark-gray);
+    background-color: var(--light-gray);
     border: 1px solid;
     border-color: #2C2C2C transparent transparent transparent;
 
@@ -319,7 +319,7 @@ hr.solid {
 
 #bodydiv{
     padding:1rem;
-    background-color: var(--dark-gray);
+    background-color: var(--light-gray);
 }
 #navbarinfo{
     white-space: nowrap;

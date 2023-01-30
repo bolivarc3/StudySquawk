@@ -11,12 +11,11 @@
 	<link href="/static/mainstyles/styles.css" rel="stylesheet">
 	<link HREF="/static/minorstyles/sidebar.css" rel="stylesheet">
 	<link rel="stylesheet" href = "/static/minorstyles/autoComplete.css">
-	<script type="text/javascript" src="/static/scripts/sidebar.js"></script>
+	<script src="/static/scripts/sidebar.js" defer></script>
 	<script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.6/dist/autoComplete.min.js"></script>
 	<meta name="viewport" content="width=device-width" />
 	{% block head %}
 	{% endblock %}
-
 </head>
 
 <title> {% block title %}Studyist {% endblock %}</title>
@@ -37,9 +36,9 @@
 
 <body>
 	<header class="header">
-	  <button class="menu-icon-btn" data-menu-icon-btn>
-		<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="menu-icon"><g ><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></g></svg>
-	  </button>
+		<button class="menu-icon-btn" data-menu-icon-btn>
+			<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="menu-icon"><g><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></g></svg>
+		</button>
 		<!-- logo -->
 		<div>
 			<a href = "/homepage"><img id = "logo" src="/static/images/placeholder.png"></a>
@@ -99,32 +98,107 @@
 					</script>
 			</form>
 		</div>
-			{% block postbutton %}
-			{% endblock %}
-		</div>
+		{% block postbutton %}
+		{% endblock %}
 	</header>
-		<div class="container">
-			<aside class="sidebar">
-				<div class="top-sidebar">
-					<a href="#" class="href"><img src="static/images/logo.png" alt="Channel Logo" class="src"></a>
-					<div>Web Dev Simplified</div>
-				</div>
-				<div class="middle-sidebar">
-					Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur fuga alias perferendis mollitia inventore, reprehenderit totam nemo. Saepe ea et natus! Porro omnis ab consectetur, velit corporis vero cupiditate ratione, tenetur et magnam, ea ullam. Accusantium ipsa sed error velit rem iste quo suscipit quia sit voluptates sapiente, veritatis, alias repudiandae itaque dolores deserunt molestias incidunt quis, non saepe vel odit voluptas exercitationem minus. Vero voluptatum eum saepe ipsa deleniti nulla velit adipisci tempore, perspiciatis culpa facilis. Aliquam alias veniam quis, quibusdam et reiciendis omnis fuga rerum inventore doloremque illum eius. Esse, nesciunt. Deserunt vero enim nisi facilis cumque iste sint eligendi! Pariatur soluta rerum, magnam exercitationem harum molestias asperiores, commodi similique fugit architecto unde molestiae omnis? Omnis libero quos in ad ea veniam earum suscipit, odio voluptatem voluptatibus, ratione facere aspernatur. Labore sunt molestiae animi id! Tempora quibusdam alias corrupti mollitia ut dolores odio a nesciunt, exercitationem nostrum. Fuga, eius! Nihil, placeat vitae autem perferendis accusantium perspiciatis laboriosam! Illo, veniam aperiam! Pariatur deleniti veniam expedita tempore aliquid sequi unde non ex ab explicabo atque fugiat earum ullam, sint qui cumque adipisci quis error eligendi quae harum quaerat debitis. Est, facilis at nemo iusto natus quaerat incidunt deleniti excepturi nam, placeat maxime eos enim minima quis et doloribus non, praesentium voluptas repellendus magni. Recusandae molestias sequi nostrum unde, qui fugiat voluptas in minus similique magnam doloremque beatae vitae hic assumenda officiis quas ex quam doloribus nam quia maxime excepturi accusantium odit quaerat! Quibusdam nobis blanditiis mollitia quas repellat laborum vel minus ipsa? Vel est cumque dicta doloribus, commodi inventore ad repellendus enim deserunt rem eum nisi iste in, suscipit, cum quibusdam tenetur numquam ut! Consequatur, dolorum. Aperiam vitae id eligendi a mollitia, assumenda laborum aut tempora adipisci omnis! Et veritatis beatae quidem iusto! Dolor eaque, ducimus dicta velit est vel amet vitae ea? Ex blanditiis minus temporibus praesentium illum deserunt nulla magnam excepturi? Ea voluptatibus soluta omnis fugit, perspiciatis odit pariatur, iusto optio quis praesentium facere sed ipsum. Esse delectus quod debitis quo harum dolorem minus repudiandae voluptatibus adipisci! Quis nobis saepe neque eius commodi inventore ad animi? Veniam neque eaque placeat repellendus eum aperiam, inventore deserunt hic iure blanditiis, sequi repellat architecto mollitia praesentium animi nostrum sint asperiores officiis molestiae totam quia. Tempore voluptatem, maxime accusantium dolore quod rerum consectetur ullam soluta quisquam dicta ad cupiditate earum nemo in animi harum ea fugit eos aperiam expedita pariatur quis error voluptates. Qui eveniet quisquam odio et! Voluptatum tenetur id fugit esse officiis. Cupiditate eaque facere nemo perspiciatis ea, minima odit totam omnis assumenda dicta dolores magni consequatur sint vero, voluptates doloremque. Reiciendis dolore possimus rem cupiditate consequuntur! Commodi iste, sapiente officia consectetur aliquam facere nam omnis odit aperiam ea, aut cumque dicta quasi delectus eos ab fuga eius obcaecati alias nihil labore? Molestiae exercitationem possimus neque alias facere, libero, blanditiis veritatis ullam suscipit quis perferendis cum quae ab incidunt magni qui minus nobis! Debitis quo omnis libero! Provident doloremque recusandae, iste voluptas debitis eum veniam minus, ullam quas harum eveniet nihil saepe. In corporis laborum suscipit repellendus nihil, ut velit id commodi autem, nam numquam culpa quaerat tempora veritatis vel libero quo animi reiciendis? Eaque culpa magnam odit ratione, necessitatibus itaque quas fugit fuga veritatis maiores optio dignissimos temporibus aliquid iure. Excepturi esse corrupti aut obcaecati? Quo, illum perferendis. Vel, non in? Eius, ab pariatur. In impedit ratione, dignissimos atque veniam ipsa voluptates molestiae eveniet possimus voluptatum officia tempore quidem modi accusamus inventore ullam temporibus quam, hic at deserunt delectus. Quos, qui sunt? Culpa nemo tenetur fugiat eum maiores iusto, distinctio officiis, incidunt asperiores quod dolorem, repellat esse sapiente dolor beatae alias totam consequatur excepturi sit exercitationem quia ipsa quasi! Veritatis unde eos dolorem iste officia, magnam necessitatibus provident nihil commodi beatae error a magni nobis rerum ab minus sapiente facilis harum quam animi dolores laboriosam neque ad tempore. Est ratione obcaecati necessitatibus nesciunt atque sit delectus veniam omnis alias, veritatis aliquam. Architecto voluptatem, aliquam dignissimos et eum recusandae autem. Dolores ipsa quis, odit in laboriosam obcaecati voluptatum numquam perspiciatis iure! Consequuntur necessitatibus facere esse quae aut commodi eligendi fuga explicabo, neque culpa deleniti eius itaque nesciunt animi recusandae cumque et ducimus iure nam quibusdam in! Dolorem quas fugit architecto numquam accusamus voluptas. Earum, tempora maxime ea quaerat eum perferendis placeat repellendus tempore quo optio odio. Esse nisi aliquam ad. Tempore, asperiores, ipsum amet illum earum laboriosam excepturi quasi ipsam nisi consequuntur similique dolorum harum dolorem exercitationem veritatis! Ex sit architecto, a repellat nemo adipisci aliquid voluptatum asperiores saepe, vero molestias eaque beatae quibusdam possimus culpa illum ab veritatis. Fugiat necessitatibus optio excepturi adipisci nihil, veritatis tempore doloribus maiores fugit iure perspiciatis. Illum cum quo incidunt iure dolor veniam sequi, ratione molestias illo unde ipsa, corporis fuga, similique perferendis perspiciatis quia ex sit voluptatum quod placeat ducimus voluptatibus officiis? Delectus corrupti aliquam voluptas illum molestias! Placeat eos voluptatem ipsum dolore quidem minus animi consequatur earum at mollitia sint maxime nisi accusantium reiciendis rem cumque explicabo illo officiis, ipsam iste doloremque? Fuga possimus voluptatem error? Quibusdam nostrum similique optio consectetur rerum, unde, molestias tempora magni quisquam reiciendis ratione nulla aliquid porro, iste nisi quia? Sequi temporibus error similique ipsam eum expedita recusandae at illo magnam, voluptatum, excepturi laudantium nulla commodi earum distinctio quas et aliquid eligendi facilis, esse harum quos quam fugit. Totam esse, debitis tempora facilis veniam ullam accusamus necessitatibus quaerat alias cum modi quibusdam iusto, deserunt rem assumenda. Pariatur, placeat commodi cumque accusantium ducimus ad autem assumenda laboriosam minus incidunt soluta at earum voluptates explicabo ex labore doloremque dolore blanditiis amet vitae maxime nobis ea maiores! Adipisci provident iusto repudiandae sit laudantium suscipit rerum illo neque atque numquam qui, placeat vero. Dolor tenetur, a porro amet, in iste expedita officia quaerat neque velit voluptas eligendi minima! Mollitia impedit consectetur molestias quidem accusamus itaque! Perspiciatis laudantium culpa, fugit necessitatibus et voluptatibus quo? Dolorum corporis consequuntur incidunt laudantium suscipit, eligendi, voluptatum impedit harum unde magni deleniti sint cum adipisci deserunt? Qui assumenda odit beatae exercitationem eos voluptatum debitis pariatur blanditiis adipisci.
-				</div>
-				<div class="bottom-sidebar">
-				</div>
+	<div class="container">
+		<aside class="sidebar" data-sidebar>
+			<div class="top-sidebar">
+				<a href="#" class="channel-logo"><img src="/static/images/nerdpic.png" alt="Channel Logo"></a>
+				<div class="hidden-sidebar your-channel">Your channel</div>
+				<div class="hidden-sidebar channel-name">Web Dev Simplified</div>
+			</div>
+			<div class="middle-sidebar">
+				<ul class="sidebar-list">
+				<li class="sidebar-list-item active">
+					<a href="#" class="sidebar-link">
+					<svg class="sidebar-icon" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" ><g ><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></g></svg>
+					<div class="hidden-sidebar">Dashboard</div>
+					</a>
+				</li>
+				<li class="sidebar-list-item">
+					<a href="#" class="sidebar-link">
+					<svg viewBox="0 0 24 24" class="sidebar-icon" preserveAspectRatio="xMidYMid meet" focusable="false"><g><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z"></path></g></svg>
+					<div class="hidden-sidebar">Content</div>
+					</a>
+				</li>
+				<li class="sidebar-list-item">
+					<a href="#" class="sidebar-link">
+					<svg class="sidebar-icon" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" ><g><path d="M19 9H2v2h17V9zm0-4H2v2h17V5zM2 15h13v-2H2v2zm15-2v6l5-3-5-3z"></path></g></svg>
+					<div class="hidden-sidebar">Playlists</div>
+					</a>
+				</li>
+				<li class="sidebar-list-item">
+					<a href="#" class="sidebar-link">
+					<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="sidebar-icon"><g><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"></path></g></svg>
+					<div class="hidden-sidebar">Analytics</div>
+					</a>
+				</li>
+				<li class="sidebar-list-item">
+					<a href="#" class="sidebar-link">
+					<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="sidebar-icon"><g><path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></g></svg>
+					<div class="hidden-sidebar">Comments</div>
+					</a>
+				</li>
+				<li class="sidebar-list-item">
+					<a href="#" class="sidebar-link">
+					<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="sidebar-icon"><g><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM4 12h4v2H4v-2zm10 6H4v-2h10v2zm6 0h-4v-2h4v2zm0-4H10v-2h10v2z"></path></g></svg>
+					<div class="hidden-sidebar">Subtitles</div>
+					</a>
+				</li>
+				<li class="sidebar-list-item">
+					<a href="#" class="sidebar-link">
+					<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="sidebar-icon"><g><path d="M10.08 10.86c.05-.33.16-.62.3-.87s.34-.46.59-.62c.24-.15.54-.22.91-.23.23.01.44.05.63.13.2.09.38.21.52.36s.25.33.34.53.13.42.14.64h1.79c-.02-.47-.11-.9-.28-1.29s-.4-.73-.7-1.01-.66-.5-1.08-.66-.88-.23-1.39-.23c-.65 0-1.22.11-1.7.34s-.88.53-1.2.92-.56.84-.71 1.36S8 11.29 8 11.87v.27c0 .58.08 1.12.23 1.64s.39.97.71 1.35.72.69 1.2.91 1.05.34 1.7.34c.47 0 .91-.08 1.32-.23s.77-.36 1.08-.63.56-.58.74-.94.29-.74.3-1.15h-1.79c-.01.21-.06.4-.15.58s-.21.33-.36.46-.32.23-.52.3c-.19.07-.39.09-.6.1-.36-.01-.66-.08-.89-.23-.25-.16-.45-.37-.59-.62s-.25-.55-.3-.88-.08-.67-.08-1v-.27c0-.35.03-.68.08-1.01zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path></g></svg>
+					<div class="hidden-sidebar">Copyright</div>
+					</a>
+				</li>
+				<li class="sidebar-list-item">
+					<a href="#" class="sidebar-link">
+					<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="sidebar-icon"><g><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"></path></g></svg>
+					<div class="hidden-sidebar">Monetization</div>
+					</a>
+				</li>
+				<li class="sidebar-list-item">
+					<a href="#" class="sidebar-link">
+					<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="sidebar-icon"><g><path d="M0 0h24v24H0z" fill="none"></path><path d="M7.5 5.6L10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29c-.39-.39-1.02-.39-1.41 0L1.29 18.96c-.39.39-.39 1.02 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05c.39-.39.39-1.02 0-1.41l-2.33-2.35zm-1.03 5.49l-2.12-2.12 2.44-2.44 2.12 2.12-2.44 2.44z"></path></g></svg>
+					<div class="hidden-sidebar">Customization</div>
+					</a>
+				</li>
+				<li class="sidebar-list-item">
+					<a href="#" class="sidebar-link">
+					<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="sidebar-icon"><g><path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 5h-3v5.5c0 1.38-1.12 2.5-2.5 2.5S10 13.88 10 12.5s1.12-2.5 2.5-2.5c.57 0 1.08.19 1.5.51V5h4v2zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6z"></path></g></svg>
+					<div class="hidden-sidebar">Audio Library</div>
+					</a>
+				</li>
+				</ul>
+			</div>
+			<div class="bottom-sidebar">
+				<ul class="sidebar-list">
+				<li class="sidebar-list-item">
+					<a href="#" class="sidebar-link">
+					<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="sidebar-icon"><g><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path></g></svg>
+					<div class="hidden-sidebar">Settings</div>
+					</a>
+				</li>
+				<li class="sidebar-list-item">
+					<a href="#" class="sidebar-link">
+					<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="sidebar-icon"><g><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"></path></g></svg>
+					<div class="hidden-sidebar">Send Feedback</div>
+					</a>
+				</li>
+				</ul>
+			</div>
 			</aside>
-			<main class="content">		
-				{% block heading %}
-				{% endblock %}
-				{% block body %}
-				{% endblock %}
+		<main class="content">
+			{% block heading %}
+			{% endblock %}
+			{% block body %}
+			{% endblock %}
 
-				{% block reply %}
-				{% endblock %}
-				{% block resources %}
-				{% endblock %}
-			</main>
-		</div>
+			{% block reply %}
+			{% endblock %}
+			{% block resources %}
+			{% endblock %}		
+		</main>
+	</div>
 </body>
