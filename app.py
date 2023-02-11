@@ -45,7 +45,7 @@ if ENV == 'dev':
     BUCKET_NAME='studyist-dev'
 else:
     conn = psycopg2.connect(
-        host=os.environ.get('RDS_PORT'),
+        host=os.environ.get('RDS_HOSTNAME'),
         database=os.environ.get('RDS_DB_NAME'),
         user=os.environ.get('RDS_USERNAME'),
         password= os.environ.get('RDS_PASSWORD')
