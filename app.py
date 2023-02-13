@@ -23,7 +23,7 @@ s3 = boto3.client('s3',
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 load_dotenv()
-# app.config.from_pyfile('settings.py')
+# change
 #s3
 
 ENV = os.environ.get('APPLICATION_ENV')
