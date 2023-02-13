@@ -1,13 +1,17 @@
 html, body {
   margin: 0;
   padding: 0;
-  background-color: var(--dark-blue-black);
+  background-color: var(--background-color);
 }
 
 :root {
     --accent-color: #d7dadc;
-    --dark-gray: #1B212A;
-    --dark-blue-black: #161b22;
+    --light-gray: #161b22;
+    --medium-gray: #0d1117;
+    --background-color: #010409;
+    --header-height:96px;
+    --animation-duration: 200ms;
+    --animation-timing-curve: ease-in-out;
 }
 
 p{
@@ -32,12 +36,12 @@ nav{
     position: sticky;
     padding-left:1rem;
     padding: .5rem;
-    background-color: var(--dark-gray);
+    background-color: var(--light-gray);
     height:fit-content;
     top:0;
     display:flex;
     margin:auto;
-    box-shadow: 0px 5px 5px 0px var(--dark-blue-black);
+    /* box-shadow: 0px 5px 5px 0px var(--dark-blue-black); */
 }
 
 nav li{
@@ -92,7 +96,7 @@ input, select, textarea{
 .form:focus{
     font-family: 'Teko', sans-serif;
     font-size:17;
-    background-color: var(--dark-gray);
+    background-color: var(--light-gray);
     outline:none;
     border-color: white;
     border-radius: 2px;
@@ -228,7 +232,7 @@ ul#horizontal-list {
     margin-top: 5rem;
     width: 90%;
     height: fit-content;
-    background-color: #121212;
+    background-color: var(--medium-gray);
     color:var(--accent-color);
     border:3px solid #2c2c2c;
     border-radius:5px;
@@ -258,7 +262,7 @@ ul#horizontal-list {
 
 /*tab bars*/
 #tabbar{
-    background-color: var(--dark-gray);
+    background-color: var(--light-gray);
     position: relative;
     height:fit-content;
     width:100%;
@@ -289,7 +293,7 @@ ul#horizontal-list {
 }
 
 #disabledtab{
-    background-color: var(--dark-gray);
+    background-color: var(--light-gray);
     border: 1px solid;
     border-color: #2C2C2C transparent transparent transparent;
 
@@ -318,7 +322,7 @@ hr.solid {
 
 #bodydiv{
     padding:1rem;
-    background-color: var(--dark-gray);
+    background-color: var(--light-gray);
 }
 #navbarinfo{
     white-space: nowrap;
@@ -338,6 +342,14 @@ hr.solid {
     height:30px;
 }
 
+main{
+    margin-left: auto;
+    flex-grow: 1;
+}
+.main-spacer{
+    visibility: hidden;
+    margin:auto;
+}
 @media only screen and (max-width: 600px){
     .show-mobile{
         display: block;

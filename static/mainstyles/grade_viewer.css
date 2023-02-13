@@ -1,0 +1,13 @@
+.courses_summaries_div{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.course_summary_div{
+    width:fit-content;
+    justify-content: space-evenly;
+    background-color: blue;
+    border-radius: 1rem;
+    padding: 1rem;
+}

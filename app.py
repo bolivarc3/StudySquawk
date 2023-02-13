@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import requests
 import json
 import stat
 import os
@@ -44,13 +45,14 @@ if ENV == 'dev':
     BUCKET_NAME='studyist-dev'
 else:
     conn = psycopg2.connect(
-        host=os.environ.get('RDS_PORT'),
+        host=os.environ.get('RDS_HOSTNAME'),
         database=os.environ.get('RDS_DB_NAME'),
         user=os.environ.get('RDS_USERNAME'),
         password= os.environ.get('RDS_PASSWORD')
     )
     cursor = conn.cursor()
-    BUCKET_NAME='studyist'
+    #needs to be changed to studyist
+    BUCKET_NAME='studyist-dev'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@{}:{}/{}'.format(
         os.environ.get('RDS_USERNAME'),
         os.environ.get('RDS_PASSWORD'),
@@ -549,6 +551,32 @@ def resources(route):
         aws_resource_list.append(material_info_data)
     #grab the materials
     return render_template("resources.html",BUCKET_NAME= BUCKET_NAME,aws_resource_list = aws_resource_list, currentfolderrouteurl = currentfolderrouteurl, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route,)
+
+@app.route('/grade_viewer', methods=["GET","POST"])
+def grade_viewer():
+    username = "bolivarc@bentonvillek12.org"
+    password = "Simon$2290"
+
+    #grab information for grades
+    grades_response = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades/" + username + "/" + password + "/")
+
+    #converts output to a json format(dictionary)
+    grades_data = grades_response.json()
+
+    #grabs data from dictionary
+    class_names = grades_data['class_names']
+    #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
+    grade_average = grades_data['grade_summary']
+    assignment_grades = grades_data['assignment_grades']
+
+    print(assignment_grades[class_names[0]][0])
+    course_names = list(assignment_grades.keys())
+    print(keys)
+    for course in course_names:
+        assignment_grades[course]
+
+    # for i in range()
+    return render_template("grade_viewer.html", class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades)
 
 
 @app.route('/getcourses', methods=["GET", "POST"])
