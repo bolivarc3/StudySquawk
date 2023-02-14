@@ -10,7 +10,6 @@ import stat
 import os
 import sqlite3
 import boto3
-import botocore
 from dotenv import load_dotenv
 import psycopg2
 
