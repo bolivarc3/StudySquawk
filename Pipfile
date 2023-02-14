@@ -34,6 +34,8 @@ pip = "*"
 psycopg2-binary = "*"
 install = "*"
 python-dotenv = "*"
+awscli = "*"
+botocore = "*"
 
 [dev-packages]
 
