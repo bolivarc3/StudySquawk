@@ -36,6 +36,7 @@ install = "*"
 python-dotenv = "*"
 awscli = "*"
 botocore = "*"
+gunicorn = "*"
 
 [dev-packages]
 
