@@ -5,6 +5,7 @@ from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import requests
+import botocore
 import json
 import stat
 import os
