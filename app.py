@@ -212,7 +212,8 @@ def studyist():
         #return object looking like <posts> which is an object
         #index into it and . insert what you are looking for
         course = "homepage"
-        return render_template("homepage.html", course = course, courses = courses,postings = postings)
+        page_identifier = "homepage"
+        return render_template("homepage.html", page_identifier = page_identifier, course = course, courses = courses,postings = postings)
 
 
 @app.route('/<course>', methods=["GET", "POST"])
@@ -567,17 +568,17 @@ def grade_viewer():
     #grabs data from dictionary
     class_names = grades_data['class_names']
     #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
-    grade_average = grades_data['grade_summary']
+    grade_summary = grades_data['grade_summary']
     assignment_grades = grades_data['assignment_grades']
 
     print(assignment_grades[class_names[0]][0])
     course_names = list(assignment_grades.keys())
-    print(keys)
     for course in course_names:
         assignment_grades[course]
-
+    
+    page_identifier = "grade_viewer"
     # for i in range()
-    return render_template("grade_viewer.html", class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades)
+    return render_template("grade_viewer.html", page_identifier=page_identifier, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades)
 
 
 @app.route('/getcourses', methods=["GET", "POST"])
