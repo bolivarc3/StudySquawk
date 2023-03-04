@@ -11,9 +11,26 @@
         {% for key, value in grade_summary.items() %}
             <div class="course_summary_div">
                 <h2>
-                    Key: {{key}}
+                    {{key}}
                 </h2>
-                Value: {{value[0]}}
+                <h4>
+                    {{value[0][0]}}
+                </h4>
+                <h4>
+                    {{value[0][1]}}
+                </h4>
+                <h4>
+                    {{value[0][3]}}
+                </h4>
+                <h4>
+                    {{value[0][4]}}
+                </h4>
+                <h4>
+                    {{value[0][5]}}
+                </h4>
+                <h4>
+                    {{value[0][6]}}
+                </h4>
             </div>
         {% endfor %}
     </div>
