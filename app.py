@@ -191,7 +191,7 @@ def index():
 @app.route("/homepage", methods=["GET", "POST"])
 @login_required
 def studyist():
-
+    page_identifier = "homepage"
     courses = grabclasses()
     if request.method == "POST":
         #looks in the classes db to find all of the classes
@@ -218,6 +218,7 @@ def studyist():
 
 @app.route('/<course>', methods=["GET", "POST"])
 def course(course):
+    page_identifier = course
 
     #grabs the classes and checks if class is a class in db
     courses = grabclasses()
@@ -293,7 +294,7 @@ def course(course):
     db_conn = db_info[1]
     db.execute('SELECT * FROM "posts" WHERE course=%s ORDER BY date DESC, time DESC',(course,))
     postings = db.fetchall()
-    return render_template("coursemain.html", course = course, courses = courses, postings = postings)
+    return render_template("coursemain.html", page_identifier=page_identifier, course = course, courses = courses, postings = postings)
 
 
 @app.route('/<course>/postcreation', methods=["GET", "POST"])
@@ -304,7 +305,7 @@ def post(course):
 
 @app.route('/<course>/post/<postid>', methods=["GET", "POST"])
 def viewpost(course, postid):
-
+    page_identifier = course
     postid = int(postid)
 
     if request.method == "POST":
@@ -361,7 +362,7 @@ def viewpost(course, postid):
             db.close()
             db_conn.close()
 
-        return redirect(url_for('viewpost', course = course, postid = postid))
+        return redirect(url_for('viewpost', page_identifier = page_identifier, course = course, postid = postid))
 
 
     #grab all of the courses
@@ -552,7 +553,8 @@ def resources(route):
             count+=1
         aws_resource_list.append(material_info_data)
     #grab the materials
-    return render_template("resources.html",BUCKET_NAME= BUCKET_NAME,aws_resource_list = aws_resource_list, currentfolderrouteurl = currentfolderrouteurl, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route,)
+    page_identifier=course
+    return render_template("resources.html",BUCKET_NAME= BUCKET_NAME,aws_resource_list = aws_resource_list, currentfolderrouteurl = currentfolderrouteurl, page_identifier = page_identifier, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route,)
 
 @app.route('/grade_viewer', methods=["GET","POST"])
 def grade_viewer():
@@ -570,16 +572,14 @@ def grade_viewer():
     #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
     grade_summary = grades_data['grade_summary']
     assignment_grades = grades_data['assignment_grades']
+    iterate = [1,2,3,4,5]
 
     print(assignment_grades[class_names[0]][0])
-    course_names = list(assignment_grades.keys())
-    for course in course_names:
-        assignment_grades[course]
     
-    page_identifier = "grade_viewer"
+    course="homepage"
+    page_identifier="grade_viewer"
     # for i in range()
-    return render_template("grade_viewer.html", page_identifier=page_identifier, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades)
-
+    return render_template("grade_viewer.html", course=course, page_identifier=page_identifier, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades, iterate=iterate)
 
 @app.route('/getcourses', methods=["GET", "POST"])
 def getcoursesapi():

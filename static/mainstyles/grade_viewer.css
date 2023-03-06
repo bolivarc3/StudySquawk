@@ -2,12 +2,51 @@
     display: flex;
     flex-wrap: wrap;
     width: 100%;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
 .course_summary_div{
-    width:fit-content;
+    text-align: center;
+    margin:1rem;
+    height: fit-content;
+    width:20%;
+    height: calc(100% - var(--header-height));
     justify-content: space-evenly;
-    background-color: blue;
+    background-color: #5271FF;
     border-radius: 1rem;
-    padding: 1rem;
+    padding: .5rem;
+    color: white;
+}
+
+.course_summary_div h2{
+    font-size: 1.75rem;
+}
+
+.course_info_div{
+    color:black;
+    text-align: start;
+}
+
+.course_info_div h4{
+    font-size: 1rem;
+}
+
+.grade_text{
+    font-size: 1.35rem!important;
+}
+
+.assignment_grades div{
+    border-radius: 1rem;
+    padding: .25rem  .35rem .25rem .35rem;
+    width: fit-content;
+    height: fit-content;
+    background-color: black;
+    color: white;
+}
+
+@media only screen and (max-width: 600px){
+    .course_summary_div{
+        width: 100%;
+    }
 }
