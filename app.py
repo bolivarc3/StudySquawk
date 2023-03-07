@@ -16,14 +16,13 @@ import psycopg2
 
 #change
 app = Flask(__name__)
-
+load_dotenv()
 s3 = boto3.client('s3',
     aws_access_key_id = os.environ.get('AWS_S3_ACCESS_KEY'),
     aws_secret_access_key = os.environ.get('AWS_S3_SECRET_ACCESS_KEY'),
         )
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-load_dotenv()
 # change
 #s3
 

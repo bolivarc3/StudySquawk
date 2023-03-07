@@ -37,6 +37,7 @@ python-dotenv = "*"
 awscli = "*"
 botocore = "*"
 gunicorn = "*"
+psycopg2 = "*"
 
 [dev-packages]
 
