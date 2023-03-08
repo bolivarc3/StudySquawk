@@ -6,6 +6,8 @@ class Users(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    gradeappusername=db.Column(db.String(120), unique=True, nullable=False)
+    gradeapppassword=db.Column(db.String(120), unique=True, nullable=False)
 
     def verify_password(self, password):
         pwhash = bcrypt.hashpw(password, self.password)
@@ -15,6 +17,8 @@ class Users(db.Model):
         self.username = username
         self.password = password
         self.email = email
+        self.gradeappusername = gradeappusername
+        self.gradeapppassword = gradeapppassword
 
 #models for postings
 class posts(db.Model):

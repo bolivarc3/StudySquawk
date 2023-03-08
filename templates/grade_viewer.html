@@ -9,6 +9,7 @@
 {% block body %}
     <div class="courses_summaries_div">
         {% for key, value in grade_summary.items() %}
+        <a href="/grade_viewer/{{key}}" style="display: contents;">
             <div class="course_summary_div">
                 <h2>
                     {{key}}
@@ -33,6 +34,7 @@
                     </div>
                 </div>
             </div>
+        </a>
         {% endfor %}
     </div>
 {% endblock %}
