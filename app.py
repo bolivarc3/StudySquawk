@@ -596,12 +596,20 @@ def grade_viewer():
 @app.route('/grade_viewer_signup', methods=["GET","POST"])
 def grade_viewer_signup():
     return render_template("grade_viewer_signup.html")
-@app.route('/grade_viewer/<course>', methods=["GET","POST"])
-def grade_viewer_course():
-    username = "bolivarc@bentonvillek12.org"
-    password = "Simon$2290"
 
-    grades_response = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades/" + username + "/" + password + "/")
+@app.route('/grade_viewer/<selectedcourse>', methods=["GET","POST"])
+def grade_viewer_course(selectedcourse):
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    username = session["user_id"]
+    db.execute('SELECT * FROM "Users" WHERE username = %s', (username, ))
+    user_info = db.fetchone()
+    grade_viewer_username = user_info[4]
+    grade_viewer_password = user_info[5]
+    db.close()
+    db_conn.close()
+    grades_response = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades/" + grade_viewer_username + "/" + grade_viewer_password + "/")
 
     #converts output to a json format(dictionary)
     grades_data = grades_response.json()
@@ -609,15 +617,16 @@ def grade_viewer_course():
     #grabs data from dictionary
     class_names = grades_data['class_names']
     #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
-    grade_summary = grades_data['grade_summary']
-    assignment_grades = grades_data['assignment_grades']
-    iterate = [1,2,3,4,5]
+    grade_summary = grades_data['grade_summary'][selectedcourse]
+    assignment_grades = grades_data['assignment_grades'][selectedcourse]
+    print(grade_summary)
+    print(assignment_grades)
 
     
     course="homepage"
     page_identifier="grade_viewer"
     # for i in range()
-    return render_template("grade_viewer.html", course=course, page_identifier=page_identifier, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades, iterate=iterate)
+    return render_template("grade_viewer_selected_course.html", course=course, page_identifier=page_identifier, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades)
 
 
 

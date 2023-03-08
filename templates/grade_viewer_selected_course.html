@@ -1,0 +1,50 @@
+{% extends "layout.html"%}
+{% block head %}
+<head>
+    <link href="/static/mainstyles/grade_viewer_selected_course.css" rel="stylesheet">
+</head>
+{% endblock %}
+{% block body %}
+<div class ="table_grade_div">
+    <table>
+        <tr class="table_headers">
+            <div>
+                <th>Date Assigned</th>
+            </div>
+            <div>
+                <th>Date Due</th>
+            </div>
+            <div>
+                <th>Assignment</th>
+            </div>
+            <div>
+                <th>Category</th>
+            </div>
+            <div>
+                <th>Weight</th>
+            </div>
+            <div>
+                <th>Score</th>
+            </div>
+            <div>
+                <th>Total Points</th>
+            </div>
+            <div>
+                <th>Percentage</th>
+            </div>
+        </tr>
+        {% for assignment in assignment_grades %}
+            <tr>
+                <td>{{assignment[0]}}</td>
+                <td>{{assignment[1]}}</td>
+                <td>{{assignment[2]}}</td>
+                <td>{{assignment[3]}}</td>
+                <td>{{assignment[6]}}</td>
+                <td>{{assignment[4]}}</td>
+                <td>{{assignment[5]}}</td>
+                <td>{{assignment[9]}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
