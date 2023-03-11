@@ -2,49 +2,58 @@
 {% block head %}
 <head>
     <link href="/static/mainstyles/grade_viewer_selected_course.css" rel="stylesheet">
+    <link href="/static/mainstyles/coursemain.css">
+    <script type = "text/javascript" src = "/static/scripts/grade_viewer_class.js"></script>
 </head>
 {% endblock %}
 {% block body %}
+<div class="action_bar">
+    <button>
+        Mode:<span>Viewer</span>
+    </button>
+    <button class="edit_mode_button">
+        Edit Grade
+    </button>
+</div>
 <div class ="table_grade_div">
     <table>
-        <tr class="table_headers">
-            <div>
-                <th>Date Assigned</th>
-            </div>
-            <div>
-                <th>Date Due</th>
-            </div>
-            <div>
-                <th>Assignment</th>
-            </div>
-            <div>
-                <th>Category</th>
-            </div>
-            <div>
-                <th>Weight</th>
-            </div>
-            <div>
-                <th>Score</th>
-            </div>
-            <div>
-                <th>Total Points</th>
-            </div>
-            <div>
-                <th>Percentage</th>
-            </div>
+        <tr cellspacing ="10" class="table_headers">
+            <th><div>Date Assigned</div></th>
+            <th><div>Date Due</div></th>
+            <th><div>Assignment</div></th>
+            <th><div>Category</div></th>
+            <th><div>Weight</div></th>
+            <th><div>Score</div></th>
+            <th><div>Total Points</div></th>
+            <th><div>Percentage</div></th>
+        </tr>
+        <tr class="spaceUnder">
+            <td></td>
+            <td></td>
         </tr>
         {% for assignment in assignment_grades %}
-            <tr>
-                <td>{{assignment[0]}}</td>
-                <td>{{assignment[1]}}</td>
-                <td>{{assignment[2]}}</td>
-                <td>{{assignment[3]}}</td>
-                <td>{{assignment[6]}}</td>
-                <td>{{assignment[4]}}</td>
-                <td>{{assignment[5]}}</td>
-                <td>{{assignment[9]}}</td>
+            <tr class="grade_assignment_data_row">
+                <td class="grade_assignment_data">{{assignment[0]}}</td>
+                <td class="grade_assignment_data">{{assignment[1]}}</td>
+                <td class="grade_assignment_data">{{assignment[2]}}</td>
+                <td class="grade_assignment_data">{{assignment[3]}}</td>
+                <td class="grade_assignment_data">{{assignment[6]}}</td>
+                <td class="grade_assignment_data">{{assignment[4]}}</td>
+                <td class="grade_assignment_data">{{assignment[5]}}</td>
+                <td class="grade_assignment_data">{{assignment[9]}}</td>
             </tr>
         {% endfor %}
     </table>
+</div>
+<div>
+    <h1>
+        Grade Average
+    </h1>
+    <h2 class="grade_average">
+
+    </h2>
+</div>
+<div>
+
 </div>
 {% endblock %}
