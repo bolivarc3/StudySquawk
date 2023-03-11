@@ -5,6 +5,35 @@ document.addEventListener("DOMContentLoaded", function() {
     var edit_button = document.getElementsByClassName("edit_mode_button")[0]
     edit_button.addEventListener('click', edit_mode)
 
+    var add_row_button = document.getElementsByClassName("add_row")[0]
+    add_row_button.addEventListener('click', function(){
+        const table = document.querySelector('.Grade_Data_Table_Body')
+        const newrow = document.createElement('tr')
+        newrow.className = "grade_assignment_data_row"
+
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+        date_text = mm +"/" + dd + "/" + yyyy
+        cell_default_text = [date_text, "", "Test Assignment", "Test", "1.00", "0.00", "0.00", "%100"]
+        for(datacell = 0; datacell < 8; datacell++){
+            const cell = document.createElement('td')
+            cell.addEventListener('input', function(event) {
+                // Get the target element that triggered the event
+                const target_item = event.target
+    
+                //When changed, it changes the color and recalculates the grade
+                target_item.style.backgroundColor = '#B51515'
+                grade_average_calculator()
+              })
+            cell.setAttribute('contenteditable', true)
+            cell.className = "grade_assignment_data"
+            newrow.appendChild(cell)
+        }
+        table.appendChild(newrow)
+        
+    })
     //grabs all of the cell that modify the grade average
     var cell_data_change = document.getElementsByClassName("grade_assignment_data")
     for(i=0; i < cell_data_change.length; i++){

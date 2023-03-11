@@ -14,6 +14,9 @@
     <button class="edit_mode_button">
         Edit Grade
     </button>
+    <button class="add_row">
+        Add Test Assignment!
+    </button>
 </div>
 <div class ="table_grade_div">
     <table>
@@ -31,7 +34,8 @@
             <td></td>
             <td></td>
         </tr>
-        {% for assignment in assignment_grades %}
+        <tbody class="Grade_Data_Table_Body">
+            {% for assignment in assignment_grades %}
             <tr class="grade_assignment_data_row">
                 <td>{{assignment[0]}}</td>
                 <td>{{assignment[1]}}</td>
@@ -43,6 +47,9 @@
                 <td>{{assignment[9]}}</td>
             </tr>
         {% endfor %}
+        </tbody>
+    </table>
+    <table>
         <tr class="spaceUnder">
             <td></td>
             <td></td>
