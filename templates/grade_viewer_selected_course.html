@@ -9,7 +9,7 @@
 {% block body %}
 <div class="action_bar">
     <button>
-        Mode:<span>Viewer</span>
+        Mode:<span id="mode_text">Viewer</span>
     </button>
     <button class="edit_mode_button">
         Edit Grade
@@ -33,27 +33,31 @@
         </tr>
         {% for assignment in assignment_grades %}
             <tr class="grade_assignment_data_row">
-                <td class="grade_assignment_data">{{assignment[0]}}</td>
-                <td class="grade_assignment_data">{{assignment[1]}}</td>
-                <td class="grade_assignment_data">{{assignment[2]}}</td>
-                <td class="grade_assignment_data">{{assignment[3]}}</td>
-                <td class="grade_assignment_data">{{assignment[6]}}</td>
-                <td class="grade_assignment_data">{{assignment[4]}}</td>
-                <td class="grade_assignment_data">{{assignment[5]}}</td>
-                <td class="grade_assignment_data">{{assignment[9]}}</td>
+                <td>{{assignment[0]}}</td>
+                <td>{{assignment[1]}}</td>
+                <td>{{assignment[2]}}</td>
+                <td>{{assignment[3]}}</td>
+                <td  class="grade_assignment_data">{{assignment[6]}}</td>
+                <td  class="grade_assignment_data">{{assignment[4]}}</td>
+                <td  class="grade_assignment_data">{{assignment[5]}}</td>
+                <td>{{assignment[9]}}</td>
             </tr>
         {% endfor %}
+        <tr class="spaceUnder">
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>
+                <h1>
+                    Grade Average
+                </h1>
+            </td>
+            <td>
+                <h2 class="grade_average">
+                </h2>
+            </td>
+        </tr>
     </table>
-</div>
-<div>
-    <h1>
-        Grade Average
-    </h1>
-    <h2 class="grade_average">
-
-    </h2>
-</div>
-<div>
-
 </div>
 {% endblock %}
