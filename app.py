@@ -628,7 +628,11 @@ def grade_viewer_course(selectedcourse):
     # for i in range()
     return render_template("grade_viewer_selected_course.html", course=course, page_identifier=page_identifier, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades)
 
-
+@app.route('/Attendance', methods=["GET","POST"])
+def calendar():
+    course = "homepage"
+    page_identifier = "attendance"
+    return render_template("attendance.html", course=course, page_identifier=page_identifier)
 
 @app.route('/getcourses', methods=["GET", "POST"])
 def getcoursesapi():
@@ -691,3 +695,20 @@ def getfolders():
     db_conn.close()
     folders = jsonify(foldersinfo)
     return(folders)
+
+@app.route('/gethacattendance', methods=['POST'])
+def gethaclogin():
+    username = session["user_id"]
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    db.execute('SELECT * FROM "Users" WHERE username=%s',(username,))
+    user_info = db.fetchone()
+    username = user_info[4]
+    password = user_info[5]
+    attedance_request = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/attendance/" + username + "/" + password + "/")
+
+    #converts output to a json format(dictionary)
+    attendance_data = attedance_request.json()
+    print(attendance_data)
+    return jsonify(attendance_data)

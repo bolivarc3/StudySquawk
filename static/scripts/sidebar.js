@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", function(event) {
+  //updates the sidebar to update the section that is active
   update_sidebar()
   const menuIconButton = document.querySelector("[data-menu-icon-btn]")
+  //sidebar height from the top is determined by the height of the navbar
   var sidebar = document.querySelector("[data-sidebar]")
   var header_height = document.querySelector(".header").clientHeight
   header_height = header_height.toString() + "px"

@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block head %}
+    <script type = "text/javascript" src="/static/scripts/attendance.js" ></script>
+    <link href="/static/mainstyles/attendance.css" rel="stylesheet">
+{% endblock %}
+
+{% block title %}My Calendar{% endblock %}
+{% block body %}
+<div style="width:fit-content;height:fit-content;margin: auto;"><h1 id="status"></h1></div>
+<div class="calendar_div">
+    <table>
+        <tr>
+            <th>Sunday</th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wendsday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Saturday</th>
+        </tr>
+        <tbody id="calendarbody">
+            
+        </tbody>
+    </table>
+</div>
+<div class="back_foward_buttons">
+    <svg id="back_attendance" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M459.5 440.6c9.5 7.9 22.8 9.7 34.1 4.4s18.4-16.6 18.4-29V96c0-12.4-7.2-23.7-18.4-29s-24.5-3.6-34.1 4.4L288 214.3V256v41.7L459.5 440.6zM256 352V256 128 96c0-12.4-7.2-23.7-18.4-29s-24.5-3.6-34.1 4.4l-192 160C4.2 237.5 0 246.5 0 256s4.2 18.5 11.5 24.6l192 160c9.5 7.9 22.8 9.7 34.1 4.4s18.4-16.6 18.4-29V352z"/></svg>
+    <br>
+    <br>
+    <svg id="forward_attendance" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M52.5 440.6c-9.5 7.9-22.8 9.7-34.1 4.4S0 428.4 0 416V96C0 83.6 7.2 72.3 18.4 67s24.5-3.6 34.1 4.4L224 214.3V256v41.7L52.5 440.6zM256 352V256 128 96c0-12.4 7.2-23.7 18.4-29s24.5-3.6 34.1 4.4l192 160c7.3 6.1 11.5 15.1 11.5 24.6s-4.2 18.5-11.5 24.6l-192 160c-9.5 7.9-22.8 9.7-34.1 4.4s-18.4-16.6-18.4-29V352z"/></svg>
+</div>
+{% endblock %}
