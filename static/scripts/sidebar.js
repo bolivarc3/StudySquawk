@@ -7,6 +7,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var header_height = document.querySelector(".header").clientHeight
   header_height = header_height.toString() + "px"
   document.documentElement.style.setProperty('--header-height', header_height);
+  
+  const bottom_bar = document.querySelector('[bottom_bar]')
+  var spacerheight = bottom_bar.clientHeight
+  spacerheight = spacerheight.toString() + "px"
+  document.documentElement.style.setProperty('--spacer-height', spacerheight);
+
+
   menuIconButton.addEventListener("click", () => {
     sidebar.classList.toggle("open")
   })

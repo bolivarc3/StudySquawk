@@ -1,5 +1,5 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
-from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference
+from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference, login_hac_required
 from werkzeug.utils import secure_filename
 from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
@@ -557,16 +557,12 @@ def resources(route):
     return render_template("resources.html",BUCKET_NAME= BUCKET_NAME,aws_resource_list = aws_resource_list, currentfolderrouteurl = currentfolderrouteurl, page_identifier = page_identifier, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route,)
 
 @app.route('/grade_viewer', methods=["GET","POST"])
+@login_hac_required
 def grade_viewer():
     db_info = connectdb()
     db = db_info[0]
     db_conn = db_info[1]
     username = session["user_id"]
-    if request.method == "POST":
-        grade_username = request.form.get('gradeusername')
-        gradepassword = request.form.get('gradepassword')
-        db.execute('UPDATE "Users" SET gradeappusername = %s, gradeapppassword = %s WHERE username =%s', (grade_username, gradepassword, username, ))
-        db_conn.commit()
     db.execute('SELECT * FROM "Users" WHERE username = %s', (username, ))
     user_info = db.fetchone()
     grade_viewer_username = user_info[4]
@@ -595,6 +591,18 @@ def grade_viewer():
 
 @app.route('/grade_viewer_signup', methods=["GET","POST"])
 def grade_viewer_signup():
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    username = session["user_id"]
+    if request.method == "POST":
+        grade_username = request.form.get('gradeusername')
+        gradepassword = request.form.get('gradepassword')
+        db.execute('UPDATE "Users" SET gradeappusername = %s, gradeapppassword = %s WHERE username =%s', (grade_username, gradepassword, username, ))
+        db_conn.commit()
+        redirect(request.url)
+    db.close()
+    db_conn.close()
     return render_template("grade_viewer_signup.html")
 
 @app.route('/grade_viewer/<selectedcourse>', methods=["GET","POST"])
@@ -629,9 +637,11 @@ def grade_viewer_course(selectedcourse):
     return render_template("grade_viewer_selected_course.html", course=course, page_identifier=page_identifier, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades)
 
 @app.route('/Attendance', methods=["GET","POST"])
+@login_hac_required
 def calendar():
     course = "homepage"
     page_identifier = "attendance"
+
     return render_template("attendance.html", course=course, page_identifier=page_identifier)
 
 @app.route('/getcourses', methods=["GET", "POST"])
@@ -684,6 +694,9 @@ def getresources():
 
 @app.route('/getfolders', methods=["GET", "POST"])
 def getfolders():
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
     course = request.json
     db_info = connectdb()
     db = db_info[0]

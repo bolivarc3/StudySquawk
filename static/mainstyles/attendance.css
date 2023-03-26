@@ -1,12 +1,3 @@
-.calendar_div{
-    width: fit-content;
-    height: 30%;
-    margin: auto;
-}
-.calendar_div table{
-    width: auto;
-}
-
 .calendar_div table tbody tr th {
     background-color: #59C0E4;
     padding-left: 5rem;
@@ -19,6 +10,7 @@
     padding-right: 5rem;
     font-size: 2rem;
     text-align: center;
+    color:var(--lightblue-highlight)
 }
 
 .back_foward_buttons{
@@ -26,9 +18,67 @@
     justify-content: center;
     align-items: center;
 }
-.back_foward_buttons svg{
-    width: 2rem;
-    height: 2rem;
-    fill: white;
-    margin: 2rem;
+
+.status_div{
+    width:fit-content;
+    height:fit-content;
+    margin: auto;
 }
+
+.status_div h1{
+    color:white;
+}
+
+@media only screen and (max-width: 600px){
+    .table-responsive{
+        width:100%;
+        margin:auto;
+    }
+    .calendar_div{
+        width: fit-content;
+        height: 30%;
+        margin: auto;
+    }
+    .calendar_div table tbody tr th {
+        background-color: #59C0E4;
+        padding-left: .55rem;
+        padding-right: .55rem;
+        font-size: .55rem;
+    }
+    
+    .calendar_div table tbody tr td {
+        padding-left: .55rem;
+        padding-right: .55rem;
+        font-size: .55rem;
+        text-align: center;
+    }
+    .back_foward_buttons svg{
+        width: 1rem;
+        height: 1rem;
+        fill:white;
+        margin: 2rem;
+    }
+    .status_div h1{
+        font-size: 2rem;
+        color:white;
+    }
+
+  }
+  
+  @media only screen and (min-width: 600px){
+    .calendar_div{
+        width: fit-content;
+        height: 30%;
+        margin: auto;
+    }
+    .calendar_div table{
+        width: auto;
+    }
+    .back_foward_buttons svg{
+        width: 2rem;
+        height: 2rem;
+        fill:white;
+        margin: 2rem;
+    }
+  }
+  

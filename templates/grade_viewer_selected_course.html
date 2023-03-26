@@ -21,14 +21,14 @@
 <div class ="table_grade_div">
     <table>
         <tr cellspacing ="10" class="table_headers">
-            <th><div>Date Assigned</div></th>
-            <th><div>Date Due</div></th>
+            <th class = "show-desktop"><div>Date Assigned</div></th>
+            <th class = "show-desktop"><div>Date Due</div></th>
             <th><div>Assignment</div></th>
             <th><div>Category</div></th>
-            <th><div>Weight</div></th>
+            <th class = "show-desktop"><div>Weight</div></th>
             <th><div>Score</div></th>
             <th><div>Total Points</div></th>
-            <th><div>Percentage</div></th>
+            <th class = "show-desktop"><div>Percentage</div></th>
         </tr>
         <tr class="spaceUnder">
             <td></td>
@@ -37,13 +37,13 @@
         <tbody class="Grade_Data_Table_Body">
             {% for assignment in assignment_grades %}
             <tr class="grade_assignment_data_row">
-                <td>{{assignment[0]}}</td>
-                <td>{{assignment[1]}}</td>
+                <td class = "show-desktop">{{assignment[0]}}</td>
+                <td class = "show-desktop">{{assignment[1]}}</td>
                 <td>{{assignment[2]}}</td>
                 <td>{{assignment[3]}}</td>
-                <td  class="grade_assignment_data">{{assignment[6]}}</td>
+                <td  class="grade_assignment_data" id="show-desktop">{{assignment[6]}}</td>
                 <td  class="grade_assignment_data">{{assignment[4]}}</td>
-                <td  class="grade_assignment_data">{{assignment[5]}}</td>
+                <td  class="grade_assignment_data" id="show-desktop">{{assignment[5]}}</td>
                 <td>{{assignment[9]}}</td>
             </tr>
         {% endfor %}

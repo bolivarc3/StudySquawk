@@ -12,6 +12,8 @@ html, body {
     --header-height:56px;
     --animation-duration: 200ms;
     --animation-timing-curve: ease-in-out;
+    --spacer-height:0px;
+    --lightblue-highlight: #59C0E4;
 }
 
 p{
@@ -351,20 +353,37 @@ main{
     visibility: hidden;
     margin:auto;
 }
+
+.mobile_nav_bar{
+    background-color: white;
+}
+
 @media only screen and (max-width: 600px){
     .show-mobile{
-        display: block;
+        display: block !important;
     }
+    #show-desktop{
+        display: none !important;
+    }
+
     .show-desktop{
-        display:none;
+        display:none !important;
+    }
+    #spacer{
+        height: var(--spacer-height);
+        width: 100%;
     }
 }
 
 @media only screen and (min-width: 600px){
     .show-mobile{
-        display: none;
+        display: none !important;
+    }
+
+    #show-desktop{
+        display: block !important;
     }
     .show-desktop{
-        display: block;
+        display: block !important;
     }
 }

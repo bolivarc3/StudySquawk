@@ -22,6 +22,24 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def login_hac_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        db_info = connectdb()
+        db = db_info[0]
+        db_conn = db_info[1]
+        username = session["user_id"]
+        db.execute('SELECT * FROM "Users" WHERE username = %s', (username, ))
+        user_info = db.fetchone()
+        grade_viewer_username = user_info[4]
+        grade_viewer_password = user_info[5]
+        db.close()
+        db_conn.close()
+        if grade_viewer_username=="null":
+            return redirect("/grade_viewer_signup")
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 def connectdb():
     ENV = os.environ.get('APPLICATION_ENV')
