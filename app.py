@@ -1,9 +1,10 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
-from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference, login_hac_required
+from flask_session import Session
+from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference, login_hac_required, update_hac
 from werkzeug.utils import secure_filename
 from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timezone
 import requests
 import botocore
 import json
@@ -22,7 +23,6 @@ s3 = boto3.client('s3',
     aws_secret_access_key = os.environ.get('AWS_S3_SECRET_ACCESS_KEY'),
         )
 app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
 # change
 #s3
 
@@ -70,7 +70,9 @@ UPLOAD_FOLDER = '/Studyist/userfiles'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = "super secret key"
 app.config["TEMPLATES_AUTO_RELOAD"] = True
-
+app.config["SESSION_PERMANENT"] = False
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
 from aws import upload, download_file
 # Ensure responses aren't cached
 @app.after_request
@@ -183,6 +185,8 @@ def index():
 
             #set the session
             session["user_id"] = username[0][0]
+            session["hacattendancetimeupdated"] =''
+            session["hacgradestimeupdated"] =''
             return redirect("homepage")
     else:
         return render_template("intro.html")
@@ -300,7 +304,8 @@ def course(course):
 @app.route('/<course>/postcreation', methods=["GET", "POST"])
 @login_required
 def post(course):
-    return render_template("post.html", course = course, )
+    page_identifier= course
+    return render_template("post.html", course = course, page_identifier=page_identifier)
 
 
 @app.route('/<course>/post/<postid>', methods=["GET", "POST"])
@@ -398,6 +403,7 @@ def viewpost(course, postid):
     db.close()
     db_conn.close()
     userid = session["user_id"]
+    page_identifier = "homepage"
     return render_template("viewpost.html", postid = postid, postinfo = postinfo, imagesinfo = imagesinfo, filesinfo = filesinfo, repliesinfo = repliesinfo, repliesimagesinfo = repliesimagesinfo, repliesfilesinfo = repliesfilesinfo, courses = courses, course = course, userid = userid,BUCKET_NAME = BUCKET_NAME)
 
 
@@ -572,10 +578,8 @@ def grade_viewer():
     if grade_viewer_username=="null":
         return redirect(url_for('grade_viewer_signup'))
     #grab information for grades
-    grades_response = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades/" + grade_viewer_username + "/" + grade_viewer_password + "/")
-
-    #converts output to a json format(dictionary)
-    grades_data = grades_response.json()
+    update_hac()
+    grades_data = session["hacgrades"]
 
     #grabs data from dictionary
     class_names = grades_data['class_names']
@@ -657,6 +661,7 @@ def getcourseposts():
     course = request.json
     #if it is displaying the homepage, grab all the posts
     if course == "homepage":
+        update_hac()
         now = datetime.now()
         nowdate = now.strftime("%m/%d/%Y")
         nowdate = datetime.strptime(nowdate,"%m/%d/%Y")
@@ -711,17 +716,10 @@ def getfolders():
 
 @app.route('/gethacattendance', methods=['POST'])
 def gethaclogin():
-    username = session["user_id"]
-    db_info = connectdb()
-    db = db_info[0]
-    db_conn = db_info[1]
-    db.execute('SELECT * FROM "Users" WHERE username=%s',(username,))
-    user_info = db.fetchone()
-    username = user_info[4]
-    password = user_info[5]
-    attedance_request = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/attendance/" + username + "/" + password + "/")
-
-    #converts output to a json format(dictionary)
-    attendance_data = attedance_request.json()
-    print(attendance_data)
+    update_hac()
+    attendance_data = session["hacattendance"]
     return jsonify(attendance_data)
+
+@app.route('/update_hac', methods=['POST'])
+def update_hac_function():
+    update_hac()

@@ -5,6 +5,7 @@ import os
 import requests
 import urllib.parse
 from flask import redirect, render_template, request, session
+from datetime import datetime, timezone
 from functools import wraps
 import csv
 import psycopg2
@@ -133,4 +134,55 @@ def upload(filespath,filename):
             )
             msg = "Upload Done ! "
     return render_template("file_upload_to_s3.html",msg =msg)
+
+
+def update_hac():
+    current_time = datetime.now(timezone.utc)
+    if session["hacattendancetimeupdated"] == '':
+        print("empty")
+        hac_executions('attendance')
+    if session["hacgradestimeupdated"] == '':
+        print("empty")
+        hac_executions('grades')
+    duration = current_time - session["hacattendancetimeupdated"]
+    duration_in_s = duration.total_seconds()  
+    minutes = divmod(duration_in_s, 60)[0]
+    print(minutes)
+    if minutes > 1:
+        print("yo")
+        hac_executions('attendance')
+    duration = current_time - session["hacgradestimeupdated"]
+    duration_in_s = duration.total_seconds()  
+    minutes = divmod(duration_in_s, 60)[0]
+    print(minutes)
+    if minutes > 1:
+        print("yo")
+        hac_executions('grades')
     
+
+def hac_executions(runfunction):
+    username = session["user_id"]
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    db.execute('SELECT * FROM "Users" WHERE username=%s',(username,))
+    user_info = db.fetchone()
+    username = user_info[4]
+    password = user_info[5]
+    if runfunction == "attendance":
+        attendance_update(username, password)
+    else:
+        grades_update(username, password)
+
+def attendance_update(username, password):
+    attedance_request = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/attendance/" + username + "/" + password + "/")
+    #converts output to a json format(dictionary)
+    attendance_data = attedance_request.json()
+    session["hacattendance"] = attendance_data
+    session["hacattendancetimeupdated"] = datetime.now(timezone.utc)
+
+def grades_update(username, password):
+    grades_request = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades/" + username + "/" + password + "/")
+    grades_request = grades_request.json()
+    session["hacgrades"] = grades_request
+    session["hacgradestimeupdated"] = datetime.now(timezone.utc)

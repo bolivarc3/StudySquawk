@@ -38,6 +38,7 @@ awscli = "*"
 botocore = "*"
 gunicorn = "*"
 psycopg2 = "*"
+flask-session = "*"
 
 [dev-packages]
 
