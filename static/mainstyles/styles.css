@@ -373,6 +373,14 @@ main{
         height: var(--spacer-height);
         width: 100%;
     }
+    .show-mobile-table{
+        visibility: collapse;
+        display:none; 
+    }
+    #show-mobile-table{
+        visibility: collapse;
+        display:none; 
+    }
 }
 
 @media only screen and (min-width: 600px){

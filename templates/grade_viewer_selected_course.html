@@ -20,15 +20,15 @@
 </div>
 <div class ="table_grade_div">
     <table>
-        <tr cellspacing ="10" class="table_headers">
-            <th class = "show-desktop"><div>Date Assigned</div></th>
-            <th class = "show-desktop"><div>Date Due</div></th>
+        <tr cellspacing ="2" class="table_headers">
+            <th class = "show-mobile-table"><div>Date Assigned</div></th>
+            <th class = "show-mobile-table"><div>Date Due</div></th>
             <th><div>Assignment</div></th>
             <th><div>Category</div></th>
-            <th class = "show-desktop"><div>Weight</div></th>
+            <th class = "show-mobile-table"><div>Weight</div></th>
             <th><div>Score</div></th>
-            <th><div>Total Points</div></th>
-            <th class = "show-desktop"><div>Percentage</div></th>
+            <th class = "show-mobile-table"><div>Total Points</div></th>
+            <th><div>Percentage</div></th>
         </tr>
         <tr class="spaceUnder">
             <td></td>
@@ -36,17 +36,17 @@
         </tr>
         <tbody class="Grade_Data_Table_Body">
             {% for assignment in assignment_grades %}
-            <tr class="grade_assignment_data_row">
-                <td class = "show-desktop">{{assignment[0]}}</td>
-                <td class = "show-desktop">{{assignment[1]}}</td>
-                <td>{{assignment[2]}}</td>
-                <td>{{assignment[3]}}</td>
-                <td  class="grade_assignment_data" id="show-desktop">{{assignment[6]}}</td>
-                <td  class="grade_assignment_data">{{assignment[4]}}</td>
-                <td  class="grade_assignment_data" id="show-desktop">{{assignment[5]}}</td>
-                <td>{{assignment[9]}}</td>
-            </tr>
-        {% endfor %}
+                <tr class="grade_assignment_data_row">
+                    <td>{{assignment[0]}}</td>
+                    <td class = "show-mobile-table">{{assignment[1]}}</td>
+                    <td>{{assignment[2]}}</td>
+                    <td>{{assignment[3]}}</td>
+                    <td  class="grade_assignment_data" id="show-mobile-table">{{assignment[6]}}</td>
+                    <td  class="grade_assignment_data">{{assignment[4]}}</td>
+                    <td  class="grade_assignment_data" id="show-mobile-table">{{assignment[5]}}</td>
+                    <td>{{assignment[9]}}</td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
     <table>

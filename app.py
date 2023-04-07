@@ -621,10 +621,8 @@ def grade_viewer_course(selectedcourse):
     grade_viewer_password = user_info[5]
     db.close()
     db_conn.close()
-    grades_response = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades/" + grade_viewer_username + "/" + grade_viewer_password + "/")
-
-    #converts output to a json format(dictionary)
-    grades_data = grades_response.json()
+    update_hac()
+    grades_data = session["hacgrades"]
 
     #grabs data from dictionary
     class_names = grades_data['class_names']
