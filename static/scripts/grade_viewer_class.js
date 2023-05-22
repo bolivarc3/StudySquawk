@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
             cell.className = "grade_assignment_data"
             newrow.appendChild(cell)
         }
-        table.appendChild(newrow)
+        table.prepend(newrow)
         
     })
     //grabs all of the cell that modify the grade average
