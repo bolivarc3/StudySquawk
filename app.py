@@ -14,6 +14,7 @@ import sqlite3
 import boto3
 from dotenv import load_dotenv
 import psycopg2
+from threading import Thread
 
 #change
 app = Flask(__name__)
@@ -714,10 +715,14 @@ def getfolders():
 
 @app.route('/gethacattendance', methods=['POST'])
 def gethaclogin():
-    update_hac()
+    thread = Thread(target=update_hac)
+    thread.daemon = True
+    thread.start()
     attendance_data = session["hacattendance"]
     return jsonify(attendance_data)
 
 @app.route('/update_hac', methods=['POST'])
 def update_hac_function():
-    update_hac()
+    thread = Thread(target=update_hac)
+    thread.daemon = True
+    thread.start()

@@ -39,6 +39,7 @@ botocore = "*"
 gunicorn = "*"
 psycopg2 = "*"
 flask-session = "*"
+tasks = "*"
 
 [dev-packages]
 

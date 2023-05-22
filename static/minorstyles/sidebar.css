@@ -13,7 +13,7 @@ body {
   top: 0;
   background-color: var(--light-gray);
   box-shadow: 0 1px 10px 0 rgba(0, 0, 0, .4);
-  padding: .5rem;
+  padding: 12px;
   height: fit-content;
 }
 

@@ -2,15 +2,21 @@ document.addEventListener("DOMContentLoaded", function(event) {
   //updates the sidebar to update the section that is active
   update_sidebar()
   const menuIconButton = document.querySelector("[data-menu-icon-btn]")
-  //sidebar height from the top is determined by the height of the navbar
-  var sidebar = document.querySelector("[data-sidebar]")
-  var header_height = document.querySelector(".header").clientHeight
-  header_height = header_height.toString() + "px"
-  document.documentElement.style.setProperty('--header-height', header_height);
+  //sidebar height from the top is determined by the height of the navbar\
+
+  var img = document.getElementById('logo')
+  img.onload = function(){
+    const image_height = img.height;
+    console.log(image_height)
+    height = image_height + 2*12
+    height = height.toString() + "px"
+    console.log(height)
+    document.documentElement.style.setProperty('--header-height', height);
+  }
   
-  const bottom_bar = document.querySelector('[bottom_bar]')
-  var spacerheight = bottom_bar.clientHeight
-  spacerheight = spacerheight.toString() + "px"
+  const bottom_bar = document.querySelector('[bottom_bar]');
+  var spacerheight = bottom_bar.clientHeight;
+  spacerheight = spacerheight.toString() + "px";
   document.documentElement.style.setProperty('--spacer-height', spacerheight);
 
 

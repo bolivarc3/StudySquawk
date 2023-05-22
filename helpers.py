@@ -148,14 +148,14 @@ def update_hac():
     duration_in_s = duration.total_seconds()  
     minutes = divmod(duration_in_s, 60)[0]
     print(minutes)
-    if minutes > 1:
+    if minutes > 5:
         print("yo")
         hac_executions('attendance')
     duration = current_time - session["hacgradestimeupdated"]
     duration_in_s = duration.total_seconds()  
     minutes = divmod(duration_in_s, 60)[0]
     print(minutes)
-    if minutes > 1:
+    if minutes > 5:
         print("yo")
         hac_executions('grades')
     
