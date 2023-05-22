@@ -48,3 +48,31 @@ td{
     border-radius: 1rem;
     padding:.5rem;
 }
+
+
+@media only screen and (min-width: 600px){
+    .table_grade_div{
+        width: 100%;
+    }
+    .table_grade_div table{
+        width: 100%;
+    }
+  }
+  @media only screen and (max-width: 600px){
+    .table_grade_div{
+        width: 100%;
+        padding:0;
+    }
+    .table_grade_div table{
+        width: 10%;
+        margin:auto
+    }
+    td{
+        border: 1px solid #59C0E4;
+        padding:0;
+        text-align: center;
+    }
+    th div{
+        margin:0;
+    }
+  }

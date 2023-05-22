@@ -27,8 +27,8 @@
             <th><div>Category</div></th>
             <th class = "show-mobile-table"><div>Weight</div></th>
             <th><div>Score</div></th>
-            <th class = "show-mobile-table"><div>Total Points</div></th>
-            <th><div>Percentage</div></th>
+            <th><div>Total Points</div></th>
+            <th class = "show-mobile-table"><div>Percentage</div></th>
         </tr>
         <tr class="spaceUnder">
             <td></td>
@@ -37,14 +37,14 @@
         <tbody class="Grade_Data_Table_Body">
             {% for assignment in assignment_grades %}
                 <tr class="grade_assignment_data_row">
-                    <td>{{assignment[0]}}</td>
+                    <td class = "show-mobile-table">{{assignment[0]}}</td>
                     <td class = "show-mobile-table">{{assignment[1]}}</td>
                     <td>{{assignment[2]}}</td>
                     <td>{{assignment[3]}}</td>
                     <td  class="grade_assignment_data" id="show-mobile-table">{{assignment[6]}}</td>
                     <td  class="grade_assignment_data">{{assignment[4]}}</td>
-                    <td  class="grade_assignment_data" id="show-mobile-table">{{assignment[5]}}</td>
-                    <td>{{assignment[9]}}</td>
+                    <td  class="grade_assignment_data">{{assignment[5]}}</td>
+                    <td id="show-mobile-table">{{assignment[9]}}</td>
                 </tr>
             {% endfor %}
         </tbody>
