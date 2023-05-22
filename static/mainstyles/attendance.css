@@ -81,4 +81,20 @@
         margin: 2rem;
     }
   }
+  @media only screen and (max-width: 600px){
+    .calendar_div{
+        width: fit-content;
+        height: 30%;
+        margin: auto;
+    }
+    .calendar_div table{
+        width: 100%;
+    }
+    .back_foward_buttons svg{
+        width: 1rem;
+        height: 1rem;
+        fill:white;
+        margin: 2rem;
+    }
+  }
   
