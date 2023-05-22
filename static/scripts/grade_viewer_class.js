@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", function() {
         date_text = mm +"/" + dd + "/" + yyyy
         cell_default_text = [date_text, "", "Test Assignment", "Test", "1.00", "0.00", "0.00", "%100"]
         for(datacell = 0; datacell < 8; datacell++){
+            hiddencells=[0,1,4,7]
             const cell = document.createElement('td')
             cell.addEventListener('input', function(event) {
                 // Get the target element that triggered the event
@@ -29,6 +30,9 @@ document.addEventListener("DOMContentLoaded", function() {
               })
             cell.setAttribute('contenteditable', true)
             cell.className = "grade_assignment_data"
+            if (hiddencells.includes(datacell)){
+                cell.id = "show-mobile-table"
+            }
             newrow.appendChild(cell)
         }
         table.prepend(newrow)
