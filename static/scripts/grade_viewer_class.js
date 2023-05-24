@@ -105,12 +105,14 @@ function grade_average_calculator(){
             var score = tds[5].textContent
             //Checks if the score is not empty or is a code letter
             if (score != ''){
-                if (score == 'N'){
-                    score = 0
+                if (score != 'X'){
+                    if(score == 'N'){
+                        score = 0
+                    }
+                    //Adds the score to total score and adds the total availbile points
+                    total_score = total_score +  parseFloat(score)
+                    total_avalible_points = total_avalible_points + parseFloat(tds[6].textContent)
                 }
-                //Adds the score to total score and adds the total availbile points
-                total_score = total_score +  parseFloat(score)
-                total_avalible_points = total_avalible_points + parseFloat(tds[6].textContent)
             }
         }
     }
