@@ -581,7 +581,7 @@ def grade_viewer():
     #grab information for grades
     update_hac()
     grades_data = session["hacgrades"]
-
+    print(grades_data)
     #grabs data from dictionary
     class_names = grades_data['class_names']
     #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
@@ -666,9 +666,11 @@ def getcourseposts():
         nowdate = datetime.strptime(nowdate,"%m/%d/%Y")
         db_info = connectdb()
         db = db_info[0]
-        db_info = db_info[1]
+        db_conn = db_info[1]
         db.execute('SELECT * FROM "posts" ORDER BY date DESC, time DESC')
         postings = db.fetchall()
+        db.close()
+        db_conn.close()
     else:
         db_info = connectdb()
         db = db_info[0]
@@ -679,6 +681,7 @@ def getcourseposts():
         db_conn.close()
     postlist = [tuple(row) for row in postings]
     postings = json.dumps(postlist, indent=4, sort_keys=True, default=str)
+    print(postings)
     return(postings)
 
 @app.route('/getresources', methods=["GET", "POST"])
@@ -713,16 +716,14 @@ def getfolders():
     folders = jsonify(foldersinfo)
     return(folders)
 
-@app.route('/gethacattendance', methods=['POST'])
+@app.route('/gethacattendance', methods=['GET', 'POST'])
 def gethaclogin():
-    thread = Thread(target=update_hac)
-    thread.daemon = True
-    thread.start()
+    update_hac()
     attendance_data = session["hacattendance"]
     return jsonify(attendance_data)
 
-@app.route('/update_hac', methods=['POST'])
+@app.route('/update_hac', methods=['GET', 'POST'])
 def update_hac_function():
-    thread = Thread(target=update_hac)
-    thread.daemon = True
-    thread.start()
+    update_hac()
+    response = "good"
+    return response

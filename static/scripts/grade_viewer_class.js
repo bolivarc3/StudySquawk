@@ -102,18 +102,19 @@ function grade_average_calculator(){
         //Checks to see if the Grade acutally has any weight that applies to it
         var weight = parseFloat(tds[4].textContent)
         if (weight != 0){
-            var score = tds[5].textContent
+            var score = parseFloat(tds[5].textContent)
+            total_score_add = parseFloat(tds[6].textContent)
             //Checks if the score is not empty or is a code letter
-            if (score != ''){
-                if (score != 'X'){
-                    if(score == 'N'){
-                        score = 0
-                    }
-                    //Adds the score to total score and adds the total availbile points
-                    total_score = total_score +  parseFloat(score)
-                    total_avalible_points = total_avalible_points + parseFloat(tds[6].textContent)
-                }
+            if(score == 'N'){
+                score = 0
             }
+            if(isNaN(score)){
+                score = 0
+                total_score_add = 0
+            }
+            //Adds the score to total score and adds the total availbile points
+            total_score = total_score +  score
+            total_avalible_points = total_avalible_points + total_score_add
         }
     }
 
