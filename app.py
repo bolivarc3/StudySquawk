@@ -341,6 +341,7 @@ def viewpost(course, postid):
             id = replieslength + 1
 
             db.execute('INSERT INTO "replies"(replyid, postid, course, username, title, body, time, date) VALUES(%s,%s, %s, %s,%s, %s, %s,%s)',(id, postid, course, username, title, body, time, date,))
+            db_conn.commit()
             file = request.files['file']
             filedata = request.files.getlist("file")
             filespath = "userfiles-replies/" + str(id)
@@ -394,6 +395,7 @@ def viewpost(course, postid):
     # postduration = time_difference(post[5],post[6])
     db.execute('SELECT * FROM "replies" WHERE postid=%s ORDER BY date DESC, time DESC',(postid,))
     repliesinfo = db.fetchall()
+    print(repliesinfo)
 
     db.execute('SELECT * FROM "replyimages" WHERE postid=%s',(postid,))
     repliesimagesinfo = db.fetchall()
