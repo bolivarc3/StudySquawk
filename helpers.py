@@ -173,6 +173,8 @@ def hac_executions(runfunction):
         attendance_update(username, password)
     else:
         grades_update(username, password)
+    db.close()
+    db_conn.close()
 
 def attendance_update(username, password):
     attedance_request = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/attendance/" + username + "/" + password + "/")

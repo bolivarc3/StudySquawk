@@ -204,7 +204,7 @@ def studyist():
         courseavailible = checkclass(course, courses)
         if courseavailible == False:
             flash('Class is not availible. Select Class from Options')
-            return redirect(url_for(studyist))
+            return redirect(url_for('studyist'))
         #checks if the course requested is the same as one in the array
         return redirect(course)
 
@@ -395,7 +395,6 @@ def viewpost(course, postid):
     # postduration = time_difference(post[5],post[6])
     db.execute('SELECT * FROM "replies" WHERE postid=%s ORDER BY date DESC, time DESC',(postid,))
     repliesinfo = db.fetchall()
-    print(repliesinfo)
 
     db.execute('SELECT * FROM "replyimages" WHERE postid=%s',(postid,))
     repliesimagesinfo = db.fetchall()
@@ -583,7 +582,11 @@ def grade_viewer():
     #grab information for grades
     update_hac()
     grades_data = session["hacgrades"]
-    print(grades_data)
+    if 'error' in grades_data:
+        error = grades_data['error']
+        url = '/grade_viewer'
+        return render_template("error.html", error = error, url = url)
+    print(session["hacgrades"])
     #grabs data from dictionary
     class_names = grades_data['class_names']
     #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
@@ -607,7 +610,7 @@ def grade_viewer_signup():
         gradepassword = request.form.get('gradepassword')
         db.execute('UPDATE "Users" SET gradeappusername = %s, gradeapppassword = %s WHERE username =%s', (grade_username, gradepassword, username, ))
         db_conn.commit()
-        redirect(request.url)
+        return redirect(url_for('studyist'))
     db.close()
     db_conn.close()
     return render_template("grade_viewer_signup.html")
@@ -632,9 +635,6 @@ def grade_viewer_course(selectedcourse):
     #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
     grade_summary = grades_data['grade_summary'][selectedcourse]
     assignment_grades = grades_data['assignment_grades'][selectedcourse]
-    print(grade_summary)
-    print(assignment_grades)
-
     
     course="homepage"
     page_identifier="grade_viewer"
@@ -683,7 +683,6 @@ def getcourseposts():
         db_conn.close()
     postlist = [tuple(row) for row in postings]
     postings = json.dumps(postlist, indent=4, sort_keys=True, default=str)
-    print(postings)
     return(postings)
 
 @app.route('/getresources', methods=["GET", "POST"])
@@ -707,9 +706,6 @@ def getfolders():
     db = db_info[0]
     db_conn = db_info[1]
     course = request.json
-    db_info = connectdb()
-    db = db_info[0]
-    db_conn = db_info[1]
     db.execute('SELECT * FROM "materials" WHERE (objecttype=%s and course=%s)',('folder',course, ))
     #grab the materials
     foldersinfo = db.fetchall()

@@ -3,11 +3,11 @@ from app import db_creation as db
 class Users(db.Model):
     __tablename__ = 'Users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(120), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    gradeappusername=db.Column(db.String(120), unique=True, nullable=False)
-    gradeapppassword=db.Column(db.String(120), unique=True, nullable=False)
+    username = db.Column(db.String(80), nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    gradeappusername=db.Column(db.String(120), nullable=False)
+    gradeapppassword=db.Column(db.String(120), nullable=False)
 
     def verify_password(self, password):
         pwhash = bcrypt.hashpw(password, self.password)
