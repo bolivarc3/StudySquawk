@@ -1,6 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
 from flask_session import Session
-from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference, login_hac_required, update_hac
+from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference, login_hac_required, update_hac, hac_executions
 from werkzeug.utils import secure_filename
 from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
@@ -610,9 +610,12 @@ def grade_viewer_signup():
         gradepassword = request.form.get('gradepassword')
         db.execute('UPDATE "Users" SET gradeappusername = %s, gradeapppassword = %s WHERE username =%s', (grade_username, gradepassword, username, ))
         db_conn.commit()
+        hac_executions('attendance')
+        hac_executions('grades')
         return redirect(url_for('studyist'))
     db.close()
     db_conn.close()
+    print("yesssssss")
     return render_template("grade_viewer_signup.html")
 
 @app.route('/grade_viewer/<selectedcourse>', methods=["GET","POST"])
