@@ -427,13 +427,14 @@ def resources(route):
     db = db_info[0]
     db_conn = db_info[1]
     if len(routeparts) > 1:
-        db.execute('SELECT * FROM "materials" WHERE objectroute = %s',(route,))
+        root_route = "/" + str(routeparts[0])
+        db.execute('SELECT * FROM "materials" WHERE (objectroute = %s AND objecttype = %s AND name = %s)',(root_route,'folder',routeparts[len(routeparts)-1]),)
         count = len(db.fetchall())
         if count == 0:
             error = 'this folder does not exist. Please go back'
             url = "/resources/"+ routeparts[0]
             return render_template("error.html", error = error, url = url)
-    #if the class is not in the list, it will render an apology
+    # if the class is not in the list, it will render an apology
     if courseavailible == False:
         error = 'Class is not availible. Select Class from Options'
         url = "/homepage"
