@@ -6,7 +6,7 @@
 	<script type = "text/javascript" src = "/static/scripts/script.js"></script>
 	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css"rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	<link href="/static/images/nerdpic.png" rel="icon">
+	<link href="/static/images/logobird.png" rel="icon">
 	<link href="/static/images/logo.jpeg">
 	<link href="/static/mainstyles/styles.css" rel="stylesheet">
 	<link HREF="/static/minorstyles/sidebar.css" rel="stylesheet">
@@ -39,9 +39,8 @@
 		<button class="menu-icon-btn show-desktop" data-menu-icon-btn>
 			<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="menu-icon"><g><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></g></svg>
 		</button>
-		<!-- logo -->
-		<div>
-			<a href = "/homepage"><img id = "logo" src="/static/images/logobird.png"></a>
+		<div class="top-sidebar show-mobile">
+			<a href="#" class="channel-logo"><img src="/static/images/logobird.png" alt="Channel Logo"></a>
 		</div>
 		<!-- searchbox -->
 		<div id = "searchbar-box">
@@ -98,9 +97,6 @@
 					</script>
 			</form>
 		</div>
-		<div class="top-sidebar show-mobile">
-			<a href="#" class="channel-logo"><img src="/static/images/nerdpic.png" alt="Channel Logo"></a>
-		</div>
 		{% block postbutton %}
 		{% endblock %}
 	</header>
@@ -108,7 +104,7 @@
 		<aside class="sidebar show-desktop" id="sidebar" data-sidebar>
 			<div class="middle-sidebar">
 				<div class="top-sidebar">
-					<a href="#" class="channel-logo"><img src="/static/images/nerdpic.png" alt="Channel Logo"></a>
+					<a href="/homepage" class="channel-logo"><img src="/static/images/logobird.png" alt="Channel Logo"></a>
 					<div class="hidden-sidebar your-channel">Your channel</div>
 					<div class="hidden-sidebar channel-name">Web Dev Simplified</div>
 				</div>
