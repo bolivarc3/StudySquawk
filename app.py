@@ -52,7 +52,6 @@ else:
         password= os.environ.get('RDS_PASSWORD')
     )
     cursor = conn.cursor()
-    #needs to be changed to studyist
     BUCKET_NAME='studyist'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@{}:{}/{}'.format(
         os.environ.get('RDS_USERNAME'),
