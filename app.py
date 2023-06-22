@@ -586,7 +586,6 @@ def grade_viewer():
         error = grades_data['error']
         url = '/grade_viewer'
         return render_template("error.html", error = error, url = url)
-    print(session["hacgrades"])
     #grabs data from dictionary
     class_names = grades_data['class_names']
     #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
@@ -615,7 +614,6 @@ def grade_viewer_signup():
         return redirect(url_for('studyist'))
     db.close()
     db_conn.close()
-    print("yesssssss")
     return render_template("grade_viewer_signup.html")
 
 @app.route('/grade_viewer/<selectedcourse>', methods=["GET","POST"])
@@ -726,4 +724,5 @@ def gethaclogin():
 def update_hac_function():
     update_hac()
     response = "good"
+    print("good")
     return response
