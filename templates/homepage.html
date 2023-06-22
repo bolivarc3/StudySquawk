@@ -12,14 +12,15 @@
                 },
                 body: JSON.stringify(course) // body data type must match "Content-Type" header
             })
+
             const data = await response.json()
             console.log(data)
             loadposts(data)
         }
+        const HacWorker = new Worker("/static/scripts/update_hac.js");
         var course = "{{course}}"
         getData()
         getcourseposts(course)
-        updatehac()
     </script>
 {% endblock %}
 {% block heading %}

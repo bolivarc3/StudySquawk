@@ -665,7 +665,6 @@ def getcourseposts():
     course = request.json
     #if it is displaying the homepage, grab all the posts
     if course == "homepage":
-        update_hac()
         now = datetime.now()
         nowdate = now.strftime("%m/%d/%Y")
         nowdate = datetime.strptime(nowdate,"%m/%d/%Y")
