@@ -74,7 +74,7 @@
                 <br>
                 <br>
                 <input type = "hidden", name = "formname" value = "replyform">
-                <textarea id = "inputbodytext" name="text" rows="6" cols="120" onkeyup = "checktext()" onchange="checktext()" placeholder="Body Text"></textarea>
+                <textarea id = "inputbodytext" name="text"  cols="120" style="max-width:100%"; onkeyup = "checktext()" onchange="checktext()" placeholder="Body Text"></textarea>
                 <br>
                 <br>
                 <label id = "uploadbutton" for="file-ip-1" value= "Upload">Upload Files and Images</label>
@@ -86,8 +86,8 @@
                     </ul>
                 </div>
                 <div>
-                    <div style = "fit-content; margin:auto">
-                        <input type="submit" id = "submitbutton" class = "disabled" value = "Submit" style = "margin-left:45%" ></submit>
+                    <div style = "display:flex;">
+                        <input type="submit" id = "submitbutton" class = "disabled" value = "Submit"></submit>
                     </div>
                 </div>
             </form>
