@@ -724,5 +724,4 @@ def gethaclogin():
 def update_hac_function():
     update_hac()
     response = "good"
-    print("good")
     return response

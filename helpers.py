@@ -78,7 +78,6 @@ def grabclasses():
 def checkclass(course, courses):
     availible = False
     for i in range(len(courses)):
-        print(courses[i])
         if course == courses[i]:
             availible = True
     if availible != True:
@@ -90,11 +89,9 @@ def check(email):
     # and the string into the fullmatch() method
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
     if(re.fullmatch(regex, email)):
-        print("Valid Email")
         return("valid")
 
     else:
-        print("Invalid Email")
         return("invalid")
 
 
@@ -105,10 +102,7 @@ def time_difference(postedtime,posteddate):
     nowtime = now.strftime("%H:%M:%S")
     nowtime = datetime.strptime(nowtime,"%H:%M:%S")
     postedtime = datetime.strptime(postedtime, "%H:%M:%S")
-    print(nowtime)
-    print(postedtime)
     differencetime = nowtime - postedtime
-    print(differencetime)
     seconds = differencetime.seconds
     hours = (seconds//3600)-18
     minutes = (seconds//60)%60
@@ -120,7 +114,6 @@ def time_difference(postedtime,posteddate):
         differencetime = str(differencetime) + str(minutes) + " minutes "
     if seconds != 0:
         differencetime = differencetime + str(seconds) + " seconds "
-    print(differencetime)
 
 def upload(filespath,filename):
     if request.method == 'POST':
@@ -139,24 +132,18 @@ def upload(filespath,filename):
 def update_hac():
     current_time = datetime.now(timezone.utc)
     if session["hacattendancetimeupdated"] == '':
-        print("empty")
         hac_executions('attendance')
     if session["hacgradestimeupdated"] == '':
-        print("empty")
         hac_executions('grades')
     duration = current_time - session["hacattendancetimeupdated"]
     duration_in_s = duration.total_seconds()  
     minutes = divmod(duration_in_s, 60)[0]
-    print(minutes)
     if minutes > 5:
-        print("yo")
         hac_executions('attendance')
     duration = current_time - session["hacgradestimeupdated"]
     duration_in_s = duration.total_seconds()  
     minutes = divmod(duration_in_s, 60)[0]
-    print(minutes)
     if minutes > 5:
-        print("yo")
         hac_executions('grades')
     
 
