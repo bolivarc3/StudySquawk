@@ -635,12 +635,13 @@ def grade_viewer_course(selectedcourse):
     class_names = grades_data['class_names']
     #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
     grade_summary = grades_data['grade_summary'][selectedcourse]
+    percentage=grade_summary[0][3]
     assignment_grades = grades_data['assignment_grades'][selectedcourse]
     
     course="homepage"
     page_identifier="grade_viewer"
     # for i in range()
-    return render_template("grade_viewer_selected_course.html", course=course, page_identifier=page_identifier, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades)
+    return render_template("grade_viewer_selected_course.html", percentage=percentage, course=course, page_identifier=page_identifier, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades)
 
 @app.route('/Attendance', methods=["GET","POST"])
 @login_hac_required

@@ -95,7 +95,7 @@
         <br>
         <hr class="solid">
         {% for repliesinfo in repliesinfo %}
-        <div style = "padding:1rem">
+        <div style = "padding:1rem; border-top:1px solid #3d3d3d; border-bottom:1px solid #3d3d3d;">
             <p>{{ repliesinfo[4] }}</p>
             <p>{{ repliesinfo[7] }} {{ repliesinfo[8] }}</p>
             <br>
@@ -131,7 +131,6 @@
                 {% endif %}
             {% endfor %}
         </div>
-        <hr class="solid">
         {% endfor %}
     </div>
 {% endblock %}

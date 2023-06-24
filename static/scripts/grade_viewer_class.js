@@ -123,6 +123,6 @@ function grade_average_calculator(){
     //Fixes it to 3 decimal Points
     Grade_Average = Grade_Average.toFixed(3)
     //Sets the text element to Grade Average Number
-    const text = document.getElementsByClassName("grade_average")[0]
-    text.innerHTML = "%" + Grade_Average
+    const grade_average_after_change = document.getElementsByClassName("grade_average")[0]
+    grade_average_after_change.innerHTML = Grade_Average + "%"
 }
