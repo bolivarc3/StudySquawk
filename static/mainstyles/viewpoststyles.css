@@ -67,7 +67,7 @@ hr.solid {
 #uploadbutton {
     display:block;
     width:45%;
-    height:45px;
+    height:fit-content;
     margin-left: 25%;
     line-height:50px;
     text-align:center;
@@ -170,7 +170,7 @@ ul#image-horizontal-list {
     top: 25%;
     left: 50%;
     transform: translateX(-50%);
-    width: 50%;
+    width: 100%;
 }
 
 @media only screen and (max-width: 1000px) {

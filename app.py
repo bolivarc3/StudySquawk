@@ -352,7 +352,7 @@ def viewpost(course, postid):
                     # extract the file name and extension
                     file_name = split_tup[0]
                     file_extension = split_tup[1]
-                    imagefileextensions = ['.png', 'PNG', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif','.webp']
+                    imagefileextensions = ['.png', 'PNG', '.jpg', '.jpeg','.JPG', '.bmp' '.tiff', '.gif','.webp']
                     #checks if image
                     if file_extension in imagefileextensions:
                         filename = secure_filename(file.filename)
