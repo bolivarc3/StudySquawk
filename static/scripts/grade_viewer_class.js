@@ -92,7 +92,8 @@ function grade_average_calculator(){
         var tds = grade_assignments_rows[row].querySelectorAll("td")
 
         //Checks to see if it is a Valid Number
-        if (Number.isNaN(parseFloat(tds[5].textContent)) == true || Number.isNaN(parseFloat(tds[6].textContent)) == true){
+        if (Number.isNaN(parseFloat(tds[5].textContent)) == true || Number.isNaN(parseFloat(tds[6].textContent)) == true)
+        {
             tds[7].innerText = "%100.00"
         }
         else{
@@ -125,4 +126,23 @@ function grade_average_calculator(){
     //Sets the text element to Grade Average Number
     const grade_average_after_change = document.getElementsByClassName("grade_average")[0]
     grade_average_after_change.innerHTML = Grade_Average + "%"
+
+    var grade_average_current = document.getElementsByClassName("grade_average")[1].textContent.toString()
+    grade_average_current = grade_average_current.replace('%','');
+    const percent_change_cell = document.getElementById("percent_change_cell")
+    const percentage_change_text = document.getElementsByClassName("percentage_change_text")[0]
+    var percentage_change = parseFloat((Grade_Average - parseFloat(grade_average_current)).toFixed(3))
+    if (percentage_change < 0){
+        percent_change_cell.className = "percent_change_cell negative"
+        percentage_change_text.innerHTML = percentage_change + "%"
+    }
+    else if (percentage_change > 0){
+        percent_change_cell.className = "percent_change_cell positive"
+        percentage_change_text.innerHTML = "+" + percentage_change + "%"
+    }
+    else if (percentage_change == 0){
+        percent_change_cell.className = "percent_change_cell nuetral"
+        percentage_change_text.innerHTML = percentage_change + "%"
+    }
+
 }

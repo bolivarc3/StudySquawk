@@ -49,6 +49,19 @@ td{
     padding:.5rem;
 }
 
+.percent_change_cell.positive{
+    background-color: #5afa4e;
+}
+
+.percent_change_cell.negative{
+    background-color: #ff4545;
+}
+
+.percent_change_cell.nuetral{
+    background-color: #a5a5a5;
+}
+
+
 
 @media only screen and (min-width: 600px){
     .table_grade_div{
