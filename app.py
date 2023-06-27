@@ -641,7 +641,7 @@ def grade_viewer_course(selectedcourse):
     course="homepage"
     page_identifier="grade_viewer"
     # for i in range()
-    return render_template("grade_viewer_selected_course.html", percentage=percentage, course=course, page_identifier=page_identifier, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades)
+    return render_template("grade_viewer_selected_course.html", percentage=percentage, course=course, page_identifier=page_identifier, selectedcourse = selectedcourse, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades)
 
 @app.route('/Attendance', methods=["GET","POST"])
 @login_hac_required
@@ -725,4 +725,10 @@ def gethaclogin():
 def update_hac_function():
     update_hac()
     response = "good"
-    return response
+    return (response)
+
+@app.route('/grade_save_calculations', methods=['GET','POST'])
+def grade_save_calculations():
+    grade_info_change = request.json
+    response = "good"
+    return (response)

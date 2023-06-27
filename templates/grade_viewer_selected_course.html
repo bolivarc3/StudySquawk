@@ -7,6 +7,7 @@
 </head>
 {% endblock %}
 {% block body %}
+<h2 id="course" style="visibility: hidden;">{{selectedcourse}}</h2>
 <div class="action_bar">
     <button>
         Mode:<span id="mode_text">Viewer</span>
@@ -82,7 +83,7 @@
             </td>
             <td>
                 <h2 class="grade_average">
-                    {{percentage}}
+                    
                 </h2>
             </td>
         </tr>
