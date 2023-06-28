@@ -86,7 +86,7 @@ function grab_table(){
     const grade_table_data = []
     let current_row = []
     let data=[]
-    for (var row=0; row < rows.length+; row++) {
+    for (var row=0; row < rows.length; row++) {
         //iterate through rows
         //rows would be accessed using the "row" variable assigned in the for loop
         const data_cell = []
