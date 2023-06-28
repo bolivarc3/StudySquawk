@@ -617,6 +617,7 @@ def grade_viewer_signup():
     return render_template("grade_viewer_signup.html")
 
 @app.route('/grade_viewer/<selectedcourse>', methods=["GET","POST"])
+@login_required
 def grade_viewer_course(selectedcourse):
     db_info = connectdb()
     db = db_info[0]

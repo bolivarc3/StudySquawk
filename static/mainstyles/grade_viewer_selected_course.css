@@ -12,7 +12,7 @@
 }
 
 th div{
-    padding: .55rem;
+    padding: .35rem;
     background-color: #59C0E4;
     border-radius: 1.25rem;
     border-color: #59C0E4;
@@ -20,6 +20,7 @@ th div{
     color: black;
     text-align: center;
     border-spacing: 10rem;
+    font-size: .9rem;
 }
 
 tr.spaceUnder>td {
@@ -27,6 +28,10 @@ tr.spaceUnder>td {
     border-bottom: #59C0E4;
     padding-bottom: 1em;
   }
+
+#course{
+    color:#59C0E4;
+}
 
 td{
     border: 1px solid #59C0E4;
