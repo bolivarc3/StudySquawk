@@ -74,7 +74,7 @@ td{
   @media only screen and (max-width: 600px){
     .table_grade_div{
         width: 100%;
-        padding:1rem;
+        padding:0;
     }
     .table_grade_div table{
         width: 10%;
