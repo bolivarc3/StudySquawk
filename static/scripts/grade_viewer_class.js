@@ -7,9 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
     grade_average.innerHTML = grade_average_calculated
     var course_name = document.getElementById("course").textContent
     key_name = 'grades_modified' + course_name
-    console.log(localStorage.getItem(key_name))
     if (localStorage.getItem(key_name) == null) {
-        console.log("newwww tabllleeeess")
         saving_edited_table()
     }
     key_name = 'current_grades' + course_name
@@ -73,14 +71,13 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
 function saving_edited_table(){
-    console.log("This is a setting of tables")
+
     var course_name = document.getElementById("course").textContent
     var stringified = JSON.stringify(current_table)
     localStorage.setItem(key_name,stringified);
     key_name = 'grades_modified' + course_name
     var current_table = grab_table()
     stringified =  JSON.stringify(current_table)
-    console.log(stringified)
     localStorage.setItem(key_name,stringified);
 }
 
@@ -89,7 +86,7 @@ function grab_table(){
     const grade_table_data = []
     let current_row = []
     let data=[]
-    for (var row=0; row < rows.length-1; row++) {
+    for (var row=0; row < rows.length+; row++) {
         //iterate through rows
         //rows would be accessed using the "row" variable assigned in the for loop
         const data_cell = []
@@ -114,7 +111,6 @@ function grab_table(){
         grade_table_data.push(current_row)
         current_row = []
     }
-    console.log(grade_table_data)
     return grade_table_data
 }
 
@@ -131,7 +127,6 @@ function edit_mode(edit_button){
         var course_name = document.getElementById("course").textContent
         key_name = 'grades_modified' + course_name
         var table_unfiltered = localStorage.getItem(key_name)
-        console.log(table_unfiltered)
         table = JSON.parse(table_unfiltered)
         create_table(table)
         
@@ -196,7 +191,7 @@ function create_table(table){
                 cell.style.backgroundColor="#B51515"
             }
             current_cell_text = table[i][datacell][1]
-            cell.innerHTML = current_cell_text
+            cell.textContent = current_cell_text
             newrow.appendChild(cell)
         }
         table_body.appendChild(newrow)
@@ -243,7 +238,7 @@ function grade_average_calculator(){
     }
 
     //Calculates the Grade Average 
-    var Grade_Average = total_score/total_avalible_points*100
+    var Grade_Average = (total_score/total_avalible_points)*100
     //Fixes it to 3 decimal Points
     Grade_Average = Grade_Average.toFixed(3)
     //Sets the text element to Grade Average Number
