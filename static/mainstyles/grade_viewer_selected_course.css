@@ -74,7 +74,7 @@ td{
   @media only screen and (max-width: 600px){
     .table_grade_div{
         width: 100%;
-        padding:0;
+        padding:1rem;
     }
     .table_grade_div table{
         width: 10%;
@@ -87,5 +87,11 @@ td{
     }
     th div{
         margin:0;
+    }
+    td h1{
+        font-size: 1.75rem;
+    }
+    .grade_average{
+        font-size: 1.75rem;
     }
   }
