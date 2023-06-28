@@ -18,7 +18,13 @@ document.addEventListener("DOMContentLoaded", function() {
     edit_button.addEventListener('click', edit_mode)
 
     var add_row_button = document.getElementsByClassName("add_row")[0]
+
     add_row_button.addEventListener('click', function(){
+        const status = document.getElementById("mode_text")
+        var status_text = status.innerText
+        if (status_text == "Viewer"){
+            return (0)
+        }
         const table = document.querySelector('.Grade_Data_Table_Body')
         const newrow = document.createElement('tr')
         newrow.className = "grade_assignment_data_row"
