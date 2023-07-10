@@ -1,3 +1,12 @@
+
+document.addEventListener("DOMContentLoaded", function(){
+    console.log("done")
+    document.getElementById("x-element-login-div").addEventListener("click",function(){
+        loginoff()
+    })
+    // document.getElementById.addEventListener("click",signupoff())
+})
+
 function signupon() {
     document.getElementById("signupfog").style.display = "block";
     var x=window.scrollX;
@@ -14,8 +23,10 @@ function loginon() {
 
 function signupoff() {
     document.getElementById("signupfog").style.display = "none";
+    event.stopPropagation();
 }
 
 function loginoff(){
     document.getElementById("loginfog").style.display = "none";
+    event.stopPropagation();
 }

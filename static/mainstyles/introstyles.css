@@ -3,9 +3,20 @@ html, body {
   padding: 0;
 }
 
+:root {
+  --accent-color: #d7dadc;
+  --light-gray: #161b22;
+  --medium-gray: #0d1117;
+  --background-color: #010409;
+  --header-height:56px;
+  --animation-duration: 200ms;
+  --animation-timing-curve: ease-in-out;
+  --spacer-height:0px;
+  --lightblue-highlight: #59C0E4;
+}
+
 .crop {
-    height: 1000px;
-    width:100%;
+    height: 88.8%;
     overflow: hidden;
 }
 .crop img {
@@ -15,22 +26,20 @@ html, body {
 
 #titlediv{
   /* Allow the centering to work */
-	margin: 0 auto;
   background: #CFD7C7;
   width: fit-content;
   border: 1px;
-  float: left;
 }
 
 #divtitlegrouping { /* Allow the centering to work */
-  overflow: hidden;
 	margin: 0;
   background:#CFD7C7 ;
   width: 100%;
   height: fit-content;
-  display: block;
-  padding-left: 0;
   border: 1px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 .5rem 0 .5rem;
 }
 
 #returnhome{
@@ -48,13 +57,9 @@ html, body {
 
 
 #navbox {
-	display: table;   /* Allow the centering to work */
-	margin: 0 auto;
   background: #CFD7C7;
   width: fit-content;
-  padding-right: 2rem;
   border: 1px;
-  float: right;
 }
 
 #horizontal-list li {
@@ -62,18 +67,17 @@ html, body {
 }
 
 
+#girl_image{
+  width: 100%;
+}
+
 #signupfog {
-  padding-top:4%;
-  height: 100%;
   overflow: hidden;
   position: fixed; /* Sit on top of the page content */
   display: none; /* Hidden by default */
   width: 100%; /* Full width (cover the whole page) */
   height: 100%; /* Full height (cover the whole page) */
   top:0;
-  left: 0;
-  right: 0;
-  bottom:0;
   background-color: rgba(0,0,0,0.5); /* Black background with opacity */
   z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
   cursor: pointer; /* Add a pointer on hover */
@@ -82,17 +86,12 @@ html, body {
 
 
 #loginfog {
-  padding-top:11%;
-  height: 100%;
   overflow: hidden;
   position: fixed; /* Sit on top of the page content */
   display: none; /* Hidden by default */
   width: 100%; /* Full width (cover the whole page) */
   height: 100%; /* Full height (cover the whole page) */
   top:0;
-  left: 0;
-  right: 0;
-  bottom:0;
   background-color: rgba(0,0,0,0.5); /* Black background with opacity */
   z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
   cursor: pointer; /* Add a pointer on hover */
@@ -157,16 +156,6 @@ font-weight:800;
 
 /* Signup -----------------------------------------------------------------*/
 
-#form-group{
-  margin:auto;
-  padding:1rem;
-  text-align:center;
-  background-color:white;
-  width: 40rem;
-  border:10px solid #d6d6d6;
-  border-radius: 12px;
-}
-
 
 .form-element{
   margin:auto;
@@ -202,3 +191,128 @@ font-weight:800;
   border-radius:12px;
 }
 
+@media only screen and (max-width: 1000px){
+  #form-group{
+    margin:auto;
+    padding-top:6rem;
+    text-align:center;
+    background-color:var(--light-gray);
+    width:100%;
+    border:10px solid var(--light-gray);
+    border-radius: 12px;
+    display:block
+  }
+  .mobile-form-div{
+    display:flex;
+    height:100%;
+    flex-direction: column;
+  }
+  .mobile-form-div form{
+    height: fit-content;
+    margin-left: auto;
+    margin-right:auto;
+    margin-bottom:auto;
+    margin-top:15rem;
+    width: 100%;
+  }
+  .mobile-form-div h1{
+    color:white;
+    font-size:5rem;
+  }
+  .form-element{
+    width: 100%;
+    margin-top:10%;
+    flex-grow: 1;
+  }
+  .form-element input{
+    height: 10rem;
+    margin-top:10%;
+    margin:auto;
+  }
+  .form-element input,
+  input::placeholder {
+      font-size: 3rem;
+  }
+  .btn-primary{
+    background-color: #40798C; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 3rem;
+    cursor: pointer;
+    border-radius:12px;
+  }
+  #exit-form{
+    display: block;
+    width: 100%;
+
+  }
+  #x_clickbox{
+    width: fit-content;
+    height: fit-content;
+  }
+
+  #exit-form svg{
+    width: 4rem;
+    float: left;
+    padding-left: 1rem;
+    fill: white;
+  }
+  #returnhome{
+    font-size: 10rem;
+  }
+  #navbox{
+    margin: auto;
+  }
+
+  #signup-item a {
+    text-decoration: none;
+    color:white;
+    display: block;
+    padding: 0.625rem;
+    font-size:3rem;
+    font-family: 'Teko', sans-serif;
+    font-weight:800;
+  }
+  #login-item a {
+    margin:0;
+    text-decoration: none;
+    color:#40798C;
+    display: block;
+    padding: 0.675rem;
+    font-size:3rem;
+    font-family: 'Teko', sans-serif;
+    font-weight:800;
+  }
+  #divtitlegrouping{
+    padding: .5rem;
+  }
+    
+}
+
+@media only screen and (min-width: 1000px){
+  #form-group{
+    margin:auto;
+    padding:1rem;
+    text-align:center;
+    background-color:white;
+    width: 40rem;
+    border:10px solid #d6d6d6;
+    border-radius: 12px;
+  }
+
+  #loginfog {
+    padding-top:11rem;
+  }
+  #signupfog {
+    padding-top: 11rem;
+
+  }
+  #exit-form{
+    display:none;
+  }
+  
+}
