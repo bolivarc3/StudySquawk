@@ -9,7 +9,6 @@ async function getData(){
     })
     ;
 }
-
 async function updatehac(){
     const data = await fetch('/update_hac', {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.

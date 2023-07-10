@@ -32,7 +32,6 @@ document.addEventListener("DOMContentLoaded", function() {
             month = month_list.length-1
             year = year-1
         }
-        console.log(month)
         main(calendar,month,year)
     })
     document.getElementById("forward_attendance").addEventListener('click',function(){
@@ -47,7 +46,6 @@ document.addEventListener("DOMContentLoaded", function() {
             month = 0
             year = year+1
         }
-        console.log(month)
         main(calendar,month,year)
     })
 })
@@ -67,7 +65,6 @@ function main(calendar,month,year){
             var current_day_number = String(current_month[row][day][0]).replaceAll(',','')
             var current_day_event = String(current_month[row][day][1]).replaceAll(',','')
             event_coloring(day_cell, current_day_event)
-            console.log(current_day_event)
             day_cell.innerHTML =  current_day_number
             created_row.appendChild(day_cell)
         }

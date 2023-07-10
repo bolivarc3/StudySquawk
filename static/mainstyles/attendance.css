@@ -41,8 +41,7 @@
     }
     .calendar_div table tbody tr th {
         background-color: #59C0E4;
-        padding-left: .55rem;
-        padding-right: .55rem;
+        padding: 0;
         font-size: .55rem;
     }
     
@@ -61,6 +60,9 @@
     .status_div h1{
         font-size: 2rem;
         color:white;
+    }
+    th div{
+        margin:auto;
     }
 
   }
@@ -95,6 +97,10 @@
         height: 1rem;
         fill:white;
         margin: 2rem;
+    }
+    th div{
+        width: fit-content;
+        padding:0 .5rem 0 .5rem;
     }
   }
   

@@ -230,6 +230,10 @@ body{
       text-decoration: none;
       align-items: center;
   }
+  .content{
+    margin:0;
+    width:100%;
+  }
 
 }
 

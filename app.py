@@ -352,7 +352,7 @@ def viewpost(course, postid):
                     # extract the file name and extension
                     file_name = split_tup[0]
                     file_extension = split_tup[1]
-                    imagefileextensions = ['.png', 'PNG', '.jpg', '.jpeg', '.bmp' '.tiff', '.gif','.webp']
+                    imagefileextensions = ['.png', 'PNG', '.jpg', '.jpeg','.JPG', '.bmp' '.tiff', '.gif','.webp']
                     #checks if image
                     if file_extension in imagefileextensions:
                         filename = secure_filename(file.filename)
@@ -586,7 +586,6 @@ def grade_viewer():
         error = grades_data['error']
         url = '/grade_viewer'
         return render_template("error.html", error = error, url = url)
-    print(session["hacgrades"])
     #grabs data from dictionary
     class_names = grades_data['class_names']
     #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
@@ -615,10 +614,10 @@ def grade_viewer_signup():
         return redirect(url_for('studyist'))
     db.close()
     db_conn.close()
-    print("yesssssss")
     return render_template("grade_viewer_signup.html")
 
 @app.route('/grade_viewer/<selectedcourse>', methods=["GET","POST"])
+@login_required
 def grade_viewer_course(selectedcourse):
     db_info = connectdb()
     db = db_info[0]
@@ -637,12 +636,13 @@ def grade_viewer_course(selectedcourse):
     class_names = grades_data['class_names']
     #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
     grade_summary = grades_data['grade_summary'][selectedcourse]
+    percentage=grade_summary[0][3]
     assignment_grades = grades_data['assignment_grades'][selectedcourse]
     
     course="homepage"
     page_identifier="grade_viewer"
     # for i in range()
-    return render_template("grade_viewer_selected_course.html", course=course, page_identifier=page_identifier, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades)
+    return render_template("grade_viewer_selected_course.html", percentage=percentage, course=course, page_identifier=page_identifier, selectedcourse = selectedcourse, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades)
 
 @app.route('/Attendance', methods=["GET","POST"])
 @login_hac_required
@@ -665,7 +665,6 @@ def getcourseposts():
     course = request.json
     #if it is displaying the homepage, grab all the posts
     if course == "homepage":
-        update_hac()
         now = datetime.now()
         nowdate = now.strftime("%m/%d/%Y")
         nowdate = datetime.strptime(nowdate,"%m/%d/%Y")
@@ -727,4 +726,10 @@ def gethaclogin():
 def update_hac_function():
     update_hac()
     response = "good"
-    return response
+    return (response)
+
+@app.route('/grade_save_calculations', methods=['GET','POST'])
+def grade_save_calculations():
+    grade_info_change = request.json
+    response = "good"
+    return (response)

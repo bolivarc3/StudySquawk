@@ -371,7 +371,7 @@ main{
         display:none !important;
     }
     #spacer{
-        height: var(--spacer-height);
+        height: 3rem;
         width: 100%;
     }
     .show-mobile-table{
