@@ -15,6 +15,7 @@ import boto3
 from dotenv import load_dotenv
 import psycopg2
 from threading import Thread
+from oauthlib.oauth2 import WebApplicationClient
 
 #change
 app = Flask(__name__)
@@ -66,6 +67,18 @@ from models import Users, posts, images, files, replies, replyfiles, replyimages
 db_creation.create_all()
 db_creation.session.commit()
 
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
+GOOGLE_DISCOVERY_URL = (
+    "https://accounts.google.com/.well-known/openid-configuration"
+)
+
+client = WebApplicationClient(GOOGLE_CLIENT_ID)
+
+def get_google_provider_cfg():
+    return requests.get(GOOGLE_DISCOVERY_URL).json()
+
 UPLOAD_FOLDER = '/Studyist/userfiles'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = "super secret key"
@@ -88,15 +101,18 @@ def page_not_found(e):
     url = "/homepage"
     return render_template('error.html', error = error, url = url), 404
 
+
+def get_google_provider_cfg():
+    return requests.get(GOOGLE_DISCOVERY_URL).json()
+
 #the intro homepage for the user
 #test1
 @app.route("/", methods=["GET", "POST"])
 def index():
-    # if the form is submitted
     if request.method == "POST":
-
-        #Get password/confirmation information
+    #Get password/confirmation information
         form = request.form.get("form-name")
+        print(form)
         if form == "signupform":
             email = request.form.get("email")
             username = request.form.get("username")      
@@ -152,19 +168,19 @@ def index():
                 flash("username already has been used")
                 return redirect(url_for('index'))
             null = "null"
-            db.execute('INSERT INTO "Users"(username, password, email, gradeappusername, gradeapppassword) VALUES (%s, %s, %s, %s, %s)',(username,password,email,null,null, ))
+            db.execute('INSERT INTO "Users"(username, password, email, gradeappusername, gradeapppassword, google_auth) VALUES (%s, %s, %s, %s, %s, %s)',(username,password,email,null,null,"False",))
             db_conn.commit()
             db.close()
             db_conn.close()
             return redirect("/")
 
         if form == "loginform":
+            print("yesss")
             db_info = connectdb()
             db = db_info[0]
             db_conn = db_info[1]
             email = request.form.get("email")
             password = request.form.get("password")
-
             #if email is not in system, return error
             db.execute('SELECT * FROM "Users" WHERE email=%s',(email,))
             users = db.fetchall()
@@ -172,6 +188,15 @@ def index():
             if count == 0:
                 flash("Email and User not found")
                 return render_template("intro.html")
+            db.execute('SELECT google_auth FROM "Users" WHERE email=%s',(email,));
+            google_auth = db.fetchall()[0][0]
+            db.execute('SELECT password FROM "Users" WHERE email=%s',(email,));
+            db_password = db.fetchall()[0][0]
+            print(db_password)
+            if google_auth == "True":
+                if db_password == "null":
+                    session["attempted_password"] = password
+                    return redirect(url_for("login"))
 
             db.execute('SELECT username FROM "Users" WHERE email=%s AND password=%s',(email,password));
             username = db.fetchall()
@@ -187,10 +212,94 @@ def index():
             session["user_id"] = username[0][0]
             session["hacattendancetimeupdated"] =''
             session["hacgradestimeupdated"] =''
-            return redirect("homepage")
+            return redirect(url_for("studyist"))
     else:
         return render_template("intro.html")
+    return render_template("intro.html")
 
+
+@app.route('/login')
+def login():
+        # Find out what URL to hit for Google login
+    google_provider_cfg = get_google_provider_cfg()
+    authorization_endpoint = google_provider_cfg["authorization_endpoint"]
+
+    # Use library to construct the request for Google login and provide
+    # scopes that let you retrieve user's profile from Google
+    request_uri = client.prepare_request_uri(
+        authorization_endpoint,
+        redirect_uri=request.base_url + "/callback",
+        scope=["openid", "email", "profile"],
+    )
+    return redirect(request_uri)
+
+@app.route("/login/callback")
+def callback():
+    # Get authorization code Google sent back to you
+    code = request.args.get("code")
+    google_provider_cfg = get_google_provider_cfg()
+    token_endpoint = google_provider_cfg["token_endpoint"]
+    # Prepare and send a request to get tokens! Yay tokens!
+    token_url, headers, body = client.prepare_token_request(
+        token_endpoint,
+        authorization_response=request.url,
+        redirect_url=request.base_url,
+        code=code
+    )
+    token_response = requests.post(
+        token_url,
+        headers=headers,
+        data=body,
+        auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
+    )
+
+    # Parse the tokens!
+    client.parse_request_body_response(json.dumps(token_response.json()))
+    userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
+    uri, headers, body = client.add_token(userinfo_endpoint)
+    userinfo_response = requests.get(uri, headers=headers, data=body)
+    if userinfo_response.json().get("email_verified"):
+        unique_id = userinfo_response.json()["sub"]
+        users_email = userinfo_response.json()["email"]
+        picture = userinfo_response.json()["picture"]
+        users_name = userinfo_response.json()["given_name"]
+    else:
+        return "User email not available or not verified by Google.", 400
+
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    # Doesn't exist? Add it to the database.
+    db.execute('SELECT * FROM "Users" WHERE email = %s', (users_email, ))
+    users = db.fetchall()
+    count = len(users)
+    if count == 0:
+
+    #checks if username is already in the system | cant be 2 of same username
+    # userinfocursor.execute("SELECT username FROM users WHERE username = ?", (username, ));
+    # stored_username = userinfocursor.fetchone()
+    # userinfoconnect.close()
+        db.execute('SELECT username FROM "Users" WHERE username = %s', (users_name, ))
+        users = db.fetchall()
+        count = len(users)
+        if count == 0:
+            null = "null"
+            db.execute('INSERT INTO "Users"(username, password, email, gradeappusername, gradeapppassword, google_auth) VALUES (%s, %s, %s, %s, %s, %s)',(users_name,null,users_email,null,null,"True",))
+            # Send user back to homepage
+            db_conn.commit()
+            db.close()
+            db_conn.close()
+            return redirect(url_for("studyist"))
+    session["user_id"] = users_name
+    if "attempted_password" in session:
+        db_info = connectdb()
+        db = db_info[0]
+        db_conn = db_info[1]
+        db.execute('UPDATE "Users" SET password=%s WHERE username=%s',(session["attempted_password"],session["user_id"]))
+    db_conn.commit()
+    db.close()
+    db_conn.close()
+    return redirect(url_for("studyist"))
 
 @app.route("/homepage", methods=["GET", "POST"])
 @login_required

@@ -8,6 +8,7 @@ class Users(db.Model):
     email = db.Column(db.String(120), nullable=False)
     gradeappusername=db.Column(db.String(120), nullable=False)
     gradeapppassword=db.Column(db.String(120), nullable=False)
+    google_auth = db.Column(db.String(120), nullable=False)
 
     def verify_password(self, password):
         pwhash = bcrypt.hashpw(password, self.password)
@@ -19,6 +20,7 @@ class Users(db.Model):
         self.email = email
         self.gradeappusername = gradeappusername
         self.gradeapppassword = gradeapppassword
+        self.google_auth = google_auth
 
 #models for postings
 class posts(db.Model):

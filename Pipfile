@@ -40,6 +40,9 @@ gunicorn = "*"
 psycopg2 = "*"
 flask-session = "*"
 tasks = "*"
+oauthlib = "*"
+pyopenssl = "*"
+flask-login = "*"
 
 [dev-packages]
 
