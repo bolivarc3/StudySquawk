@@ -67,17 +67,15 @@ from models import Users, posts, images, files, replies, replyfiles, replyimages
 db_creation.create_all()
 db_creation.session.commit()
 
+#needed info for google authentication
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
 GOOGLE_DISCOVERY_URL = (
     "https://accounts.google.com/.well-known/openid-configuration"
 )
-
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
-def get_google_provider_cfg():
-    return requests.get(GOOGLE_DISCOVERY_URL).json()
 
 UPLOAD_FOLDER = '/Studyist/userfiles'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -86,6 +84,7 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["SESSION_PERMANENT"] = False
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
+
 from aws import upload, download_file
 # Ensure responses aren't cached
 @app.after_request
@@ -112,7 +111,6 @@ def index():
     if request.method == "POST":
     #Get password/confirmation information
         form = request.form.get("form-name")
-        print(form)
         if form == "signupform":
             email = request.form.get("email")
             username = request.form.get("username")      
@@ -175,7 +173,6 @@ def index():
             return redirect("/")
 
         if form == "loginform":
-            print("yesss")
             db_info = connectdb()
             db = db_info[0]
             db_conn = db_info[1]
@@ -188,15 +185,18 @@ def index():
             if count == 0:
                 flash("Email and User not found")
                 return render_template("intro.html")
+            #grabs the database to see if an account has been google authenticated
             db.execute('SELECT google_auth FROM "Users" WHERE email=%s',(email,));
             google_auth = db.fetchall()[0][0]
             db.execute('SELECT password FROM "Users" WHERE email=%s',(email,));
             db_password = db.fetchall()[0][0]
-            print(db_password)
+            #if an account with the same email has
             if google_auth == "True":
+                #if the password is not already set to something
                 if db_password == "null":
                     session["attempted_password"] = password
                     return redirect(url_for("login"))
+                #else, continue to authenticate password
 
             db.execute('SELECT username FROM "Users" WHERE email=%s AND password=%s',(email,password));
             username = db.fetchall()
@@ -265,7 +265,7 @@ def callback():
         users_name = userinfo_response.json()["given_name"]
     else:
         return "User email not available or not verified by Google.", 400
-
+    #grabs the database to fetch the user with the email that the user had in the google account
     db_info = connectdb()
     db = db_info[0]
     db_conn = db_info[1]
@@ -273,12 +273,9 @@ def callback():
     db.execute('SELECT * FROM "Users" WHERE email = %s', (users_email, ))
     users = db.fetchall()
     count = len(users)
-    if count == 0:
-
+    
     #checks if username is already in the system | cant be 2 of same username
-    # userinfocursor.execute("SELECT username FROM users WHERE username = ?", (username, ));
-    # stored_username = userinfocursor.fetchone()
-    # userinfoconnect.close()
+    if count == 0:
         db.execute('SELECT username FROM "Users" WHERE username = %s', (users_name, ))
         users = db.fetchall()
         count = len(users)
@@ -291,6 +288,7 @@ def callback():
             db_conn.close()
             return redirect(url_for("studyist"))
     session["user_id"] = users_name
+    #adds the attempted password if the user doesn't already have one
     if "attempted_password" in session:
         db_info = connectdb()
         db = db_info[0]
