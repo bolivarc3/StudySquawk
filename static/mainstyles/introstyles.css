@@ -191,6 +191,36 @@ font-weight:800;
   border-radius:12px;
 }
 
+.google_auth_btn{
+  margin-top:5rem;
+  margin: 5rem auto auto auto;
+  padding:.5rem;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-color: #d6d6d6;
+  width: 50%;
+  border-radius: .65rem;
+}
+
+.google_auth_div{
+  color:rgb(33, 36, 44);
+  width: 100%;
+  text-align: center;
+  vertical-align: center;
+}
+
+.google_auth_btn img{
+  width:2rem;
+  float: left;
+}
+
+.google_auth_btn a{
+  text-decoration: none;
+}
+
 @media only screen and (max-width: 1000px){
   #form-group{
     margin:auto;
@@ -212,7 +242,7 @@ font-weight:800;
     margin-left: auto;
     margin-right:auto;
     margin-bottom:auto;
-    margin-top:15rem;
+    margin-top:5rem;
     width: 100%;
   }
   .mobile-form-div h1{
@@ -288,9 +318,23 @@ font-weight:800;
     font-weight:800;
   }
   #divtitlegrouping{
-    padding: .5rem;
+    padding: .5rem 1rem 1rem .5rem;
   }
-    
+  .google_auth_btn{
+    width:70%;
+    height: fit-content;
+  }
+  .google_auth_btn img{
+    width:5rem;
+    float: left;
+  }
+  .google_auth_btn h4{
+    font-size: 3rem;
+  }
+  
+  .google_auth_btn a{
+    text-decoration: none;
+  }
 }
 
 @media only screen and (min-width: 1000px){
