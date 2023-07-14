@@ -18,16 +18,16 @@
 {% block body %}
 <div class = "formdiv">
     <form action ="/{{ course }}", id = "formcenter", method = "POST" enctype=multipart/form-data>
-        <br>
-        <br>
         <input id = "formtitleinput", type = "text", name = "title", placeholder = "Title" >
         <br>
         <br>
-        <textarea id = "bodytext" id="text" name="text" rows="12" cols="50" placeholder="Body Text"></textarea>
+        <textarea id = "bodytext" id="text" name="text" placeholder="Body Text"></textarea>
         <br>
         <br>
-        <label id = "uploadbutton" for="file-ip-1" value= "Upload">Upload Files and Images</label>
-        <input type="file" name = "file" id="file-ip-1" onchange="showPreview(event);" multiple>
+        <div id="label_form">
+            <label id = "uploadbutton" for="file-ip-1" value= "Upload">Upload Files and Images</label>
+            <input type="file" name = "file" id="file-ip-1" onchange="showPreview(event);" multiple>
+        </div>
         <br>
         <div id = "filesviewdiv">
             <ul id = "horizontal-list">
@@ -36,8 +36,8 @@
         </div>
         <br>
         <div>
-            <div style = "margin:auto">
-                <input type="submit", id = "submitbutton" value = "Submit" style = "margin-left:45%"></submit>
+            <div style = "display:flex; justify-content: center; align-items: center; margin-bottom: 3rem;">
+                <input type="submit", id = "submitbutton" value = "Submit"></submit>
             </div>
         </div>
     </form>
