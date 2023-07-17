@@ -13,40 +13,74 @@ html, body {
   --animation-timing-curve: ease-in-out;
   --spacer-height:0px;
   --lightblue-highlight: #59C0E4;
+  --core-purple-dark: #06002E;
+  --core-purple-light: #6E62CE;
 }
 
 .crop {
-    height: 88.8%;
+    height: 80%;
     overflow: hidden;
 }
 .crop img {
-    width:100%;
+    width:50%;
 }
 
+#background_parrot_image_div{
+  display:flex;
+  justify-content: flex-end;
+}
+#parrot_background_image{
+  width: 1024px;
+}
+
+#introbox{
+  width: 100%;
+  height: fit-content;
+  position: relative;
+}
+
+#introphrase{
+  padding: 8rem;
+  padding-right: 16rem;
+  border:1rem solid white;
+  border-radius: 1rem;
+  margin: auto;
+  width: 70%;
+  height: fit-content;
+  overflow-wrap: normal;
+  position: absolute;
+  bottom: 343px;
+  right: 358px;
+}
+#introphrase h1{
+  font-size: 3.5rem;
+  color: white;
+}
 
 #titlediv{
   /* Allow the centering to work */
-  background: #CFD7C7;
+  background: var(--core-purple-dark);
   width: fit-content;
   border: 1px;
 }
 
 #divtitlegrouping { /* Allow the centering to work */
-	margin: 0;
-  background:#CFD7C7 ;
+	margin: .5rem 0 .5rem 0;
+  background: var(--core-purple-dark);
   width: 100%;
   height: fit-content;
   border: 1px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 0 .5rem 0 .5rem;
 }
 
 #returnhome{
   text-decoration: none;
   padding-left: 2;
-  font-size:80;
-  color:#40798C;
+  font: size 10px;;
+  color:white;
   font-family: 'Teko', sans-serif;
   font-weight:5000;
   display: block;
@@ -57,7 +91,7 @@ html, body {
 
 
 #navbox {
-  background: #CFD7C7;
+  background: var(--core-purple-dark);
   width: fit-content;
   border: 1px;
 }
@@ -66,10 +100,6 @@ html, body {
 		display: inline;
 }
 
-
-#girl_image{
-  width: 100%;
-}
 
 #signupfog {
   overflow: hidden;
@@ -101,12 +131,11 @@ html, body {
 /*Login ----------------------------------------------- */
 
 #login-item{
-margin-top: 1.5rem;
 margin-left:2rem;
 float: right;
 width: fit-content;
 border-radius: 12px;
-border: 1px solid #40798C;
+border: 1px solid var(--core-purple-light);
 list-style-type: none;
 cursor: pointer;
 }
@@ -118,7 +147,7 @@ background-color: #e3e3e3;
 #login-item a {
 margin:0;
 text-decoration: none;
-color:#40798C;
+color:var(--core-purple-light);
 display: block;
 padding: 0.675rem;
 font-size:16;
@@ -128,13 +157,12 @@ font-weight:800;
 /* Login -----------------------------------------------------------------*/
 /* Signup -----------------------------------------------------------------*/
 #signup-item{
-margin-top:1.5rem;
 margin-left:2rem;
 float: left;
 width: fit-content;
 border-radius: 12px;
-border: 1px solid #40798C;
-background-color:#40798C;
+border: 1px solid var(--core-purple-light);
+background-color:var(--core-purple-light);
 list-style-type: none;
 float:right;
 cursor: pointer;
@@ -179,7 +207,7 @@ font-weight:800;
 }
 
 .btn-primary{
-  background-color: #40798C; /* Green */
+  background-color: var(--core-purple-light); /* Green */
   border: none;
   color: white;
   padding: 15px 32px;
@@ -219,6 +247,11 @@ font-weight:800;
 
 .google_auth_btn a{
   text-decoration: none;
+}
+
+body{
+  background-color: var(--core-purple-dark) !important;
+
 }
 
 @media only screen and (max-width: 1000px){
@@ -264,7 +297,7 @@ font-weight:800;
       font-size: 3rem;
   }
   .btn-primary{
-    background-color: #40798C; /* Green */
+    background-color: var(--core-purple-light); /* Green */
     border: none;
     color: white;
     padding: 15px 32px;
@@ -310,7 +343,7 @@ font-weight:800;
   #login-item a {
     margin:0;
     text-decoration: none;
-    color:#40798C;
+    color:var(--core-purple-light);
     display: block;
     padding: 0.675rem;
     font-size:3rem;
@@ -334,6 +367,39 @@ font-weight:800;
   
   .google_auth_btn a{
     text-decoration: none;
+  }
+
+
+  #background_parrot_image_div{
+    display:flex;
+    justify-content: flex-end;
+  }
+  #parrot_background_image{
+    width: 1024px;
+  }
+  
+  #introbox{
+    width: 100%;
+    height: fit-content;
+    position: relative;
+  }
+  
+  #introphrase{
+    padding: 8rem;
+    padding-right: 16rem;
+    border:none;
+    border-radius: 1rem;
+    margin: auto;
+    width: 70%;
+    height: fit-content;
+    overflow-wrap: normal;
+    position: absolute;
+    bottom: 0;
+    right: 388px;
+  }
+  #introphrase h1{
+    font-size: 3.5rem;
+    color: white;
   }
 }
 
