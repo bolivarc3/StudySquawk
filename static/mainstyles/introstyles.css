@@ -37,6 +37,7 @@ html, body {
   width: 100%;
   height: fit-content;
   position: relative;
+  margin-bottom: 3rem;
 }
 
 #introphrase{
@@ -254,6 +255,53 @@ body{
 
 }
 
+.subsection_text_div{
+  width: 50%;
+  overflow-wrap: normal;
+  margin-left: 3rem;
+  color:white;
+  margin-bottom: 8%;
+}
+.subsection_text{
+  color: white;
+  font-size: 5rem;
+}
+
+.box_system_row_div{
+  padding: 3rem;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.content_container{
+  background-image:  url("./intropage_gradients/1.png");
+  background-repeat: no-repeat, no-repeat;
+  background-size: 100%;
+  height: 22rem;
+  width: 20%;
+  padding: 1rem;
+  border-radius: 1rem;
+  align-items: center;
+  margin: 2.5%;
+}
+
+#social_div{
+  padding: 1rem;
+  width: 30%;
+  margin: 1.665%;
+  height: 10rem;
+  color: white;
+  background-color: var(--core-purple-light);
+  border-radius: .5rem;
+}
+
+#social_div a{
+  color: white;
+  text-decoration: none;
+}
+
 @media only screen and (max-width: 1000px){
   #form-group{
     margin:auto;
@@ -401,6 +449,22 @@ body{
     font-size: 3.5rem;
     color: white;
   }
+  #display_mobile{
+    display: block;
+  }
+  #display_desktop{
+    display:none;
+  }
+
+  .content_container{
+    width: 100%;
+  }
+  .content_container h1{
+    font-size: 4rem;
+  }
+  .content_container h4{
+    font-size: 2.5rem;
+  }
 }
 
 @media only screen and (min-width: 1000px){
@@ -424,5 +488,10 @@ body{
   #exit-form{
     display:none;
   }
-  
+  #display_mobile{
+    display: none;
+  }
+  #display_desktop{
+    display:block;
+  }
 }

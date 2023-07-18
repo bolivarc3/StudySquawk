@@ -23,10 +23,16 @@ function loginon() {
 
 function signupoff() {
     document.getElementById("signupfog").style.display = "none";
+    window.onscroll = function(){
+
+    };
     event.stopPropagation();
 }
 
 function loginoff(){
     document.getElementById("loginfog").style.display = "none";
+    window.onscroll = function(){
+
+    };
     event.stopPropagation();
 }
