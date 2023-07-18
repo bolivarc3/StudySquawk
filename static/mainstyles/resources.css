@@ -280,13 +280,14 @@ input, select, textarea{
     height:90%;
 }
 h2{
-    font-size:1rem;
+    font-size:1rem !important;
 }
 
 @media only screen and (max-width: 1000px){
     #actionheaders{
         display:inline-block;
         color:#676869;
+        margin: .5rem;
     }
     #actionheaders:hover{
         color:#40798C;
@@ -314,6 +315,9 @@ h2{
     }
     #form-group{
         width: 100%;
+    }
+    h2{
+        font-size:.75rem !important;
     }
 
 }
