@@ -215,6 +215,7 @@ body{
       width: 100%;
       fill: var(--light-gray);
       flex-grow: 1;
+      margin: 1rem .5rem 1rem .5rem;
   }
   .sidebar-link svg{
       width: 1rem; 
@@ -234,6 +235,7 @@ body{
     margin:0;
     width:100%;
   }
+  
 
 }
 

@@ -83,20 +83,28 @@
     <div id = "newactionheaders" onclick = "newfolderon()">
         <div class = "newbutton" onclick = "newfolderon()">
             <i class="fa-solid fa-folder-plus"></i>
-            New Folder
+            <h2>
+                New Folder
+            </h2>
         </div>
     </div>
     <div id = "actionheaders" onclick = "uploadon()">
         <i class="fa-solid fa-upload"></i>
-        Upload
+        <h2>
+            Upload
+        </h2>
     </div>
     <div id = "actionheaders">
         <i class="fa-solid fa-download"></i>
-        Download
+        <h2>
+            Download
+        </h2>
     </div>
     <div id = "actionheaders">
         <i class="fa-solid fa-pen-to-square"></i>
-        Apply for Moderator
+        <h2>
+            Apply for Moderator
+        </h2>
     </div>
 </div>
 
@@ -128,7 +136,7 @@
         <tr id = "rowbox">
             <td id = "checkbox"><i class="fa-solid fa-circle-check"></td>
             <td id = "tablecells"><i class="fa-solid fa-file"></i></td>
-            <td id = "tablecells"><a href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/{{aws_resource_list[3]}}" target="_blank">{{aws_resource_list[0]}}</a></td>
+            <td id = "tablecells"><a id="file_text" href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/{{aws_resource_list[3]}}" target="_blank">{{aws_resource_list[0]}}</a></td>
             <td id = "tablecells"><a href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com{{aws_resource_list[3]}}" target="_blank">{{aws_resource_list[1]}}</a></td>
         <td id = "tablecells"><a href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com{{aws_resource_list[3]}}" target="_blank">{{aws_resource_list[2]}}</a></td>
         </tr>

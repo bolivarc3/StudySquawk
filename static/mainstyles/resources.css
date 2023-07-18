@@ -1,14 +1,17 @@
-#actionheaders{
-    display:inline-block;
-    color:#676869;
-    margin:1rem 1rem 1rem 3rem;
-}
+
 #resourcesdiv{
     height:fit-content;
     display:flex;
     width:100%;
     border-bottom: 1px solid #40798C;
     border-top:1px solid #40798C;
+    justify-content: space-evenly;
+}
+
+#actionheaders{
+    display:inline-block;
+    color:#676869;
+    margin:1rem 1rem 1rem 3rem;
 }
 
 #actionheaders:hover{
@@ -276,4 +279,42 @@ input, select, textarea{
 
 #uploadresourceform{
     height:90%;
+}
+h2{
+    font-size:1rem;
+}
+
+@media only screen and (max-width: 1000px){
+    #actionheaders{
+        display:inline-block;
+        color:#676869;
+    }
+    #actionheaders:hover{
+        color:#40798C;
+        cursor:pointer;
+    }
+    #actionheaders h2{
+        font-size: .5rem;
+    }
+    .newbutton h2{
+        font-size: 1rem;
+    }
+    #tableheader{
+        color:#40798C;
+        border: 1px solid transparent;
+        border-bottom: 1px solid #40798C;
+        padding: .25rem .25rem .25rem .25rem;
+    }
+    #newactionheaders{
+        margin: 0;
+    }
+    #file_text{
+        max-width: 3rem;
+        overflow-wrap: normal;
+        font-size:2.5vw;
+    }
+}
+
+@media only screen and (min-width: 1000px){
+    
 }
