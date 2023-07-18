@@ -465,6 +465,15 @@ body{
   .content_container h4{
     font-size: 2.5rem;
   }
+  box_system_row_div{
+    align-items: center;
+  }
+  #social_div{
+    width: 30%;
+  }
+  #social_div a h4{
+    font-size: 1.35rem;
+  }
 }
 
 @media only screen and (min-width: 1000px){
