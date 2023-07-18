@@ -119,7 +119,7 @@ table{
 
 #uploadbutton {
     display:block;
-    width:40rem;
+    width:100%;
     height:45px;
     line-height:50px;
     text-align:center;
@@ -164,7 +164,7 @@ table{
     border-color:transparent;
     border-radius:1px;
     background-color: #0D1117;
-    width:50rem;
+    width:100%;
     height:20rem;
 }
 
@@ -229,7 +229,7 @@ input, select, textarea{
     border-color: white;
     border-radius: 2px;
     height: 2.5rem;
-    width: 30rem;
+    width: 100%;
 }
 
 .form:focus{
