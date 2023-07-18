@@ -310,7 +310,7 @@ h2{
     }
     #file_text{
         max-width: 3rem;
-        overflow-wrap: normal;
+        overflow:scroll;
         font-size:2.5vw;
     }
 }
