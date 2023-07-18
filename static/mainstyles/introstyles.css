@@ -276,7 +276,7 @@ body{
 }
 
 .content_container{
-  background-image:  url("../images/intropage_gradients/1.png");
+  background-image:  linear-gradient(#A3DDFC,#ACC2FB, #ACC2FB,#F7CFF3);;
   background-repeat: no-repeat, no-repeat;
   background-size: 100%;
   height: 22rem;
