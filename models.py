@@ -126,6 +126,8 @@ class materials(db.Model):
     name = db.Column(db.Text, nullable=False)
     time = db.Column(db.Time, nullable=False)
     date = db.Column(db.Date, nullable=False)
+    title = db.Column(db.Text, nullable=False)
+    body = db.Column(db.Text, nullable=False)
 
     def __init__(self, resourceid, objectroute, objecttype, course, username,name, time, date):
         self.resourceid = resourceid
@@ -136,6 +138,8 @@ class materials(db.Model):
         self.name = name
         self.time = time
         self.date = date
+        self.title = title
+        self.body = body
 
 #models for classes
 class classes(db.Model):

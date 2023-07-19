@@ -532,8 +532,12 @@ def resources(route):
     db_info = connectdb()
     db = db_info[0]
     db_conn = db_info[1]
+    root_route = ""
     if len(routeparts) > 1:
-        root_route = "/" + str(routeparts[0])
+        for route_part in range(len(routeparts)-1):
+            root_route = root_route + "/" + routeparts[route_part]
+        print(root_route)
+        print(routeparts)
         db.execute('SELECT * FROM "materials" WHERE (objectroute = %s AND objecttype = %s AND name = %s)',(root_route,'folder',routeparts[len(routeparts)-1]),)
         count = len(db.fetchall())
         if count == 0:
@@ -562,6 +566,7 @@ def resources(route):
 
         if type_of_form == "uploadfile":
             title = request.form.get("title")
+            body = request.form.get("body")
             title = str(title)
 
             #if there is no inputs, return an error
@@ -604,7 +609,7 @@ def resources(route):
                         fileupload = upload(filespath,filename,file)
 
                         db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)'''
-                        ,(id,objectroute,objecttype,course,username,filename,time,date,))
+                        ,(id,objectroute,objecttype,course,username,filename,time,date,title,body,))
 
                         db_conn.commit()
                     else:
@@ -612,8 +617,8 @@ def resources(route):
                         filename = secure_filename(file.filename)
                         fileupload = upload(filespath,filename,file)
 
-                        db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)'''
-                        ,(id,objectroute,objecttype,course,username,filename,time,date,))
+                        db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                        ,(id,objectroute,objecttype,course,username,filename,time,date,title,body,))
 
                         db_conn.commit()
         if type_of_form == "newfolder":
@@ -639,8 +644,8 @@ def resources(route):
             objecttype = "folder"
             #enter folder information into database
 
-            db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)'''
-                        ,(id,objectroute,objecttype,course,username,foldername,time,date,))
+            db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                        ,(id,objectroute,objecttype,course,username,foldername,time,date,"",""))
             db_conn.commit()
     #grab the materials
     db.execute('SELECT * FROM "materials" WHERE (objecttype=%s OR objecttype=%s) AND objectroute=%s',('image','file', route,))
@@ -794,34 +799,34 @@ def getcourseposts():
     postings = json.dumps(postlist, indent=4, sort_keys=True, default=str)
     return(postings)
 
-@app.route('/getresources', methods=["GET", "POST"])
-def getresources():
-    course = request.json
-    #grab the materials
-    db_info = connectdb()
-    db = db_info[0]
-    db_conn = db_info[1]
-    db.execute('SELECT * FROM "materials" WHERE objecttype=%s OR objecttype=%s AND course=%s',('image','file',course, ))
-    #grab the materials
-    materialsinfo = db.fetchall()
-    db.close()
-    db_conn.close()
-    resources = jsonify(materialsinfo)
-    return(resources)
+# @app.route('/getresources', methods=["GET", "POST"])
+# def getresources():
+#     course = request.json
+#     #grab the materials
+#     db_info = connectdb()
+#     db = db_info[0]
+#     db_conn = db_info[1]
+#     db.execute('SELECT * FROM "materials" WHERE objecttype=%s OR objecttype=%s AND course=%s',('image','file',course, ))
+#     #grab the materials
+#     materialsinfo = db.fetchall()
+#     db.close()
+#     db_conn.close()
+#     resources = jsonify(materialsinfo)
+#     return(resources)
 
-@app.route('/getfolders', methods=["GET", "POST"])
-def getfolders():
-    db_info = connectdb()
-    db = db_info[0]
-    db_conn = db_info[1]
-    course = request.json
-    db.execute('SELECT * FROM "materials" WHERE (objecttype=%s and course=%s)',('folder',course, ))
-    #grab the materials
-    foldersinfo = db.fetchall()
-    db.close()
-    db_conn.close()
-    folders = jsonify(foldersinfo)
-    return(folders)
+# @app.route('/getfolders', methods=["GET", "POST"])
+# def getfolders():
+#     db_info = connectdb()
+#     db = db_info[0]
+#     db_conn = db_info[1]
+#     course = request.json
+#     db.execute('SELECT * FROM "materials" WHERE (objecttype=%s and course=%s)',('folder',course, ))
+#     #grab the materials
+#     foldersinfo = db.fetchall()
+#     db.close()
+#     db_conn.close()
+#     folders = jsonify(foldersinfo)
+#     return(folders)
 
 @app.route('/gethacattendance', methods=['GET', 'POST'])
 def gethaclogin():
