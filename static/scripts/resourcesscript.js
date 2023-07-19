@@ -219,4 +219,13 @@ function showPreview(event){
         }
     }
 }
+
+function preview_resource(id_number){
+    console.log(id_number)
+    document.getElementById(id_number).style.display = "block"
+}
+
+function infofog_off(id_number){
+    document.getElementById(id_number).style.display = "none"
+}
 // Allows for Preview of file

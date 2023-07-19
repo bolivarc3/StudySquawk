@@ -134,14 +134,34 @@
         {% endfor %}
         {% for aws_resource_list in aws_resource_list %}
         <tr id = "rowbox">
+            <td hidden>{{aws_resource_list[6]}}</td>
             <td id = "checkbox"><i class="fa-solid fa-circle-check"></td>
             <td id = "tablecells"><i class="fa-solid fa-file"></i></td>
-            <td id = "tablecells" style="overflow-wrap: break-word;"><a id="file_text" href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/{{aws_resource_list[3]}}" target="_blank">{{aws_resource_list[0]}}</a></td>
-            <td id = "tablecells"><a href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com{{aws_resource_list[3]}}" target="_blank">{{aws_resource_list[1]}}</a></td>
-        <td id = "tablecells"><a href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com{{aws_resource_list[3]}}" target="_blank">{{aws_resource_list[2]}}</a></td>
+            <td id = "tablecells" style="overflow-wrap: break-word;"><a id="file_text" onclick="preview_resource('{{aws_resource_list[6]}}')" target="_blank">{{aws_resource_list[4]}}</a></td>
+            <td id = "tablecells"><a href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/{{aws_resource_list[3]}}" target="_blank">{{aws_resource_list[1]}}</a></td>
+        <td id = "tablecells"><a href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/{{aws_resource_list[3]}}" target="_blank">{{aws_resource_list[2]}}</a></td>
         </tr>
         {% endfor %}
     </table>
+    {% for aws_resource_list in aws_resource_list %}
+        <div class="info_fog" id="{{aws_resource_list[6]}}" onclick="infofog_off('{{aws_resource_list[6]}}')">
+            <div class="resourceinfodiv">
+                <div>
+                    <h1>
+                        {{aws_resource_list[4]}}
+                    </h1>
+                    <br>
+                    <h2>
+                        {{aws_resource_list[5]}}
+                    </h2>
+                    <br>
+                    <br>
+                    <a href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/{{aws_resource_list[3]}}" target="_blank"><img src = "https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/{{aws_resource_list[3]}}"></a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
 </div>
 <!-- tables for the files -->
 {% endblock %}

@@ -568,6 +568,7 @@ def resources(route):
             title = request.form.get("title")
             body = request.form.get("body")
             title = str(title)
+            body = str(body)
 
             #if there is no inputs, return an error
             if title == "":
@@ -608,7 +609,7 @@ def resources(route):
                         filename = secure_filename(file.filename)
                         fileupload = upload(filespath,filename,file)
 
-                        db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)'''
+                        db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
                         ,(id,objectroute,objecttype,course,username,filename,time,date,title,body,))
 
                         db_conn.commit()
@@ -670,6 +671,9 @@ def resources(route):
             aws_key = materialsinfo[i][6].replace(" ", "+")
             aws__route = "resources" + str(aws_course) + "/" + str(aws_key)
             material_info_data.append(aws__route)
+            material_info_data.append(materialsinfo[i][9])
+            material_info_data.append(materialsinfo[i][10])
+            material_info_data.append(materialsinfo[i][1])
             count+=1
         aws_resource_list.append(material_info_data)
     #grab the materials

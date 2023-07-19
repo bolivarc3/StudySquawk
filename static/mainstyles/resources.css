@@ -283,6 +283,47 @@ h2{
     font-size:1rem !important;
 }
 
+.info_fog{
+    overflow: hidden;
+    position: fixed; /* Sit on top of the page content */
+    display: none; /* Hidden by default */
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height (cover the whole page) */
+    top:0;
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+}
+/* .info_fog div{
+    width: fit-content;
+    height: fit-content;
+
+} */
+
+.resourceinfodiv{
+    width: 80%;
+    height: fit-content;
+    color: white;
+    background-color: #161B22;
+    flex-direction: column;
+    position: absolute;
+    right: 254px;
+    bottom: 248px;
+    padding: 3rem;
+}
+
+.resourceinfodiv div{
+    margin: auto;
+    width: 90%;
+    height: fit-content;
+    border: .5rem solid white;
+    padding: 1rem;
+}
+
+.resourceinfodiv div a img{
+    width:20%;
+}
+
 @media only screen and (max-width: 1000px){
     #actionheaders{
         display:inline-block;
@@ -318,6 +359,35 @@ h2{
     }
     h2{
         font-size:.75rem !important;
+    }
+    .resourceinfodiv{
+        width: 80%;
+        height: fit-content;
+        color: white;
+        background-color: #161B22;
+        flex-direction: column;
+        position: absolute;
+        right: 39px;
+        bottom: 153px;
+        padding: 1.5rem;
+    }
+    .resourceinfodiv div{
+        margin: auto;
+        width: 90%;
+        height: fit-content;
+        border: .2rem solid white;
+        padding: 1rem;
+        max-height: 80%;
+        overflow-y: scroll;
+    }
+    .resourceinfodiv div a img{
+        width:50%;
+    }
+    .resourceinfodiv div h1{
+        font-size: 1.5rem !important;
+    }
+    .resourceinfodiv div h2{
+        font-size: 2rem !important;
     }
 
 }
