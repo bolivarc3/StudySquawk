@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
+from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify,send_file
 from flask_session import Session
 from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference, login_hac_required, update_hac, hac_executions
 from werkzeug.utils import secure_filename
@@ -16,6 +16,8 @@ from dotenv import load_dotenv
 import psycopg2
 from threading import Thread
 from oauthlib.oauth2 import WebApplicationClient
+import zipfile
+import glob
 
 #change
 app = Flask(__name__)
@@ -849,3 +851,50 @@ def grade_save_calculations():
     grade_info_change = request.json
     response = "good"
     return (response)
+
+@app.route("/zip_download", methods=['POST'])
+def get_zip():
+    file_elements = request.json
+    parentpath = os.getcwd()
+    root_path = str(parentpath) + "/static/zip/"
+    zip_folder_number = str(0)
+    current_folders = os.listdir(root_path)
+    print(current_folders)
+    for index in range(len(current_folders)):
+        if str(zip_folder_number) != str(current_folders[index]):
+            zip_folder_number = str(index)
+        if str(index) == str(current_folders[index]):
+            zip_folder_number = str(index + 1)
+    for file_element in file_elements:
+        file_element = str(file_element)
+        file_route_split = file_element.split("/")
+        filename = file_route_split[len(file_route_split)-1]
+        route = file_route_split[3]
+        for routing_index in range(4,len(file_route_split)):
+            route = route + "/" + file_route_split[routing_index]
+        print("\n")
+        route = route.replace("+"," ")
+        print("\n")
+        download_file(route,filename, BUCKET_NAME, zip_folder_number)
+    zip_folder_path = root_path + zip_folder_number + ".zip"
+    zip_folder_past = root_path + zip_folder_number
+    # with zipfile.ZipFile(zip_folder_path, 'w') as f:
+    #     for file in glob.glob(zip_folder_past):
+    #         f.write(file)
+
+    # import os, zipfile
+
+    name = zip_folder_past
+    zip_name = name + '.zip'
+
+    with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as zip_ref:
+        for folder_name, subfolders, filenames in os.walk(name):
+            for filename in filenames:
+                file_path = os.path.join(folder_name, filename)
+                zip_ref.write(file_path, arcname=os.path.relpath(file_path, name))
+
+    zip_ref.close()
+
+    return jsonify(zip_folder_number+".zip")
+
+    

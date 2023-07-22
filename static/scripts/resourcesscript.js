@@ -1,3 +1,6 @@
+// import JSZip from "jszip";
+// import { saveAs } from 'file-saver';
+
 // The function used for fog on form
 function uploadon() {
     document.getElementById("uploadformfog").style.display = "block";
@@ -229,3 +232,104 @@ function infofog_off(id_number){
     document.getElementById(id_number).style.display = "none"
 }
 // Allows for Preview of file
+selected_elements = []
+titles = []
+window.addEventListener("DOMContentLoaded", (event) => {
+    var checkboxes = document.getElementsByClassName("checkbox") 
+    for(var check_box_num = 0; check_box_num < checkboxes.length; check_box_num++){
+        var current_checkbox = checkboxes[check_box_num]
+        current_checkbox.addEventListener('click', function(check_box_num){
+            checkbox_color = getComputedStyle(this).color
+            console.log(checkbox_color)
+
+
+            if (checkbox_color == "rgb(22, 27, 34)"){
+                this.style.color="white";
+                selected(this)
+                console.log("activate")
+            }
+            else if(checkbox_color == "rgb(81, 81, 82)"){
+                this.style.color="white";
+                selected(this,this.id)
+                console.log("activate")
+            }
+            if(checkbox_color == "rgb(255, 255, 255)"){
+                this.style.color="#161b22"
+                deslected(this,this.id)
+                console.log("disactivate")
+            }
+        })
+    }
+});
+
+function selected(element,type){ 
+    var parent = element.parentElement;
+    var children_rows = parent.childNodes;
+    var title = children_rows[1].id
+    if (type == "folder"){
+        console.log("folder")
+
+    }
+    else{
+        var a_element = children_rows[9].childNodes[0]
+        var link = decodeURI(a_element.href)
+        selected_elements.push(link)
+        titles.push(title)
+    }
+    console.log(selected_elements)
+}
+
+function deslected(element,type){
+    var parent = element.parentElement;
+    var children_rows = parent.childNodes;
+    if (type == "folder"){
+        console.log("folder")
+
+    }
+    else{
+        var a_element = children_rows[9].childNodes[0]
+        var link = a_element.href
+        console.log(link)
+        var index = selected_elements.indexOf(decodeURI(link));
+        if (index > -1) {
+            selected_elements.splice(index, 1);
+            titles.splice(index,1)
+        }
+    }
+    console.log(selected_elements)
+}
+
+function download_files() {
+    send_files_for_zip()
+}
+function download_zip(url,fileName){
+    const downloadLink = document.createElement('a');
+    downloadLink.setAttribute('download', fileName)
+  
+    // Append the link to the DOM (this is required for the download to work in some browsers)
+    downloadLink.href = url
+    document.body.appendChild(downloadLink);
+  
+    // Click the link to start the download
+    downloadLink.click();
+    
+    // Remove the link (it's not needed anymore)
+    document.body.removeChild(downloadLink);
+}
+
+async function send_files_for_zip(){
+    const response = await fetch('/zip_download', {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify(selected_elements) // body data type must match "Content-Type" header
+    })
+    const zip_name = await response.json()
+    console.log(zip_name)
+    hostname = window.location.hostname	 
+    var path_zip = "/static/" + "zip/" + zip_name.toString()
+
+    download_zip(path_zip,zip_name)
+}

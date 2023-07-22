@@ -43,6 +43,9 @@ tasks = "*"
 oauthlib = "*"
 pyopenssl = "*"
 flask-login = "*"
+uuid = "*"
+zipfile36 = "*"
+glob2 = "*"
 
 [dev-packages]
 

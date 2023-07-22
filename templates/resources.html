@@ -1,8 +1,28 @@
 <!DOCTYPE html>
 <head>
+    <script type="text/javascript" src="[path to paramquery]/jsZip-2.5.0/jszip.min.js"></script>
+
     <script src="https://kit.fontawesome.com/dc046f3b4c.js" crossorigin="anonymous"></script>
     <script type = "text/javascript" src = "/static/scripts/resourcesscript.js"></script>
     <link href="/static/mainstyles/resources.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip-utils/0.1.0/jszip-utils.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
+    <script src="
+https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js
+"></script>
+    <script src="
+    https://cdn.jsdelivr.net/npm/zip@1.2.0/zip.min.js
+    "></script>
+    <script src="https://unpkg.com/fflate@0.8.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
+    <!-- Now, the global variable fflate contains the library -->
+    
+    <!-- If you're going buildless but want ESM, import from Skypack -->
+    <script type="module">
+      import * as fflate from 'https://cdn.skypack.dev/fflate@0.8.0?min';
+    </script>
+
 </head>
 {% extends "layout.html" %}
 {% block maintitle %} | {{ course }}{% endblock %}s
@@ -94,7 +114,7 @@
             Upload
         </h2>
     </div>
-    <div id = "actionheaders">
+    <div id = "actionheaders" onclick = "download_files()">
         <i class="fa-solid fa-download"></i>
         <h2>
             Download
@@ -113,7 +133,6 @@
     <h3 id = "routing">{{ route }}</h3>
 </div>
 <br>
-
 <div id = "resourcestablediv">
     <table id = "resourcestable">
         <tr>
@@ -125,7 +144,8 @@
         </tr>
         {% for foldersinfo in foldersinfo %}
         <tr id = "rowbox">
-            <td id = "checkbox"><i class="fa-solid fa-circle-check"></td>
+            <td class="title_info" id = "{{ foldersinfo[6] }}" hidden ></td>
+            <td class = "checkbox" id="folder"><i class="fa-solid fa-circle-check"></td>
             <td id = "tablecells"><i class="fa-solid fa-folder"></i></td>
             <td id = "tablecells"><a href="/resources/{{ currentfolderrouteurl }}>{{ foldersinfo[6] }}" >{{ foldersinfo[6] }}</a></td>
             <td id = "tablecells"><a href="/static/resources/Algebra 1/Capture - Copy.PNG" >{{ foldersinfo[8] }}</a></td>
@@ -134,8 +154,8 @@
         {% endfor %}
         {% for aws_resource_list in aws_resource_list %}
         <tr id = "rowbox">
-            <td hidden>{{aws_resource_list[6]}}</td>
-            <td id = "checkbox"><i class="fa-solid fa-circle-check"></td>
+            <td hidden class="title_info" id="{{aws_resource_list[4]}}">{{aws_resource_list[6]}}</td>
+            <td name="{{aws_resource_list[4]}}" class = "checkbox" id="file"><i class="fa-solid fa-circle-check"></td>
             <td id = "tablecells"><i class="fa-solid fa-file"></i></td>
             <td id = "tablecells" style="overflow-wrap: break-word;"><a id="file_text" onclick="preview_resource('{{aws_resource_list[6]}}')" target="_blank">{{aws_resource_list[4]}}</a></td>
             <td id = "tablecells"><a href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/{{aws_resource_list[3]}}" target="_blank">{{aws_resource_list[1]}}</a></td>

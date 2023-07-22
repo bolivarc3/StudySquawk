@@ -1,6 +1,8 @@
 from app import BUCKET_NAME,s3
 import os
 import boto3
+import uuid
+
 def upload(filespath,filename,filedata):
     #saving files to the s3 with a filepath and filename
     parentpath = os.getcwd()
@@ -16,24 +18,25 @@ def upload(filespath,filename,filedata):
     )
     return "Upload Done ! "
 
-def download_file(filespath, BUCKET_NAME):
+
+def download_file(filespath, filename, BUCKET_NAME, zip_folder_number):
     #filepath for the folder creation
     parentpath = os.getcwd()
-    folderpath = str(parentpath) + "/static/" + str(filespath)
+    root_path = str(parentpath) + "/static/zip/"
+    folderpath = root_path + zip_folder_number + "/"
+    target= root_path + zip_folder_number + "/" +str(filename)
     print(folderpath)
+    print(filespath)
     if not os.path.isdir(folderpath):
         os.makedirs(folderpath)
     
-    #s3 information for downloads
-    s3_resource = boto3.resource('s3')
-    bucket = s3_resource.Bucket(BUCKET_NAME)
+    s3 = boto3.client('s3',
+    aws_access_key_id = os.environ.get('AWS_S3_ACCESS_KEY'),
+    aws_secret_access_key = os.environ.get('AWS_S3_SECRET_ACCESS_KEY'),
+    )
 
-    #grabs the objects from the s3 bucket and downloads them
-    objects = bucket.objects.filter(Prefix=filespath)
-    for obj in objects:
-        #from the objects, grab the paths and names
-        path, filename = os.path.split(obj.key)
-        #make the target path
-        target = str(parentpath) + '/static/' + str(filespath) + "/" + str(filename)
-        #download
-        bucket.download_file(obj.key, target)
+    s3.download_file(
+        Bucket=BUCKET_NAME,
+        Key=filespath,
+        Filename=target
+    )
