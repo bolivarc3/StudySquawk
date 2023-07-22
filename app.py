@@ -860,6 +860,8 @@ def get_zip():
     file_elements = request.json
     parentpath = os.getcwd()
     root_path = str(parentpath) + "/static/zip/"
+    if not os.path.isdir(root_path):
+        os.makedirs(root_path)
     zip_folder_number = str(0)
     current_folders = os.listdir(root_path)
     print(current_folders)
