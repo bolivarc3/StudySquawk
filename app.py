@@ -228,6 +228,9 @@ def index():
 
 @app.route('/login')
 def login():
+    print("hacattendance done")
+    session["hacattendancetimeupdated"] =''
+    session["hacgradestimeupdated"] =''
         # Find out what URL to hit for Google login
     google_provider_cfg = get_google_provider_cfg()
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
@@ -243,6 +246,9 @@ def login():
 
 @app.route("/login/callback")
 def callback():
+    print("hacattendance done")
+    session["hacattendancetimeupdated"] =''
+    session["hacgradestimeupdated"] =''
     # Get authorization code Google sent back to you
     code = request.args.get("code")
     google_provider_cfg = get_google_provider_cfg()
@@ -305,6 +311,9 @@ def callback():
     db_conn.commit()
     db.close()
     db_conn.close()
+    print("hacattendance done")
+    session["hacattendancetimeupdated"] =''
+    session["hacgradestimeupdated"] =''
     return redirect(url_for("studyist"))
 
 @app.route("/homepage", methods=["GET", "POST"])
