@@ -200,6 +200,7 @@ def index():
                     session["user_id"] = username[0][0]
                     session["hacattendancetimeupdated"] =''
                     session["hacgradestimeupdated"] =''
+                    print("hacattendance done")
                     return redirect(url_for("login"))
                 #else, continue to authenticate password
 
@@ -212,12 +213,13 @@ def index():
             if count == 0:
                 flash("Password is Incorrect")
                 return render_template("intro.html")
-            print(session["hacgradestimeupdated"])
+            print("hacattendance done")
             #set the session
             session["user_id"] = username[0][0]
             session["hacattendancetimeupdated"] =''
             session["hacgradestimeupdated"] =''
             print(session["hacgradestimeupdated"])
+            print("hacattendance done")
             return redirect(url_for("studyist"))
     else:
         return render_template("intro.html")
