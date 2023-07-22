@@ -197,6 +197,9 @@ def index():
                 #if the password is not already set to something
                 if db_password == "null":
                     session["attempted_password"] = password
+                    session["user_id"] = username[0][0]
+                    session["hacattendancetimeupdated"] =''
+                    session["hacgradestimeupdated"] =''
                     return redirect(url_for("login"))
                 #else, continue to authenticate password
 
