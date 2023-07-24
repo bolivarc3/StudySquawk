@@ -46,6 +46,7 @@ flask-login = "*"
 uuid = "*"
 zipfile36 = "*"
 glob2 = "*"
+pytest-shutil = "*"
 
 [dev-packages]
 

@@ -233,7 +233,9 @@ function infofog_off(id_number){
 }
 // Allows for Preview of file
 selected_elements = []
-titles = []
+folder_elements = []
+selected_elements_titles = []
+folder_elements_titles = []
 window.addEventListener("DOMContentLoaded", (event) => {
     var checkboxes = document.getElementsByClassName("checkbox") 
     for(var check_box_num = 0; check_box_num < checkboxes.length; check_box_num++){
@@ -245,7 +247,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
 
             if (checkbox_color == "rgb(22, 27, 34)"){
                 this.style.color="white";
-                selected(this)
+                selected(this,this.id)
                 console.log("activate")
             }
             else if(checkbox_color == "rgb(81, 81, 82)"){
@@ -267,42 +269,110 @@ function selected(element,type){
     var children_rows = parent.childNodes;
     var title = children_rows[1].id
     if (type == "folder"){
-        console.log("folder")
-
+        var a_element = children_rows[7].childNodes[0]
+        var link = decodeURI(a_element.href)
+        folder_elements.push(link)
     }
     else{
+        console.log("YES")
         var a_element = children_rows[9].childNodes[0]
         var link = decodeURI(a_element.href)
         selected_elements.push(link)
-        titles.push(title)
+        selected_elements_titles.push(title)
     }
-    console.log(selected_elements)
+    console.log(folder_elements)
 }
 
 function deslected(element,type){
     var parent = element.parentElement;
     var children_rows = parent.childNodes;
+    console.log()
     if (type == "folder"){
-        console.log("folder")
+        var a_element = children_rows[7].childNodes[0]
+        var link = a_element.href
+        var index = folder_elements.indexOf(decodeURI(link));
+        if (index > -1) {
+            folder_elements.splice(index, 1);
+            folder_elements_titles.splice(index,1)
+        }
 
     }
     else{
         var a_element = children_rows[9].childNodes[0]
         var link = a_element.href
-        console.log(link)
         var index = selected_elements.indexOf(decodeURI(link));
         if (index > -1) {
             selected_elements.splice(index, 1);
-            titles.splice(index,1)
+            selected_elements_titles.splice(index,1)
         }
     }
-    console.log(selected_elements)
+    console.log(folder_elements)
 }
 
-function download_files() {
-    send_files_for_zip()
+async function send_files_for_zip(){
+    const response = await fetch('/zip_download_files', {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify(selected_elements) // body data type must match "Content-Type" header
+    })
+    const zip_number = await response.json()
+    console.log(zip_number)
+    hostname = window.location.hostname	 
+    return(zip_number)
 }
+async function zipit(path_zip){
+    console.log(path_zip)
+    const response = await fetch('/zipit', {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body:JSON.stringify(path_zip)
+    })
+    console.log("yeah")
+    zip_number = await response.json()
+}
+async function send_folders_for_zip(zip_number){
+    const response = await fetch('/folder_zip_download', {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify({"folder_elements":folder_elements,"zip_number":zip_number}) // body data type must match "Content-Type" header
+    })
+    zip_number = await response.json()
+    console.log(zip_number)
+    hostname = window.location.hostname	
+    return (zip_number)
+}
+
+
+async function download_files() {
+    let zip_number = ''
+    var path_zip = ''
+    if (selected_elements.length != 0 || folder_elements.length != 0)
+    {
+        if (selected_elements.length != 0){
+            zip_number = await send_files_for_zip(zip_number)
+        }
+        if (folder_elements.length != 0){
+            zip_number = await send_folders_for_zip(zip_number)
+        }
+        path_zip = "/static/" + "zip_files/" + zip_number.toString() +"/file.zip"
+        console.log(path_zip)
+        await zipit(zip_number)
+        download_zip(path_zip,"file.zip")
+    }
+}
+
+
 function download_zip(url,fileName){
+    console.log("yopooo")
     const downloadLink = document.createElement('a');
     downloadLink.setAttribute('download', fileName)
   
@@ -315,21 +385,4 @@ function download_zip(url,fileName){
     
     // Remove the link (it's not needed anymore)
     document.body.removeChild(downloadLink);
-}
-
-async function send_files_for_zip(){
-    const response = await fetch('/zip_download', {
-        method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        headers: {
-            'Content-Type': 'application/json'
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: JSON.stringify(selected_elements) // body data type must match "Content-Type" header
-    })
-    const zip_name = await response.json()
-    console.log(zip_name)
-    hostname = window.location.hostname	 
-    var path_zip = "/static/" + "zip/" + zip_name.toString()
-
-    download_zip(path_zip,zip_name)
 }

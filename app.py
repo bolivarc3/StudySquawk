@@ -18,6 +18,8 @@ from threading import Thread
 from oauthlib.oauth2 import WebApplicationClient
 import zipfile
 import glob
+import shutil 
+from zipfile import ZipFile
 
 #change
 app = Flask(__name__)
@@ -86,8 +88,7 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["SESSION_PERMANENT"] = False
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
-
-from aws import upload, download_file
+from aws import upload, download_file, download_folder
 # Ensure responses aren't cached
 @app.after_request
 def after_request(response):
@@ -863,7 +864,7 @@ def grade_save_calculations():
     response = "good"
     return (response)
 
-@app.route("/zip_download", methods=['POST'])
+@app.route("/zip_download_files", methods=['POST'])
 def get_zip():
     file_elements = request.json
     parentpath = os.getcwd()
@@ -891,23 +892,83 @@ def get_zip():
         download_file(route,filename, BUCKET_NAME, zip_folder_number)
     zip_folder_path = root_path + zip_folder_number + ".zip"
     zip_folder_past = root_path + zip_folder_number
-    # with zipfile.ZipFile(zip_folder_path, 'w') as f:
-    #     for file in glob.glob(zip_folder_past):
-    #         f.write(file)
+    return jsonify(zip_folder_number)
 
-    # import os, zipfile
+def zipdir(dirPath=None, zipFilePath=None, includeDirInZip=True):
 
-    name = zip_folder_past
-    zip_name = name + '.zip'
+    if not zipFilePath:
+        zipFilePath = dirPath + ".zip"
+    if not os.path.isdir(dirPath):
+        raise OSError("dirPath argument must point to a directory. "
+            "'%s' does not." % dirPath)
+    parentDir, dirToZip = os.path.split(dirPath)
+    #Little nested function to prepare the proper archive path
+    def trimPath(path):
+        archivePath = path.replace(parentDir, "", 1)
+        if parentDir:
+            archivePath = archivePath.replace(os.path.sep, "", 1)
+        if not includeDirInZip:
+            archivePath = archivePath.replace(dirToZip + os.path.sep, "", 1)
+        return os.path.normcase(archivePath)
 
-    with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as zip_ref:
-        for folder_name, subfolders, filenames in os.walk(name):
-            for filename in filenames:
-                file_path = os.path.join(folder_name, filename)
-                zip_ref.write(file_path, arcname=os.path.relpath(file_path, name))
+    outFile = zipfile.ZipFile(zipFilePath, "w",
+        compression=zipfile.ZIP_DEFLATED)
+    for (archiveDirPath, dirNames, fileNames) in os.walk(dirPath):
+        for fileName in fileNames:
+            filePath = os.path.join(archiveDirPath, fileName)
+            outFile.write(filePath, trimPath(filePath))
+        #Make sure we get empty directories as well
+        if not fileNames and not dirNames:
+            zipInfo = zipfile.ZipInfo(trimPath(archiveDirPath) + "/")
+            #some web sites suggest doing
+            #zipInfo.external_attr = 16
+            #or
+            #zipInfo.external_attr = 48
+            #Here to allow for inserting an empty directory.  Still TBD/TODO.
+            outFile.writestr(zipInfo, "")
+    outFile.close()
 
-    zip_ref.close()
-
-    return jsonify(zip_folder_number+".zip")
-
+@app.route("/zipit", methods=['POST'])
+def zipit():
+    zip_number = str(request.json)
+    parentpath = os.getcwd()
+    zip_folder_root = str(parentpath) + "/static/zip/" + zip_number
+    base_folder_target =  str(parentpath) +'/static/zip_files/' + zip_number + "/"
+    if not os.path.isdir(base_folder_target):
+        os.makedirs(base_folder_target)
+    target = str(parentpath) +'/static/zip_files/' + zip_number + '/file.zip'
+    zipdir(zip_folder_root, target, False)
+    return jsonify(0)
     
+
+@app.route("/folder_zip_download", methods=['POST'])
+def get_folder_zip():
+    folder_info = request.json
+    folder_elements = folder_info["folder_elements"]
+    zip_folder_number = folder_info["zip_number"]
+    print(zip_folder_number)
+    if len(zip_folder_number) == 0:
+        parentpath = os.getcwd()
+        root_path = str(parentpath) + "/static/zip/"
+        if not os.path.isdir(root_path):
+            os.makedirs(root_path)
+        zip_folder_number = str(0)
+        current_folders = os.listdir(root_path)
+        print(current_folders)
+        for index in range(len(current_folders)):
+            if str(zip_folder_number) != str(current_folders[index]):
+                zip_folder_number = str(index)
+            if str(index) == str(current_folders[index]):
+                zip_folder_number = str(index + 1)
+    for folder in folder_elements:
+        folder = str(folder).replace(">","/")
+        file_route_split = folder.split("/")
+        filename = file_route_split[len(file_route_split)-1]
+        route = file_route_split[3]
+        for routing_index in range(4,len(file_route_split)):
+            route = route + "/" + file_route_split[routing_index]
+        print("\n")
+        route = route.replace("+"," ")
+        print("\n")
+        download_folder(BUCKET_NAME,route,zip_folder_number)
+    return jsonify(zip_folder_number)

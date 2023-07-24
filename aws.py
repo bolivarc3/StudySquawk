@@ -2,6 +2,7 @@ from app import BUCKET_NAME,s3
 import os
 import boto3
 import uuid
+import errno
 
 def upload(filespath,filename,filedata):
     #saving files to the s3 with a filepath and filename
@@ -25,8 +26,8 @@ def download_file(filespath, filename, BUCKET_NAME, zip_folder_number):
     root_path = str(parentpath) + "/static/zip/"
     folderpath = root_path + zip_folder_number + "/"
     target= root_path + zip_folder_number + "/" +str(filename)
-    print(folderpath)
-    print(filespath)
+    print("key:" + str(filespath))
+    print("target:" + str(target))
     if not os.path.isdir(folderpath):
         os.makedirs(folderpath)
     
@@ -40,3 +41,43 @@ def download_file(filespath, filename, BUCKET_NAME, zip_folder_number):
         Key=filespath,
         Filename=target
     )
+
+def assert_dir_exists(path):
+    try:
+        os.makedirs(path)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
+def download_folder(bucket, path, zip_folder_number):
+    parentpath = os.getcwd()
+    root_path = str(parentpath) + "/static/zip/"
+    folderpath = root_path + zip_folder_number + "/"
+    if not os.path.isdir(folderpath):
+        os.makedirs(folderpath)
+    target = folderpath
+        # Handle missing / at end of prefix
+    if not path.endswith('/'):
+        path += '/'
+    client = boto3.client('s3',aws_access_key_id = os.environ.get('AWS_S3_ACCESS_KEY'),
+    aws_secret_access_key = os.environ.get('AWS_S3_SECRET_ACCESS_KEY'),)
+    paginator = client.get_paginator('list_objects_v2')
+
+    for result in paginator.paginate(Bucket=bucket, Prefix=path):
+        # Download each file individually
+        for key in result['Contents']:
+            # Calculate relative path
+            rel_path_origin_folder = key['Key'].split("/")
+            rel_path_origin_folder = rel_path_origin_folder[len(rel_path_origin_folder)-2]
+            print(rel_path_origin_folder)
+            rel_path = rel_path_origin_folder + "/" + key['Key'][len(path):]
+            # Skip paths ending in /
+            if not key['Key'].endswith('/'):
+                local_file_path = os.path.join(target, rel_path)
+                print("key:" + str(key['Key']))
+                print("target:" + str(local_file_path))
+                # Make sure directories exist
+                local_file_dir = os.path.dirname(local_file_path)
+                assert_dir_exists(local_file_dir)
+                client.download_file(bucket, key['Key'], local_file_path)
+
