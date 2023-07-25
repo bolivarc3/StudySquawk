@@ -26,8 +26,8 @@ def download_file(filespath, filename, BUCKET_NAME, zip_folder_number):
     root_path = str(parentpath) + "/static/zip/"
     folderpath = root_path + zip_folder_number + "/"
     target= root_path + zip_folder_number + "/" +str(filename)
-    print("key:" + str(filespath))
-    print("target:" + str(target))
+    # print("key:" + str(filespath))
+    # print("target:" + str(target))
     if not os.path.isdir(folderpath):
         os.makedirs(folderpath)
     
@@ -49,7 +49,9 @@ def assert_dir_exists(path):
         if e.errno != errno.EEXIST:
             raise
 
-def download_folder(bucket, path, zip_folder_number):
+def download_folder(bucket, path, zip_folder_number,base_folder):
+    base_folder = base_folder.split("/")
+    base_folder.pop()
     parentpath = os.getcwd()
     root_path = str(parentpath) + "/static/zip/"
     folderpath = root_path + zip_folder_number + "/"
@@ -68,16 +70,18 @@ def download_folder(bucket, path, zip_folder_number):
         for key in result['Contents']:
             # Calculate relative path
             rel_path_origin_folder = key['Key'].split("/")
-            rel_path_origin_folder = rel_path_origin_folder[len(rel_path_origin_folder)-2]
+            rel_path_origin_folder = rel_path_origin_folder[len(base_folder)-1]
             print(rel_path_origin_folder)
             rel_path = rel_path_origin_folder + "/" + key['Key'][len(path):]
+            print(rel_path)
             # Skip paths ending in /
             if not key['Key'].endswith('/'):
                 local_file_path = os.path.join(target, rel_path)
-                print("key:" + str(key['Key']))
-                print("target:" + str(local_file_path))
+                # print("key:" + str(key['Key']))
+                # print("target:" + str(local_file_path))
                 # Make sure directories exist
                 local_file_dir = os.path.dirname(local_file_path)
+                print("\n")
                 assert_dir_exists(local_file_dir)
                 client.download_file(bucket, key['Key'], local_file_path)
 

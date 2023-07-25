@@ -210,13 +210,10 @@ def index():
             if count == 0:
                 flash("Password is Incorrect")
                 return render_template("intro.html")
-            print("hacattendance done")
             #set the session
             session["user_id"] = username[0][0]
             session["hacattendancetimeupdated"] =''
             session["hacgradestimeupdated"] =''
-            print(session["hacgradestimeupdated"])
-            print("hacattendance done")
             return redirect(url_for("studyist"))
     else:
         return render_template("intro.html")
@@ -225,7 +222,6 @@ def index():
 
 @app.route('/login')
 def login():
-    print("hacattendance done")
     session["hacattendancetimeupdated"] =''
     session["hacgradestimeupdated"] =''
         # Find out what URL to hit for Google login
@@ -243,7 +239,6 @@ def login():
 
 @app.route("/login/callback")
 def callback():
-    print("hacattendance done")
     session["hacattendancetimeupdated"] =''
     session["hacgradestimeupdated"] =''
     # Get authorization code Google sent back to you
@@ -308,7 +303,6 @@ def callback():
     db_conn.commit()
     db.close()
     db_conn.close()
-    print("hacattendance done")
     session["hacattendancetimeupdated"] =''
     session["hacgradestimeupdated"] =''
     return redirect(url_for("studyist"))
@@ -550,8 +544,6 @@ def resources(route):
     if len(routeparts) > 1:
         for route_part in range(len(routeparts)-1):
             root_route = root_route + "/" + routeparts[route_part]
-        print(root_route)
-        print(routeparts)
         db.execute('SELECT * FROM "materials" WHERE (objectroute = %s AND objecttype = %s AND name = %s)',(root_route,'folder',routeparts[len(routeparts)-1]),)
         count = len(db.fetchall())
         if count == 0:
@@ -873,7 +865,6 @@ def get_zip():
         os.makedirs(root_path)
     zip_folder_number = str(0)
     current_folders = os.listdir(root_path)
-    print(current_folders)
     for index in range(len(current_folders)):
         if str(zip_folder_number) != str(current_folders[index]):
             zip_folder_number = str(index)
@@ -886,9 +877,7 @@ def get_zip():
         route = file_route_split[3]
         for routing_index in range(4,len(file_route_split)):
             route = route + "/" + file_route_split[routing_index]
-        print("\n")
         route = route.replace("+"," ")
-        print("\n")
         download_file(route,filename, BUCKET_NAME, zip_folder_number)
     zip_folder_path = root_path + zip_folder_number + ".zip"
     zip_folder_past = root_path + zip_folder_number
@@ -946,7 +935,6 @@ def get_folder_zip():
     folder_info = request.json
     folder_elements = folder_info["folder_elements"]
     zip_folder_number = folder_info["zip_number"]
-    print(zip_folder_number)
     if len(zip_folder_number) == 0:
         parentpath = os.getcwd()
         root_path = str(parentpath) + "/static/zip/"
@@ -954,7 +942,6 @@ def get_folder_zip():
             os.makedirs(root_path)
         zip_folder_number = str(0)
         current_folders = os.listdir(root_path)
-        print(current_folders)
         for index in range(len(current_folders)):
             if str(zip_folder_number) != str(current_folders[index]):
                 zip_folder_number = str(index)
@@ -967,8 +954,11 @@ def get_folder_zip():
         route = file_route_split[3]
         for routing_index in range(4,len(file_route_split)):
             route = route + "/" + file_route_split[routing_index]
-        print("\n")
         route = route.replace("+"," ")
-        print("\n")
-        download_folder(BUCKET_NAME,route,zip_folder_number)
+        folder = folder.split("/")
+        base_folder = ''
+        for route_part_index in range(3,len(folder)):
+            print("yes")
+            base_folder = base_folder + folder[route_part_index] + "/"
+        download_folder(BUCKET_NAME,route,zip_folder_number,base_folder)
     return jsonify(zip_folder_number)
