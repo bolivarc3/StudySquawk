@@ -1,6 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify,send_file
 from flask_session import Session
-from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference, login_hac_required, update_hac, hac_executions
+from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference, login_hac_required, update_hac, hac_executions,get_hashed_password,check_password
 from werkzeug.utils import secure_filename
 from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
@@ -168,6 +168,7 @@ def index():
                 error = "invalid email address"
                 flash("username already has been used")
                 return redirect(url_for('index'))
+            password = get_hashed_password(password)
             null = "null"
             db.execute('INSERT INTO "Users"(username, password, email, gradeappusername, gradeapppassword, google_auth) VALUES (%s, %s, %s, %s, %s, %s)',(username,password,email,null,null,"False",))
             db_conn.commit()
@@ -200,14 +201,14 @@ def index():
                     session["attempted_password"] = password
                     return redirect(url_for("login"))
                 #else, continue to authenticate password
-
-            db.execute('SELECT username FROM "Users" WHERE email=%s AND password=%s',(email,password));
+            verify_password = check_password(password,db_password)
+            db.execute('SELECT username FROM "Users" WHERE email=%s',(email,));
             username = db.fetchall()
             count = len(username)
             db.close()
             db_conn.close()
             #if password is not the same as the user with the email, return error
-            if count == 0:
+            if verify_password != True:
                 flash("Password is Incorrect")
                 return render_template("intro.html")
             #set the session
@@ -689,17 +690,18 @@ def resources(route):
 @app.route('/grade_viewer', methods=["GET","POST"])
 @login_hac_required
 def grade_viewer():
-    db_info = connectdb()
-    db = db_info[0]
-    db_conn = db_info[1]
-    username = session["user_id"]
-    db.execute('SELECT * FROM "Users" WHERE username = %s', (username, ))
-    user_info = db.fetchone()
-    grade_viewer_username = user_info[4]
-    grade_viewer_password = user_info[5]
-    db.close()
-    db_conn.close()
-    if grade_viewer_username=="null":
+    # db_info = connectdb()
+    # db = db_info[0]
+    # db_conn = db_info[1]
+    # username = session["user_id"]
+    # db.execute('SELECT * FROM "Users" WHERE username = %s', (username, ))
+    # user_info = db.fetchone()
+    # grade_viewer_username = user_info[4]
+    # grade_viewer_password = user_info[5]
+    # db.close()
+    # db_conn.close()
+    session_key_list = list(session.keys())
+    if "user_id_hac" not in session_key_list:
         return redirect(url_for('grade_viewer_signup'))
     #grab information for grades
     update_hac()
@@ -722,20 +724,14 @@ def grade_viewer():
 
 @app.route('/grade_viewer_signup', methods=["GET","POST"])
 def grade_viewer_signup():
-    db_info = connectdb()
-    db = db_info[0]
-    db_conn = db_info[1]
-    username = session["user_id"]
     if request.method == "POST":
         grade_username = request.form.get('gradeusername')
         gradepassword = request.form.get('gradepassword')
-        db.execute('UPDATE "Users" SET gradeappusername = %s, gradeapppassword = %s WHERE username =%s', (grade_username, gradepassword, username, ))
-        db_conn.commit()
+        session["user_id_hac"] = grade_username
+        session["password_hac"] = gradepassword
         hac_executions('attendance')
         hac_executions('grades')
         return redirect(url_for('studyist'))
-    db.close()
-    db_conn.close()
     return render_template("grade_viewer_signup.html")
 
 @app.route('/grade_viewer/<selectedcourse>', methods=["GET","POST"])
@@ -809,34 +805,34 @@ def getcourseposts():
     postings = json.dumps(postlist, indent=4, sort_keys=True, default=str)
     return(postings)
 
-# @app.route('/getresources', methods=["GET", "POST"])
-# def getresources():
-#     course = request.json
-#     #grab the materials
-#     db_info = connectdb()
-#     db = db_info[0]
-#     db_conn = db_info[1]
-#     db.execute('SELECT * FROM "materials" WHERE objecttype=%s OR objecttype=%s AND course=%s',('image','file',course, ))
-#     #grab the materials
-#     materialsinfo = db.fetchall()
-#     db.close()
-#     db_conn.close()
-#     resources = jsonify(materialsinfo)
-#     return(resources)
+@app.route('/getresources', methods=["GET", "POST"])
+def getresources():
+    course = request.json
+    #grab the materials
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    db.execute('SELECT * FROM "materials" WHERE objecttype=%s OR objecttype=%s AND course=%s',('image','file',course, ))
+    #grab the materials
+    materialsinfo = db.fetchall()
+    db.close()
+    db_conn.close()
+    resources = jsonify(materialsinfo)
+    return(resources)
 
-# @app.route('/getfolders', methods=["GET", "POST"])
-# def getfolders():
-#     db_info = connectdb()
-#     db = db_info[0]
-#     db_conn = db_info[1]
-#     course = request.json
-#     db.execute('SELECT * FROM "materials" WHERE (objecttype=%s and course=%s)',('folder',course, ))
-#     #grab the materials
-#     foldersinfo = db.fetchall()
-#     db.close()
-#     db_conn.close()
-#     folders = jsonify(foldersinfo)
-#     return(folders)
+@app.route('/getfolders', methods=["GET", "POST"])
+def getfolders():
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    course = request.json
+    db.execute('SELECT * FROM "materials" WHERE (objecttype=%s and course=%s)',('folder',course, ))
+    #grab the materials
+    foldersinfo = db.fetchall()
+    db.close()
+    db_conn.close()
+    folders = jsonify(foldersinfo)
+    return(folders)
 
 @app.route('/gethacattendance', methods=['GET', 'POST'])
 def gethaclogin():

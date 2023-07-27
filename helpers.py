@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from functools import wraps
 import csv
 import psycopg2
+import bcrypt
 
 def login_required(f):
     """
@@ -149,19 +150,12 @@ def update_hac():
 
 def hac_executions(runfunction):
     username = session["user_id"]
-    db_info = connectdb()
-    db = db_info[0]
-    db_conn = db_info[1]
-    db.execute('SELECT * FROM "Users" WHERE username=%s',(username,))
-    user_info = db.fetchone()
-    username = user_info[4]
-    password = user_info[5]
+    username = session["user_id_hac"]
+    password = session["password_hac"]
     if runfunction == "attendance":
         attendance_update(username, password)
     else:
         grades_update(username, password)
-    db.close()
-    db_conn.close()
 
 def attendance_update(username, password):
     attedance_request = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/attendance/" + username + "/" + password + "/")
@@ -175,3 +169,13 @@ def grades_update(username, password):
     grades_request = grades_request.json()
     session["hacgrades"] = grades_request
     session["hacgradestimeupdated"] = datetime.now(timezone.utc)
+
+
+def get_hashed_password(plain_text_password):
+    # Hash a password for the first time
+    #   (Using bcrypt, the salt is saved into the hash itself)
+    return bcrypt.hashpw(plain_text_password, bcrypt.gensalt())
+
+def check_password(plain_text_password, hashed_password):
+    # Check hashed password. Using bcrypt, the salt is saved into the hash itself
+    return bcrypt.checkpw(plain_text_password, hashed_password)

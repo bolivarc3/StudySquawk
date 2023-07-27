@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8f748c408929adb5c943a0e0c15dd7f9b73c561a5fca5a7e70e62d8000588f8a"
+            "sha256": "ada7fa975b4b7ee47fc62c07b277a0c1b9acb82e2938d14de1df0170fde4248d"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -26,27 +26,27 @@
         },
         "awscli": {
             "hashes": [
-                "sha256:f1298ebbbf4564448bd47775e7075dd66d547b0b30a9aba6db2f0b399025f4ff",
-                "sha256:f77e55b3b2930f76c9e72c3c02ab061fda2091883e5ce066993fbdeedf9a360e"
+                "sha256:56691f585f02f1034724b2df746d4ebd3ea0e5c369cb4f8bb7545f6dafc2b605",
+                "sha256:b3dddbaf15d2e28a0626a74e843d0f8804f92934973016d1cafb73cc1846a2d0"
             ],
             "index": "pypi",
-            "version": "==1.29.9"
+            "version": "==1.29.13"
         },
         "boto3": {
             "hashes": [
-                "sha256:01f078047eb4d238c6b9c6cc623f2af33b4ae67980c5326691e35cb5493ff6c7",
-                "sha256:4cc0c6005be910e52077227e670930ab55a41ba86cdb6d1c052571d08cd4d32c"
+                "sha256:b2d178c8a56fe3e4c9b123dccdff20e9555d12a597b72627fa659aa6295e238a",
+                "sha256:db6443fd2c65d9f35f671b03bacb0592b62d06884395ed65d75922ccddc34c2e"
             ],
             "index": "pypi",
-            "version": "==1.28.9"
+            "version": "==1.28.13"
         },
         "botocore": {
             "hashes": [
-                "sha256:bd849d3ac95f1781385ed831d753a04a3ec870a59d6598175aaedd71dc2baf5f",
-                "sha256:e56ccd3536a90094ea5b176b5dd33bfe4f049efdf71af468ea1661bd424c787d"
+                "sha256:78b96afbd88b8bd4c0967611a4cedddd9ea33d8601309dc351f81cbb5479d976",
+                "sha256:9a5080ea2a444f0447a7a1a79f64252ae2a1417b6c13a54656ee991cb610dd4e"
             ],
             "index": "pypi",
-            "version": "==1.31.9"
+            "version": "==1.31.13"
         },
         "cachelib": {
             "hashes": [
@@ -626,6 +626,13 @@
             ],
             "index": "pypi",
             "version": "==2.9.6"
+        },
+        "py-bcrypt": {
+            "hashes": [
+                "sha256:5fa13bce551468350d66c4883694850570f3da28d6866bb638ba44fe5eabda78"
+            ],
+            "index": "pypi",
+            "version": "==0.4"
         },
         "pyasn1": {
             "hashes": [
