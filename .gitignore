@@ -2,4 +2,4 @@ __pycache__/
 flask_session/
 static/userfiles/
 static/userfiles-replies/
-*.env
+.env
