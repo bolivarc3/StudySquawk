@@ -33,12 +33,6 @@ def login_hac_required(f):
         username = session["user_id"]
         db.execute('SELECT * FROM "Users" WHERE username = %s', (username, ))
         user_info = db.fetchone()
-        grade_viewer_username = user_info[4]
-        grade_viewer_password = user_info[5]
-        db.close()
-        db_conn.close()
-        if grade_viewer_username=="null":
-            return redirect("/grade_viewer_signup")
         return f(*args, **kwargs)
     return decorated_function
 

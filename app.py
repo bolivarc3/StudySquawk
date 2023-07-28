@@ -731,7 +731,7 @@ def grade_viewer_signup():
         session["password_hac"] = gradepassword
         hac_executions('attendance')
         hac_executions('grades')
-        return redirect(url_for('studyist'))
+        return redirect('/grade_viewer')
     return render_template("grade_viewer_signup.html")
 
 @app.route('/grade_viewer/<selectedcourse>', methods=["GET","POST"])
