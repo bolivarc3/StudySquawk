@@ -686,7 +686,7 @@ def resources(route):
     #grab the materials
     page_identifier=course
     return render_template("resources.html",BUCKET_NAME= BUCKET_NAME,aws_resource_list = aws_resource_list, currentfolderrouteurl = currentfolderrouteurl, page_identifier = page_identifier, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route,)
-
+#change
 @app.route('/grade_viewer', methods=["GET","POST"])
 @login_hac_required
 def grade_viewer():
