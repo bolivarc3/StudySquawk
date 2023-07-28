@@ -300,7 +300,7 @@ def callback():
         db_info = connectdb()
         db = db_info[0]
         db_conn = db_info[1]
-        db.execute('UPDATE "Users" SET password=%s WHERE username=%s',(session["attempted_password"],session["user_id"]))
+        db.execute('UPDATE "Users" SET password=%s WHERE username=%s',(get_hashed_password(session["attempted_password"]),session["user_id"]))
     db_conn.commit()
     db.close()
     db_conn.close()
