@@ -31,7 +31,7 @@ s3 = boto3.client('s3',
 app.config["SESSION_PERMANENT"] = False
 # change
 #s3
-
+#change
 ENV = os.environ.get('APPLICATION_ENV')
 if ENV == 'dev':
     conn = psycopg2.connect(
