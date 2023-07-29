@@ -28,10 +28,13 @@ s3 = boto3.client('s3',
     aws_access_key_id = os.environ.get('AWS_S3_ACCESS_KEY'),
     aws_secret_access_key = os.environ.get('AWS_S3_SECRET_ACCESS_KEY'),
         )
+app.secret_key = "super secret key"
+app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["SESSION_PERMANENT"] = False
-# change
-#s3
-#change
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
+app.config["SESSION_PERMANENT"] = False
+
 ENV = os.environ.get('APPLICATION_ENV')
 if ENV == 'dev':
     conn = psycopg2.connect(
@@ -49,6 +52,7 @@ if ENV == 'dev':
         os.environ.get('POSTGRES_DEV_DB_NAME')
     )
     BUCKET_NAME='studyist-dev'
+    DEBUG_STATUS=True
 else:
     conn = psycopg2.connect(
         host=os.environ.get('RDS_HOSTNAME'),
@@ -65,6 +69,7 @@ else:
         os.environ.get('RDS_PORT'),
         os.environ.get('RDS_DB_NAME')
     )
+    DEBUG_STATUS=False
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db_creation = SQLAlchemy(app)
 from models import Users, posts, images, files, replies, replyfiles, replyimages, materials
@@ -80,15 +85,12 @@ GOOGLE_DISCOVERY_URL = (
 )
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
-
 UPLOAD_FOLDER = '/Studyist/userfiles'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.secret_key = "super secret key"
-app.config["TEMPLATES_AUTO_RELOAD"] = True
-app.config["SESSION_PERMANENT"] = False
-app.config['SESSION_TYPE'] = 'filesystem'
-Session(app)
+
 from aws import upload, download_file, download_folder
+if __name__ == '__main__':
+    app.run(debug=DEBUG_STATUS)
 # Ensure responses aren't cached
 @app.after_request
 def after_request(response):
@@ -201,6 +203,7 @@ def index():
                     session["attempted_password"] = password
                     return redirect(url_for("login"))
                 #else, continue to authenticate password
+            print(password)
             verify_password = check_password(password,db_password)
             db.execute('SELECT username FROM "Users" WHERE email=%s',(email,));
             username = db.fetchall()
