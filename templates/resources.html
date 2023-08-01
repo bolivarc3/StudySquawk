@@ -43,6 +43,7 @@ https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js
 </script>
 
 <!-- form for the uploading of files -->
+{% if access == "granted" %}
 <div id = "uploadformfog" onclick= "uploadoff()">
     <div id = form-group onclick = "uploadon(); event.cancelBubble=true;">
         <form id = "uploadresourceform" action = "/resources/{{ currentfolderrouteurl }}" method ="POST" enctype=multipart/form-data>
@@ -75,13 +76,32 @@ https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js
         </form>
     </div>
 </div>
-
+{% endif %}
+{% if access == "granted" %}
 <div id = "newfolderformfog" onclick= "newfolderoff()">
     <div id = form-group onclick = "newfolderon(); event.cancelBubble=true;">
         <form id = "uploadresourceform" action = "/resources/{{ currentfolderrouteurl }}" method ="POST" enctype=multipart/form-data>
             <input name = "route" type="hidden" value="/{{ course }}">
             <input name = "type_of_form" type="hidden" value="newfolder">
+            <input id = "user_access_names" name = "user_access_names" type ="hidden" value="">
             <h3 id = "form-title">New Folder</h3>
+            <br>
+            <div class = "form-element-div">
+                <select id = "formtitleinput", class="dropdown_users", type = "drop", name = "access_to_folder", placeholder = "Share Access to other Users" onchange="select_user(event)">
+                    <option disabled selected hidden id = "placeholder" value="" >Share Access to Other Users</option>
+                    {% for usernames in usernames %}
+                        <option value="{{usernames}}" onclick="add_user_editable('{{usernames}}')">{{usernames}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <br>
+            <i class="fa-solid fa-x"></i>
+            <div id="user_selected">
+                <ul class = "list_area">
+
+                </ul>
+            </div>
+            <br>
             <br>
             <div class = "form-element-div">
                 <input id = "formtitleinput", type = "text", name = "name_of_folder", placeholder = "Name of Folder" >
@@ -93,10 +113,12 @@ https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js
         </form>
     </div>
 </div>
+{% endif %}
 <!-- form for the uploading of files -->
 <!-- tables for the files -->
 <div id = "resourcesdiv">
 <!-- Example single danger button -->
+    {% if access == "granted" %}
     <div id = "newactionheaders" onclick = "newfolderon()">
         <div class = "newbutton" onclick = "newfolderon()">
             <i class="fa-solid fa-folder-plus"></i>
@@ -105,12 +127,15 @@ https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js
             </h2>
         </div>
     </div>
+    {% endif %}
+    {% if access == "granted" %}
     <div id = "actionheaders" onclick = "uploadon()">
         <i class="fa-solid fa-upload"></i>
         <h2>
             Upload
         </h2>
     </div>
+    {% endif %}
     <div id = "actionheaders" onclick = "download_files()">
         <i class="fa-solid fa-download"></i>
         <h2>

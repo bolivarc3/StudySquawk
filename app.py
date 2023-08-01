@@ -89,8 +89,6 @@ UPLOAD_FOLDER = '/Studyist/userfiles'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 from aws import upload, download_file, download_folder
-if __name__ == '__main__':
-    app.run(debug=DEBUG_STATUS)
 # Ensure responses aren't cached
 @app.after_request
 def after_request(response):
@@ -203,7 +201,6 @@ def index():
                     session["attempted_password"] = password
                     return redirect(url_for("login"))
                 #else, continue to authenticate password
-            print(password)
             verify_password = check_password(password,db_password)
             db.execute('SELECT username FROM "Users" WHERE email=%s',(email,));
             username = db.fetchall()
@@ -297,6 +294,10 @@ def callback():
             db.close()
             db_conn.close()
             return redirect(url_for("studyist"))
+    else:
+        db.execute('SELECT username FROM "Users" WHERE email = %s', (users_email, ))
+        users = db.fetchall()
+        users_name = users[0][0]
     session["user_id"] = users_name
     #adds the attempted password if the user doesn't already have one
     if "attempted_password" in session:
@@ -532,20 +533,41 @@ def viewpost(course, postid):
 @app.route('/resources/<route>', methods=["GET", "POST"])
 def resources(route):
     #saves route created and checks if peson put in a correct course
+    #route to the folder
     currentfolderrouteurl = route
+    #route to the folder
+
+    #splits the routes into parts and creates an array of the parts
     routeparts = route.split(">")
     route = str()
     for i in range(len(routeparts)):
         route = route + "/" + routeparts[i]
+    #splits the routes into parts and creates an array of the parts
     course = routeparts[0]
     courses = grabclasses()
+    #checks to see if the person put in a valid course
     courseavailible = checkclass(course, courses)
+
+    #access tells if the user has access to do changes to the folder
+    access=''
+    #route base is the varibale that is the route with the foldername within it 
+    route = ""
+    #if the routepart does not only contain a class, create the route base with the route parts
+    if len(routeparts) != 1:
+        folder_name = routeparts[len(routeparts)-1]
+        for route_index in range(len(routeparts)):
+            route = route + "/" + routeparts[route_index]
+    #else, it will be the current folder_url which includes the class
+    else:
+        route = "/" + currentfolderrouteurl
     #saves route created and checks if peson put in a correct course
     db_info = connectdb()
     db = db_info[0]
     db_conn = db_info[1]
+    
     root_route = ""
     if len(routeparts) > 1:
+
         for route_part in range(len(routeparts)-1):
             root_route = root_route + "/" + routeparts[route_part]
         db.execute('SELECT * FROM "materials" WHERE (objectroute = %s AND objecttype = %s AND name = %s)',(root_route,'folder',routeparts[len(routeparts)-1]),)
@@ -619,8 +641,8 @@ def resources(route):
                         filename = secure_filename(file.filename)
                         fileupload = upload(filespath,filename,file)
 
-                        db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
-                        ,(id,objectroute,objecttype,course,username,filename,time,date,title,body,))
+                        db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body,user_access_names) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                        ,(id,objectroute,objecttype,course,username,filename,time,date,title,body,""))
 
                         db_conn.commit()
                     else:
@@ -628,14 +650,28 @@ def resources(route):
                         filename = secure_filename(file.filename)
                         fileupload = upload(filespath,filename,file)
 
-                        db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
-                        ,(id,objectroute,objecttype,course,username,filename,time,date,title,body,))
+                        db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body,user_access_names) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                        ,(id,objectroute,objecttype,course,username,filename,time,date,title,body,""))
 
                         db_conn.commit()
         if type_of_form == "newfolder":
             foldername = request.form.get("name_of_folder")
             foldername = str(foldername)
-
+            print(route)
+            db.execute('SELECT name FROM "materials" WHERE objectroute = %s',(route,))
+            folders_in_route = db.fetchall()
+            count = len(folders_in_route)
+            if count != 0:
+                for index in range(len(folders_in_route)):
+                    if folders_in_route[0][index] == foldername:
+                        flash('Folder already exist')
+                        return redirect(request.url)
+            user_access_names  = str(request.form.get("user_access_names"))
+            user_access_names = user_access_names.split(",")
+            user_access_names.append(username)
+            user_access_string = ""
+            for user_access_name in user_access_names:
+                user_access_string = user_access_string + user_access_name + ","
             #if no upload folder, return error
             if foldername == "":
                 flash('No input to required parts')
@@ -655,9 +691,34 @@ def resources(route):
             objecttype = "folder"
             #enter folder information into database
 
-            db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
-                        ,(id,objectroute,objecttype,course,username,foldername,time,date,"",""))
+            db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body, user_access_names) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                        ,(id,objectroute,objecttype,course,username,foldername,time,date,"","",str(user_access_string)))
             db_conn.commit()
+    username = session["user_id"]
+    if len(routeparts) == 1:
+        access="granted"
+    else: 
+        db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s',(root_route,folder_name,))
+        user_access_names = (db.fetchall()[0][0])
+        print(user_access_names)
+        if "-" in user_access_names:
+            parent_route_parts = root_route.split("/") 
+            parent_route_parts.pop(0)
+            parent_route_root = ""
+            parent_folder_name = parent_route_parts[len(parent_route_parts)-1]
+            for part_index in range(len(parent_route_parts)-1):
+                parent_route_root = parent_route_root + "/" + parent_route_parts[part_index]
+            print(parent_folder_name)
+            print(parent_route_root)
+            db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s',(parent_route_root,parent_folder_name,))
+            username_parent = db.fetchall()
+            username_parent = username_parent[0][0]
+            user_access_names = user_access_names + username_parent
+        user_access_names = user_access_names.split(",")
+        if username not in user_access_names:
+            access="denied"
+        else:
+            access="granted"
     #grab the materials
     db.execute('SELECT * FROM "materials" WHERE (objecttype=%s OR objecttype=%s) AND objectroute=%s',('image','file', route,))
     materialsinfo = db.fetchall()
@@ -665,7 +726,12 @@ def resources(route):
 
     db.execute('SELECT * FROM "materials" WHERE objecttype=%s AND objectroute=%s',('folder', route,))
     foldersinfo = db.fetchall()
-
+    db.execute('SELECT username FROM "Users" ORDER BY username ASC')
+    db_usernames = db.fetchall()
+    usernames = []
+    for i in range(len(db_usernames)):
+        if db_usernames[i][0] != session["user_id"]:
+            usernames.append(db_usernames[i][0])
     db.close()
     db_conn.close()
     #grab the folders
@@ -688,21 +754,11 @@ def resources(route):
         aws_resource_list.append(material_info_data)
     #grab the materials
     page_identifier=course
-    return render_template("resources.html",BUCKET_NAME= BUCKET_NAME,aws_resource_list = aws_resource_list, currentfolderrouteurl = currentfolderrouteurl, page_identifier = page_identifier, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route,)
+    return render_template("resources.html", access = access, usernames=usernames, BUCKET_NAME= BUCKET_NAME,aws_resource_list = aws_resource_list, currentfolderrouteurl = currentfolderrouteurl, page_identifier = page_identifier, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route,)
 #change
 @app.route('/grade_viewer', methods=["GET","POST"])
 @login_hac_required
 def grade_viewer():
-    # db_info = connectdb()
-    # db = db_info[0]
-    # db_conn = db_info[1]
-    # username = session["user_id"]
-    # db.execute('SELECT * FROM "Users" WHERE username = %s', (username, ))
-    # user_info = db.fetchone()
-    # grade_viewer_username = user_info[4]
-    # grade_viewer_password = user_info[5]
-    # db.close()
-    # db_conn.close()
     session_key_list = list(session.keys())
     if "user_id_hac" not in session_key_list:
         return redirect(url_for('grade_viewer_signup'))
@@ -957,7 +1013,10 @@ def get_folder_zip():
         folder = folder.split("/")
         base_folder = ''
         for route_part_index in range(3,len(folder)):
-            print("yes")
             base_folder = base_folder + folder[route_part_index] + "/"
         download_folder(BUCKET_NAME,route,zip_folder_number,base_folder)
     return jsonify(zip_folder_number)
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

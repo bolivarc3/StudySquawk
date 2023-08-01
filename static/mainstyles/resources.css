@@ -324,6 +324,28 @@ h2{
     width:20%;
 }
 
+#user_selected{
+    color:white;
+    max-height: 10rem;
+    height: fit-content;
+    overflow-y: scroll;
+}
+
+.list_area li{
+    list-style-type: none
+}
+
+.user_access_div{
+    border:1px solid white;
+    border-radius: 1rem;
+    padding: 1rem;
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem;
+}
+
 @media only screen and (max-width: 1000px){
     #actionheaders{
         display:inline-block;

@@ -372,7 +372,6 @@ async function download_files() {
 
 
 function download_zip(url,fileName){
-    console.log("yopooo")
     const downloadLink = document.createElement('a');
     downloadLink.setAttribute('download', fileName)
   
@@ -386,3 +385,51 @@ function download_zip(url,fileName){
     // Remove the link (it's not needed anymore)
     document.body.removeChild(downloadLink);
 }
+user_access_usernames = []
+function select_user(event) {
+
+    var selectElement = event.target;
+    var value = selectElement.value;
+    if (value != ""){
+        if (user_access_usernames.includes(value)== false){
+            const  user_text_div = document.createElement('div')
+            user_access_usernames.push(value)
+            if (value == "-"){
+                value = "Use Parent Folder Permissions"
+                user_text_div.style.backgroundColor = "#40798C"
+            }
+            const  list_div = document.getElementsByClassName("list_area")[0]
+            const  user_text = document.createElement('li')
+            const x_button = document.createElement("i")
+            x_button.className = "fa-solid fa-x"
+            user_text_div.className = "user_access_div"
+            user_text_div.appendChild(user_text)
+            user_text_div.appendChild(x_button)
+            user_text_div.background
+            user_text.innerHTML = value
+            list_div.appendChild(user_text_div)
+            const input_value = document.getElementById("user_access_names")
+            input_value.value = user_access_usernames
+        }
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+    url = decodeURI(window.location.href)
+    url_parts = url.split("/")
+    console.log(url_parts)
+    route = url_parts[4]
+    route_parts = route.split(">")
+    console.log(route_parts)
+    if (route_parts.length > 1){
+        let select_box = document.getElementsByClassName("dropdown_users")[0]
+        const select_item = document.createElement("option")
+        select_item.innerHTML = "Use Parent Folder Permissions"
+        select_item.value = "-"
+        console.log(select_item)
+        select_box.prepend(select_item)
+        const placeholder = document.getElementById("placeholder")
+        placeholder.display = "none"
+    }
+
+});
