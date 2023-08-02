@@ -88,7 +88,7 @@ client = WebApplicationClient(GOOGLE_CLIENT_ID)
 UPLOAD_FOLDER = '/Studyist/userfiles'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-from aws import upload, download_file, download_folder
+from aws import upload, download_file, download_folder, delete_aws_files
 # Ensure responses aren't cached
 @app.after_request
 def after_request(response):
@@ -744,6 +744,7 @@ def resources(route):
 
     db.execute('SELECT * FROM "materials" WHERE objecttype=%s AND objectroute=%s',('folder', route,))
     foldersinfo = db.fetchall()
+    print(foldersinfo)
     db.execute('SELECT username FROM "Users" ORDER BY username ASC')
     db_usernames = db.fetchall()
     usernames = []
@@ -768,6 +769,7 @@ def resources(route):
             material_info_data.append(materialsinfo[i][9])
             material_info_data.append(materialsinfo[i][10])
             material_info_data.append(materialsinfo[i][1])
+            material_info_data.append(materialsinfo[i][0])
             count+=1
         aws_resource_list.append(material_info_data)
     #grab the materials
@@ -1049,5 +1051,23 @@ def get_folder_zip():
     return jsonify(zip_folder_number)
 
 
+@app.route("/deletion", methods=['POST'])
+def delete_files():
+    files_info = request.json["ids"]
+    for id_number in files_info:
+        db_info = connectdb()
+        db = db_info[0]
+        db_conn = db_info[1]
+        db.execute('SELECT objectroute,name,objecttype FROM "materials" WHERE id=%s',(id_number,))
+        object_info = db.fetchone()
+        db.execute('DELETE FROM "materials" WHERE id=%s',(id_number,))
+        db_conn.commit()
+        objectroute = object_info[0]
+        name = object_info[1]
+        object_type = object_info[2]
+        db.close()
+        db_conn.close()
+        delete_aws_files(objectroute,name,object_type)
+    return jsonify(1)
 if __name__ == '__main__':
     app.run(debug=True)

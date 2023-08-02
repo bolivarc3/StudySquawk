@@ -142,6 +142,14 @@ https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js
             Download
         </h2>
     </div>
+    {% if access == "granted" %}
+    <div id = "actionheaders" onclick = "deletion()">
+        <i class="fa-solid fa-trash"></i>
+        <h2>
+            Delete
+        </h2>
+    </div>
+    {% endif %}
     <div id = "actionheaders">
         <i class="fa-solid fa-pen-to-square"></i>
         <h2>
@@ -165,7 +173,7 @@ https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js
             <th id = "tableheader", width = "24%">Modified By</th>
         </tr>
         {% for foldersinfo in foldersinfo %}
-        <tr id = "rowbox">
+        <tr id = "rowbox" class="{{foldersinfo[0]}}">
             <td class="title_info" id = "{{ foldersinfo[6] }}" hidden ></td>
             <td class = "checkbox" id="folder"><i class="fa-solid fa-circle-check"></td>
             <td id = "tablecells"><i class="fa-solid fa-folder"></i></td>
@@ -175,7 +183,7 @@ https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js
         </tr>
         {% endfor %}
         {% for aws_resource_list in aws_resource_list %}
-        <tr id = "rowbox">
+        <tr id = "rowbox" class="{{aws_resource_list[7]}}">
             <td hidden class="title_info" id="{{aws_resource_list[4]}}">{{aws_resource_list[6]}}</td>
             <td name="{{aws_resource_list[4]}}" class = "checkbox" id="file"><i class="fa-solid fa-circle-check"></td>
             <td id = "tablecells"><i class="fa-solid fa-file"></i></td>

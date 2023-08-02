@@ -83,3 +83,17 @@ def download_folder(bucket, path, zip_folder_number,base_folder):
                 assert_dir_exists(local_file_dir)
                 client.download_file(bucket, key['Key'], local_file_path)
 
+
+def delete_aws_files(objectroute,name,object_type):
+    key = "resources" + objectroute + "/"+ name
+    if object_type == "folder":
+        key = key + "/"
+        s3 = boto3.resource('s3',aws_access_key_id = os.environ.get('AWS_S3_ACCESS_KEY'),
+    aws_secret_access_key = os.environ.get('AWS_S3_SECRET_ACCESS_KEY'),)
+        bucket = s3.Bucket(BUCKET_NAME)
+        bucket.objects.filter(Prefix=key).delete()
+    else:
+        client = boto3.client('s3',aws_access_key_id = os.environ.get('AWS_S3_ACCESS_KEY'),
+    aws_secret_access_key = os.environ.get('AWS_S3_SECRET_ACCESS_KEY'),)
+        client.delete_object(Bucket=BUCKET_NAME, Key=key)
+

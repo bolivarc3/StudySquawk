@@ -59,7 +59,7 @@ table{
     width:100%;
 }
 
-#rowbox:hover{
+.rowbox:hover{
     background-color:#212529;
 }
 
