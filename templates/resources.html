@@ -114,6 +114,10 @@ https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js
     </div>
 </div>
 {% endif %}
+<div class="alert_div">
+    <h1 id="alert_text">
+    </h1>
+</div>
 <!-- form for the uploading of files -->
 <!-- tables for the files -->
 <div id = "resourcesdiv">
@@ -142,14 +146,12 @@ https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js
             Download
         </h2>
     </div>
-    {% if access == "granted" %}
     <div id = "actionheaders" onclick = "deletion()">
         <i class="fa-solid fa-trash"></i>
         <h2>
             Delete
         </h2>
     </div>
-    {% endif %}
     <div id = "actionheaders">
         <i class="fa-solid fa-pen-to-square"></i>
         <h2>

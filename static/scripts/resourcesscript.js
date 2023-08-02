@@ -480,6 +480,28 @@ async function deletion(){
         body: JSON.stringify({"ids":selected_elements_ids}) // body data type must match "Content-Type" header
     })
     const completion = await response.json()
-    location.reload()
+    console.log(completion)
+    if (completion == "denied"){
+        console.log("made it")
+        var text = "You do not own the rights to delete this object"
+        alert(text)
+        sleep(5000);
+        location.reload()
+    }
     return(completion)
 }
+
+function alert(text){
+    const div = document.getElementsByClassName("alert_div")[0]
+    div.style.display = "block"
+    const alert_text = document.getElementById("alert_text")
+    alert_text.innerText = text
+}
+
+function sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+      currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+  }
