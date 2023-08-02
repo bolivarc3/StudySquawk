@@ -655,9 +655,11 @@ def resources(route):
 
                         db_conn.commit()
         if type_of_form == "newfolder":
+            #grabs the folder_name for the new folder
             foldername = request.form.get("name_of_folder")
             foldername = str(foldername)
-            print(route)
+
+            #checks if the folder exist in the object route
             db.execute('SELECT name FROM "materials" WHERE objectroute = %s',(route,))
             folders_in_route = db.fetchall()
             count = len(folders_in_route)
@@ -666,17 +668,24 @@ def resources(route):
                     if folders_in_route[0][index] == foldername:
                         flash('Folder already exist')
                         return redirect(request.url)
+            #checks if the folder exist in the object route
+
+            #grabs from the form the inputed user access names and converts into a list
             user_access_names  = str(request.form.get("user_access_names"))
             user_access_names = user_access_names.split(",")
             user_access_names.append(username)
             user_access_string = ""
             for user_access_name in user_access_names:
                 user_access_string = user_access_string + user_access_name + ","
+            #grabs from the form the inputed user access names and converts into a list
+
             #if no upload folder, return error
             if foldername == "":
                 flash('No input to required parts')
                 return redirect(request.url)
+            #if no upload folder, return error
 
+            #gives permission to parent path
             parentpath = os.getcwd()
             staticpath = str(parentpath) + '/static'
             os.chmod(parentpath, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
@@ -685,25 +694,28 @@ def resources(route):
 
             #makes a new folder for the images. This makes it so that it can conserve it's name
             s3filepath = "resources" + str(route) + "/" + str(foldername) + "/"
-
             s3.put_object(Bucket = BUCKET_NAME, Key=s3filepath)
-
             objecttype = "folder"
-            #enter folder information into database
 
+            #enter folder information into database
             db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body, user_access_names) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
                         ,(id,objectroute,objecttype,course,username,foldername,time,date,"","",str(user_access_string)))
             db_conn.commit()
+    #grabs the username
     username = session["user_id"]
+    #if it is at the root path, grant everyone permission
     if len(routeparts) == 1:
         access="granted"
     else: 
+        #grabs the materials with the root path of the current folder path
         db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s',(root_route,folder_name,))
         user_access_names = (db.fetchall()[0][0])
-        print(user_access_names)
+        #if one of the access users consist of this symbol, it is granted to everyone(public)
         if ("-+" in user_access_names):
             access="granted"
+        #else, it will continue and grant access to the select users
         else:
+            #if this symbol is within the access users, then grant the user's of the parent folder access also to this folder
             if "-" in user_access_names:
                 parent_route_parts = root_route.split("/") 
                 parent_route_parts.pop(0)
@@ -711,13 +723,12 @@ def resources(route):
                 parent_folder_name = parent_route_parts[len(parent_route_parts)-1]
                 for part_index in range(len(parent_route_parts)-1):
                     parent_route_root = parent_route_root + "/" + parent_route_parts[part_index]
-                print(parent_folder_name)
-                print(parent_route_root)
                 db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s',(parent_route_root,parent_folder_name,))
                 username_parent = db.fetchall()
                 username_parent = username_parent[0][0]
                 user_access_names = user_access_names + username_parent
                 user_access_names = user_access_names.split(",")
+            #checks if the user is in the user is in the user names
             if username not in user_access_names:
                 access="denied"
             else:
@@ -758,7 +769,8 @@ def resources(route):
     #grab the materials
     page_identifier=course
     return render_template("resources.html", access = access, usernames=usernames, BUCKET_NAME= BUCKET_NAME,aws_resource_list = aws_resource_list, currentfolderrouteurl = currentfolderrouteurl, page_identifier = page_identifier, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route,)
-#change
+
+
 @app.route('/grade_viewer', methods=["GET","POST"])
 @login_hac_required
 def grade_viewer():
@@ -786,6 +798,7 @@ def grade_viewer():
 
 @app.route('/grade_viewer_signup', methods=["GET","POST"])
 def grade_viewer_signup():
+    #if the request is post, grab the form elements and password and grab nessasary information for hac
     if request.method == "POST":
         grade_username = request.form.get('gradeusername')
         gradepassword = request.form.get('gradepassword')
@@ -794,21 +807,15 @@ def grade_viewer_signup():
         hac_executions('attendance')
         hac_executions('grades')
         return redirect('/grade_viewer')
+    #else, load the page where these peices of info must be inputted
     return render_template("grade_viewer_signup.html")
 
 @app.route('/grade_viewer/<selectedcourse>', methods=["GET","POST"])
 @login_required
 def grade_viewer_course(selectedcourse):
-    db_info = connectdb()
-    db = db_info[0]
-    db_conn = db_info[1]
     username = session["user_id"]
-    db.execute('SELECT * FROM "Users" WHERE username = %s', (username, ))
-    user_info = db.fetchone()
-    grade_viewer_username = user_info[4]
-    grade_viewer_password = user_info[5]
-    db.close()
-    db_conn.close()
+    grade_viewer_username = session["user_id_hac"]
+    grade_viewer_password = session["password_hac"]
     update_hac()
     grades_data = session["hacgrades"]
 
@@ -916,29 +923,33 @@ def grade_save_calculations():
 
 @app.route("/zip_download_files", methods=['POST'])
 def get_zip():
+    #grab the files to zip
     file_elements = request.json
     parentpath = os.getcwd()
     root_path = str(parentpath) + "/static/zip/"
+    #if the directory is not there, create it
     if not os.path.isdir(root_path):
         os.makedirs(root_path)
     zip_folder_number = str(0)
     current_folders = os.listdir(root_path)
+    #make a new folder name for the path if there are multiple
     for index in range(len(current_folders)):
         if str(zip_folder_number) != str(current_folders[index]):
             zip_folder_number = str(index)
         if str(index) == str(current_folders[index]):
             zip_folder_number = str(index + 1)
+    # for each file names
     for file_element in file_elements:
         file_element = str(file_element)
+        #find the file route
         file_route_split = file_element.split("/")
         filename = file_route_split[len(file_route_split)-1]
         route = file_route_split[3]
+        #download the file in the file route 
         for routing_index in range(4,len(file_route_split)):
             route = route + "/" + file_route_split[routing_index]
         route = route.replace("+"," ")
         download_file(route,filename, BUCKET_NAME, zip_folder_number)
-    zip_folder_path = root_path + zip_folder_number + ".zip"
-    zip_folder_past = root_path + zip_folder_number
     return jsonify(zip_folder_number)
 
 def zipdir(dirPath=None, zipFilePath=None, includeDirInZip=True):
@@ -977,12 +988,15 @@ def zipdir(dirPath=None, zipFilePath=None, includeDirInZip=True):
 
 @app.route("/zipit", methods=['POST'])
 def zipit():
+    #create the zip file
     zip_number = str(request.json)
     parentpath = os.getcwd()
     zip_folder_root = str(parentpath) + "/static/zip/" + zip_number
     base_folder_target =  str(parentpath) +'/static/zip_files/' + zip_number + "/"
+    #create base directory
     if not os.path.isdir(base_folder_target):
         os.makedirs(base_folder_target)
+    #create the target to where the files should be stored and zip that target
     target = str(parentpath) +'/static/zip_files/' + zip_number + '/file.zip'
     zipdir(zip_folder_root, target, False)
     return jsonify(0)
@@ -990,9 +1004,11 @@ def zipit():
 
 @app.route("/folder_zip_download", methods=['POST'])
 def get_folder_zip():
+    #grab the json with the folder_information on which folders to download
     folder_info = request.json
     folder_elements = folder_info["folder_elements"]
     zip_folder_number = folder_info["zip_number"]
+    #creates the folder number if there are multiple folders being created
     if len(zip_folder_number) == 0:
         parentpath = os.getcwd()
         root_path = str(parentpath) + "/static/zip/"
@@ -1005,16 +1021,24 @@ def get_folder_zip():
                 zip_folder_number = str(index)
             if str(index) == str(current_folders[index]):
                 zip_folder_number = str(index + 1)
+    #for each folder
     for folder in folder_elements:
+        #create a route with the folder
         folder = str(folder).replace(">","/")
+        #convert to an array
         file_route_split = folder.split("/")
+        #grab the filename
         filename = file_route_split[len(file_route_split)-1]
+        #the route is the 3rd infec
         route = file_route_split[3]
+        #start at 4 because thats where the index for the folder route is 
         for routing_index in range(4,len(file_route_split)):
             route = route + "/" + file_route_split[routing_index]
+        #convert the uri a little
         route = route.replace("+"," ")
         folder = folder.split("/")
         base_folder = ''
+        #download the object
         for route_part_index in range(3,len(folder)):
             base_folder = base_folder + folder[route_part_index] + "/"
         download_folder(BUCKET_NAME,route,zip_folder_number,base_folder)

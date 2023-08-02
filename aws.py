@@ -26,8 +26,6 @@ def download_file(filespath, filename, BUCKET_NAME, zip_folder_number):
     root_path = str(parentpath) + "/static/zip/"
     folderpath = root_path + zip_folder_number + "/"
     target= root_path + zip_folder_number + "/" +str(filename)
-    # print("key:" + str(filespath))
-    # print("target:" + str(target))
     if not os.path.isdir(folderpath):
         os.makedirs(folderpath)
     
