@@ -660,9 +660,10 @@ def resources(route):
             foldername = str(foldername)
 
             #checks if the folder exist in the object route
-            db.execute('SELECT name FROM "materials" WHERE objectroute = %s',(route,))
+            db.execute('SELECT name FROM "materials" WHERE objectroute = %s AND objecttype= %s',(route,"folder",))
             folders_in_route = db.fetchall()
             count = len(folders_in_route)
+            print(folders_in_route)
             if count != 0:
                 for index in range(len(folders_in_route)):
                     if folders_in_route[0][index] == foldername:
@@ -710,20 +711,22 @@ def resources(route):
         #grabs the materials with the root path of the current folder path
         db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s',(root_route,folder_name,))
         user_access_names = (db.fetchall()[0][0])
+        user_access_names_split = user_access_names.split(",")
         #if one of the access users consist of this symbol, it is granted to everyone(public)
-        if ("-+" in user_access_names):
+        print(user_access_names)
+        if ("+-" in user_access_names_split):
             access="granted"
         #else, it will continue and grant access to the select users
         else:
             #if this symbol is within the access users, then grant the user's of the parent folder access also to this folder
-            if "-" in user_access_names:
+            if "-" in user_access_names_split:
                 parent_route_parts = root_route.split("/") 
                 parent_route_parts.pop(0)
                 parent_route_root = ""
                 parent_folder_name = parent_route_parts[len(parent_route_parts)-1]
                 for part_index in range(len(parent_route_parts)-1):
                     parent_route_root = parent_route_root + "/" + parent_route_parts[part_index]
-                db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s',(parent_route_root,parent_folder_name,))
+                db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s AND objecttype=%s',(parent_route_root,parent_folder_name,"folder"))
                 username_parent = db.fetchall()
                 username_parent = username_parent[0][0]
                 user_access_names = user_access_names + username_parent
@@ -733,6 +736,7 @@ def resources(route):
                 access="denied"
             else:
                 access="granted"
+        print(access)
     #grab the materials
     db.execute('SELECT * FROM "materials" WHERE (objecttype=%s OR objecttype=%s) AND objectroute=%s',('image','file', route,))
     materialsinfo = db.fetchall()

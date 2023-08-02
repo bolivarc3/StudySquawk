@@ -443,7 +443,9 @@ document.addEventListener("DOMContentLoaded", function(){
     route = url_parts[4]
     route_parts = route.split(">")
     console.log(route_parts)
+    console.log(route_parts.length)
     if (route_parts.length > 1){
+        console.log("yoo")
         let select_box = document.getElementsByClassName("dropdown_users")[0]
         const select_item = document.createElement("option")
         select_item.innerHTML = "Use Parent Folder Permissions"
@@ -452,6 +454,6 @@ document.addEventListener("DOMContentLoaded", function(){
         select_box.prepend(select_item)
         const placeholder = document.getElementById("placeholder")
         placeholder.display = "none"
+        select_user_function("-")
     }
-    select_user_function("-")
 });
