@@ -1097,7 +1097,15 @@ def delete_files():
             else:
                 db.execute('DELETE FROM "materials" WHERE id=%s',(id_number,))
         else:
-            db.execute('SELECT user_access_names FROM "materials" WHERE objectroute=%s AND objecttype=%s',(objectroute,"folder",))
+            parent_route_parts = objectroute.split("/") 
+            parent_route_parts.pop(0)
+            parent_route_root = ""
+            parent_folder_name = parent_route_parts[len(parent_route_parts)-1]
+            for part_index in range(len(parent_route_parts)-1):
+                parent_route_root = parent_route_root + "/" + parent_route_parts[part_index]
+            print(parent_folder_name)
+            print(parent_route_root)
+            db.execute('SELECT user_access_names FROM "materials" WHERE objectroute=%s AND objecttype=%s',(parent_route_root,"folder",))
             object_info = db.fetchone()
             user_access_names = object_info[0]
             user_access_names_split = user_access_names.split(",")
@@ -1107,7 +1115,7 @@ def delete_files():
             else:
                 #if this symbol is within the access users, then grant the user's of the parent folder access also to this folder
                 if "-" in user_access_names_split:
-                    parent_route_parts = objectroute.split("/") 
+                    parent_route_parts = parent_route_root.split("/") 
                     parent_route_parts.pop(0)
                     parent_route_root = ""
                     parent_folder_name = parent_route_parts[len(parent_route_parts)-1]

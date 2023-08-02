@@ -486,8 +486,8 @@ async function deletion(){
         var text = "You do not own the rights to delete this object"
         alert(text)
         sleep(5000);
-        location.reload()
     }
+    location.reload()
     return(completion)
 }
 
