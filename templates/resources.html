@@ -89,13 +89,13 @@ https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js
             <div class = "form-element-div">
                 <select id = "formtitleinput", class="dropdown_users", type = "drop", name = "access_to_folder", placeholder = "Share Access to other Users" onchange="select_user(event)">
                     <option disabled selected hidden id = "placeholder" value="" >Share Access to Other Users</option>
+                    <option value="+-" >Public</option>
                     {% for usernames in usernames %}
                         <option value="{{usernames}}" onclick="add_user_editable('{{usernames}}')">{{usernames}}</option>
                     {% endfor %}
                 </select>
             </div>
             <br>
-            <i class="fa-solid fa-x"></i>
             <div id="user_selected">
                 <ul class = "list_area">
 

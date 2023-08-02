@@ -701,24 +701,27 @@ def resources(route):
         db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s',(root_route,folder_name,))
         user_access_names = (db.fetchall()[0][0])
         print(user_access_names)
-        if "-" in user_access_names:
-            parent_route_parts = root_route.split("/") 
-            parent_route_parts.pop(0)
-            parent_route_root = ""
-            parent_folder_name = parent_route_parts[len(parent_route_parts)-1]
-            for part_index in range(len(parent_route_parts)-1):
-                parent_route_root = parent_route_root + "/" + parent_route_parts[part_index]
-            print(parent_folder_name)
-            print(parent_route_root)
-            db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s',(parent_route_root,parent_folder_name,))
-            username_parent = db.fetchall()
-            username_parent = username_parent[0][0]
-            user_access_names = user_access_names + username_parent
-        user_access_names = user_access_names.split(",")
-        if username not in user_access_names:
-            access="denied"
-        else:
+        if ("-+" in user_access_names):
             access="granted"
+        else:
+            if "-" in user_access_names:
+                parent_route_parts = root_route.split("/") 
+                parent_route_parts.pop(0)
+                parent_route_root = ""
+                parent_folder_name = parent_route_parts[len(parent_route_parts)-1]
+                for part_index in range(len(parent_route_parts)-1):
+                    parent_route_root = parent_route_root + "/" + parent_route_parts[part_index]
+                print(parent_folder_name)
+                print(parent_route_root)
+                db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s',(parent_route_root,parent_folder_name,))
+                username_parent = db.fetchall()
+                username_parent = username_parent[0][0]
+                user_access_names = user_access_names + username_parent
+                user_access_names = user_access_names.split(",")
+            if username not in user_access_names:
+                access="denied"
+            else:
+                access="granted"
     #grab the materials
     db.execute('SELECT * FROM "materials" WHERE (objecttype=%s OR objecttype=%s) AND objectroute=%s',('image','file', route,))
     materialsinfo = db.fetchall()

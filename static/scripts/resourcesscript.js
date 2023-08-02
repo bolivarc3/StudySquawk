@@ -387,21 +387,44 @@ function download_zip(url,fileName){
 }
 user_access_usernames = []
 function select_user(event) {
-
+    console.log("yo")
     var selectElement = event.target;
     var value = selectElement.value;
+    selectElement.selectedIndex = -1;
+    select_user_function(value)
+}
+
+function select_user_function(value){
+    console.log(user_access_usernames)
     if (value != ""){
         if (user_access_usernames.includes(value)== false){
             const  user_text_div = document.createElement('div')
             user_access_usernames.push(value)
+            console.log(user_access_usernames)
+            var original_value = value
+            console.log(original_value)
             if (value == "-"){
                 value = "Use Parent Folder Permissions"
+                user_text_div.style.backgroundColor = "#40798C"
+            }
+            if (value == "+-"){
+                value = "Public"
                 user_text_div.style.backgroundColor = "#40798C"
             }
             const  list_div = document.getElementsByClassName("list_area")[0]
             const  user_text = document.createElement('li')
             const x_button = document.createElement("i")
+            x_button.id = original_value
             x_button.className = "fa-solid fa-x"
+            x_button.addEventListener('click', function(user_text_div,original_value){
+                this.parentElement.remove()
+                original_value = this.id
+                const index = user_access_usernames.indexOf(original_value);
+                if (index > -1) { // only splice array when item is found
+                    user_access_usernames.splice(index, 1); // 2nd parameter means remove one item only
+                }
+
+            })
             user_text_div.className = "user_access_div"
             user_text_div.appendChild(user_text)
             user_text_div.appendChild(x_button)
@@ -413,7 +436,6 @@ function select_user(event) {
         }
     }
 }
-
 document.addEventListener("DOMContentLoaded", function(){
     url = decodeURI(window.location.href)
     url_parts = url.split("/")
@@ -431,5 +453,5 @@ document.addEventListener("DOMContentLoaded", function(){
         const placeholder = document.getElementById("placeholder")
         placeholder.display = "none"
     }
-
+    select_user_function("-")
 });
