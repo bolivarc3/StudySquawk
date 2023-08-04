@@ -38,6 +38,7 @@ virtualenv = "==20.13.3"
 virtualenv-clone = "==0.5.7"
 werkzeug = "==2.0.3"
 pip = "*"
+flask-session = "*"
 
 [dev-packages]
 
