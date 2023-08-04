@@ -39,6 +39,7 @@ virtualenv-clone = "==0.5.7"
 werkzeug = "==2.0.3"
 pip = "*"
 flask-session = "*"
+psycopg2 = "*"
 
 [dev-packages]
 
