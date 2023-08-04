@@ -40,6 +40,7 @@ werkzeug = "==2.0.3"
 pip = "*"
 flask-session = "*"
 psycopg2 = "*"
+bcrypt = "*"
 
 [dev-packages]
 
