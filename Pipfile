@@ -42,6 +42,7 @@ flask-session = "*"
 psycopg2 = "*"
 bcrypt = "*"
 python-dotenv = "*"
+oauthlib = "*"
 
 [dev-packages]
 
