@@ -627,13 +627,6 @@
             "index": "pypi",
             "version": "==2.9.6"
         },
-        "py-bcrypt": {
-            "hashes": [
-                "sha256:5fa13bce551468350d66c4883694850570f3da28d6866bb638ba44fe5eabda78"
-            ],
-            "index": "pypi",
-            "version": "==0.4"
-        },
         "pyasn1": {
             "hashes": [
                 "sha256:87a2121042a1ac9358cabcaf1d07680ff97ee6404333bacca15f76aa8ad01a57",

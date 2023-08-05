@@ -20,6 +20,7 @@ import zipfile
 import glob
 import shutil 
 from zipfile import ZipFile
+import bcrypt
 
 #change
 app = Flask(__name__)
@@ -194,6 +195,7 @@ def index():
             google_auth = db.fetchall()[0][0]
             db.execute('SELECT password FROM "Users" WHERE email=%s',(email,));
             db_password = db.fetchall()[0][0]
+            print(db_password)
             #if an account with the same email has
             if google_auth == "True":
                 #if the password is not already set to something
@@ -304,7 +306,7 @@ def callback():
         db_info = connectdb()
         db = db_info[0]
         db_conn = db_info[1]
-        db.execute('UPDATE "Users" SET password=%s WHERE username=%s',(get_hashed_password(session["attempted_password"]),session["user_id"]))
+        db.execute('UPDATE "Users" SET password=%s WHERE username=%s',(bcrypt.hashpw(session["attempted_password"]),session["user_id"]))
     db_conn.commit()
     db.close()
     db_conn.close()

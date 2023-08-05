@@ -4,7 +4,7 @@ class Users(db.Model):
     __tablename__ = 'Users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False)
-    password = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.Text, nullable=False)
     email = db.Column(db.String(120), nullable=False)
     gradeappusername=db.Column(db.String(120), nullable=False)
     gradeapppassword=db.Column(db.String(120), nullable=False)
