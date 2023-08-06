@@ -6,10 +6,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
   var header = document.getElementById('header_for_page')
   const image_height = header.clientHeight;
-  console.log(image_height)
   height = image_height
   height = height.toString() + "px"
-  console.log(height)
   document.documentElement.style.setProperty('--header-height', height);
   
   const bottom_bar = document.querySelector('[bottom_bar]');

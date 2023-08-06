@@ -224,7 +224,6 @@ function showPreview(event){
 }
 
 function preview_resource(id_number){
-    console.log(id_number)
     document.getElementById(id_number).style.display = "block"
 }
 
@@ -243,23 +242,19 @@ window.addEventListener("DOMContentLoaded", (event) => {
         var current_checkbox = checkboxes[check_box_num]
         current_checkbox.addEventListener('click', function(check_box_num){
             checkbox_color = getComputedStyle(this).color
-            console.log(checkbox_color)
 
 
             if (checkbox_color == "rgb(22, 27, 34)"){
                 this.style.color="white";
                 selected(this,this.id)
-                console.log("activate")
             }
             else if(checkbox_color == "rgb(81, 81, 82)"){
                 this.style.color="white";
                 selected(this,this.id)
-                console.log("activate")
             }
             if(checkbox_color == "rgb(255, 255, 255)"){
                 this.style.color="#161b22"
                 deslected(this,this.id)
-                console.log("disactivate")
             }
         })
     }
@@ -275,20 +270,17 @@ function selected(element,type){
         folder_elements.push(link)
     }
     else{
-        console.log("YES")
         var a_element = children_rows[9].childNodes[0]
         var link = decodeURI(a_element.href)
         selected_elements.push(link)
         selected_elements_titles.push(title)
     }
     selected_elements_ids.push(parent.className)
-    console.log(selected_elements_ids)
 }
 
 function deslected(element,type){
     var parent = element.parentElement;
     var children_rows = parent.childNodes;
-    console.log(parent.className)
     if (type == "folder"){
         var a_element = children_rows[7].childNodes[0]
         var link = a_element.href
@@ -316,7 +308,6 @@ function deslected(element,type){
             selected_elements_ids.splice(index, 1);
         }
     }
-    console.log(selected_elements_ids)
 }
 
 async function send_files_for_zip(){
@@ -329,12 +320,10 @@ async function send_files_for_zip(){
         body: JSON.stringify(selected_elements) // body data type must match "Content-Type" header
     })
     const zip_number = await response.json()
-    console.log(zip_number)
     hostname = window.location.hostname	 
     return(zip_number)
 }
 async function zipit(path_zip){
-    console.log(path_zip)
     const response = await fetch('/zipit', {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
         headers: {
@@ -343,7 +332,6 @@ async function zipit(path_zip){
         },
         body:JSON.stringify(path_zip)
     })
-    console.log("yeah")
     zip_number = await response.json()
 }
 async function send_folders_for_zip(zip_number){
@@ -356,7 +344,6 @@ async function send_folders_for_zip(zip_number){
         body: JSON.stringify({"folder_elements":folder_elements,"zip_number":zip_number}) // body data type must match "Content-Type" header
     })
     zip_number = await response.json()
-    console.log(zip_number)
     hostname = window.location.hostname	
     return (zip_number)
 }
@@ -374,7 +361,6 @@ async function download_files() {
             zip_number = await send_folders_for_zip(zip_number)
         }
         path_zip = "/static/" + "zip_files/" + zip_number.toString() +"/file.zip"
-        console.log(path_zip)
         await zipit(zip_number)
         download_zip(path_zip,"file.zip")
     }
@@ -397,7 +383,6 @@ function download_zip(url,fileName){
 }
 user_access_usernames = []
 function select_user(event) {
-    console.log("yo")
     var selectElement = event.target;
     var value = selectElement.value;
     selectElement.selectedIndex = -1;
@@ -405,14 +390,11 @@ function select_user(event) {
 }
 
 function select_user_function(value){
-    console.log(user_access_usernames)
     if (value != ""){
         if (user_access_usernames.includes(value)== false){
             const  user_text_div = document.createElement('div')
             user_access_usernames.push(value)
-            console.log(user_access_usernames)
             var original_value = value
-            console.log(original_value)
             if (value == "-"){
                 value = "Use Parent Folder Permissions"
                 user_text_div.style.backgroundColor = "#40798C"
@@ -463,7 +445,6 @@ function routing_links(route_parts,base_url){
         link.href = current_url
         link.innerHTML = "/" + route_parts[url_element]
         link.setAttribute('id', "routing")
-        console.log(link)
         const container = document.getElementById("routingdiv")
         container.appendChild(link)
         iteration = iteration + 1
@@ -473,26 +454,18 @@ function routing_links(route_parts,base_url){
 document.addEventListener("DOMContentLoaded", function(){
     url = decodeURI(window.location.href)
     url_parts = url.split("/")
-    console.log(url_parts)
-    console.log(url_parts)
     route = url_parts[4]
     route_parts = route.split(">")
-    console.log(route_parts)
-    console.log(route_parts.length)
     base_url=""
     for(let i = 0; i < 3; i++){
         base_url = base_url + url_parts[i] + "/"
     }
-    console.log("base_url")
-    console.log(base_url)
     routing_links(route_parts,base_url)
     if (route_parts.length > 1){
-        console.log("yoo")
         let select_box = document.getElementsByClassName("dropdown_users")[0]
         const select_item = document.createElement("option")
         select_item.innerHTML = "Use Parent Folder Permissions"
         select_item.value = "-"
-        console.log(select_item)
         select_box.prepend(select_item)
         const placeholder = document.getElementById("placeholder")
         placeholder.display = "none"
@@ -510,9 +483,7 @@ async function deletion(){
         body: JSON.stringify({"ids":selected_elements_ids}) // body data type must match "Content-Type" header
     })
     const completion = await response.json()
-    console.log(completion)
     if (completion == "denied"){
-        console.log("made it")
         var text = "You do not own the rights to delete this object"
         alert(text)
         sleep(5000);
