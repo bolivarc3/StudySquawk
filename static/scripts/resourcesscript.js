@@ -448,14 +448,44 @@ function select_user_function(value){
 }
 
 
+function routing_links(route_parts,base_url){
+    length = route_parts.length
+    current_url = base_url + "resources" + "/" + route_parts[0]
+    iteration = 1
+
+    for(let url_element =0; url_element < length; url_element++)
+    {
+        current_url = base_url + "resources" + "/" + route_parts[0]
+        for(let url_part_index=1; url_part_index < iteration; url_part_index++){
+            current_url = current_url + ">" + route_parts[url_part_index]
+        }
+        const link = document.createElement("a")
+        link.href = current_url
+        link.innerHTML = "/" + route_parts[url_element]
+        link.setAttribute('id', "routing")
+        console.log(link)
+        const container = document.getElementById("routingdiv")
+        container.appendChild(link)
+        iteration = iteration + 1
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function(){
     url = decodeURI(window.location.href)
     url_parts = url.split("/")
+    console.log(url_parts)
     console.log(url_parts)
     route = url_parts[4]
     route_parts = route.split(">")
     console.log(route_parts)
     console.log(route_parts.length)
+    base_url=""
+    for(let i = 0; i < 3; i++){
+        base_url = base_url + url_parts[i] + "/"
+    }
+    console.log("base_url")
+    console.log(base_url)
+    routing_links(route_parts,base_url)
     if (route_parts.length > 1){
         console.log("yoo")
         let select_box = document.getElementsByClassName("dropdown_users")[0]
@@ -505,3 +535,4 @@ function sleep(milliseconds) {
       currentDate = Date.now();
     } while (currentDate - date < milliseconds);
   }
+
