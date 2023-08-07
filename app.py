@@ -1,6 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify,send_file
 from flask_session import Session
-from helpers import login_required, grabclasses, checkclass, check, connectdb, time_difference, login_hac_required, update_hac, hac_executions,get_hashed_password,check_password
+from helpers import grabclasses, checkclass, check, connectdb, time_difference, login_hac_required, update_hac, hac_executions,get_hashed_password,check_password
 from werkzeug.utils import secure_filename
 from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
@@ -21,6 +21,7 @@ import glob
 import shutil 
 from zipfile import ZipFile
 import bcrypt
+from functools import wraps
 
 #change
 app = Flask(__name__)
@@ -103,6 +104,16 @@ def page_not_found(e):
     error = "Page not found, return to the bright side"
     url = "/homepage"
     return render_template('error.html', error = error, url = url), 404
+
+@app.before_request
+def default_login_required():
+    login_valid = 'user_id' in session
+    if (request.endpoint and 
+        'static' not in request.endpoint and 
+        not login_valid and 
+        not getattr(app.view_functions[request.endpoint], 'is_public', False) ) :
+        return render_template('intro.html', next=request.endpoint)
+
 
 
 def get_google_provider_cfg():
@@ -195,7 +206,6 @@ def index():
             google_auth = db.fetchall()[0][0]
             db.execute('SELECT password FROM "Users" WHERE email=%s',(email,));
             db_password = db.fetchall()[0][0]
-            print(db_password)
             #if an account with the same email has
             if google_auth == "True":
                 #if the password is not already set to something
@@ -306,7 +316,8 @@ def callback():
         db_info = connectdb()
         db = db_info[0]
         db_conn = db_info[1]
-        db.execute('UPDATE "Users" SET password=%s WHERE username=%s',(bcrypt.hashpw(session["attempted_password"]),session["user_id"]))
+        password = get_hashed_password(session["attempted_password"])
+        db.execute('UPDATE "Users" SET password=%s, google_auth=%s WHERE username=%s',(password,"True",session["user_id"]))
     db_conn.commit()
     db.close()
     db_conn.close()
@@ -315,7 +326,7 @@ def callback():
     return redirect(url_for("studyist"))
 
 @app.route("/homepage", methods=["GET", "POST"])
-@login_required
+
 def studyist():
     page_identifier = "homepage"
     courses = grabclasses()
@@ -424,7 +435,7 @@ def course(course):
 
 
 @app.route('/<course>/postcreation', methods=["GET", "POST"])
-@login_required
+
 def post(course):
     page_identifier= course
     return render_template("post.html", course = course, page_identifier=page_identifier)
@@ -665,7 +676,6 @@ def resources(route):
             db.execute('SELECT name FROM "materials" WHERE objectroute = %s AND objecttype= %s',(route,"folder",))
             folders_in_route = db.fetchall()
             count = len(folders_in_route)
-            print(folders_in_route)
             if count != 0:
                 for index in range(len(folders_in_route)-1):
                     if folders_in_route[0][index] == foldername:
@@ -715,7 +725,6 @@ def resources(route):
         user_access_names = (db.fetchall()[0][0])
         user_access_names_split = user_access_names.split(",")
         #if one of the access users consist of this symbol, it is granted to everyone(public)
-        print(user_access_names)
         if ("+-" in user_access_names_split):
             access="granted"
         #else, it will continue and grant access to the select users
@@ -738,7 +747,6 @@ def resources(route):
                 access="denied"
             else:
                 access="granted"
-        print(access)
     #grab the materials
     db.execute('SELECT * FROM "materials" WHERE (objecttype=%s OR objecttype=%s) AND objectroute=%s',('image','file', route,))
     materialsinfo = db.fetchall()
@@ -746,7 +754,6 @@ def resources(route):
 
     db.execute('SELECT * FROM "materials" WHERE objecttype=%s AND objectroute=%s',('folder', route,))
     foldersinfo = db.fetchall()
-    print(foldersinfo)
     db.execute('SELECT username FROM "Users" ORDER BY username ASC')
     db_usernames = db.fetchall()
     usernames = []
@@ -819,7 +826,7 @@ def grade_viewer_signup():
     return render_template("grade_viewer_signup.html")
 
 @app.route('/grade_viewer/<selectedcourse>', methods=["GET","POST"])
-@login_required
+
 def grade_viewer_course(selectedcourse):
     username = session["user_id"]
     grade_viewer_username = session["user_id_hac"]
@@ -1079,8 +1086,6 @@ def delete_files():
                     parent_route_parts.pop(0)
                     parent_route_root = ""
                     parent_folder_name = parent_route_parts[len(parent_route_parts)-1]
-                    print(parent_folder_name)
-                    print(parent_route_root)
                     for part_index in range(len(parent_route_parts)-1):
                         parent_route_root = parent_route_root + "/" + parent_route_parts[part_index]
                     db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s AND objecttype=%s',(parent_route_root,parent_folder_name,"folder"))
@@ -1093,7 +1098,6 @@ def delete_files():
                     access="denied"
                 else:
                     access="granted"
-            print(access)
             if access == "denied":
                 return jsonify("denied")
             else:
@@ -1105,8 +1109,6 @@ def delete_files():
             parent_folder_name = parent_route_parts[len(parent_route_parts)-1]
             for part_index in range(len(parent_route_parts)-1):
                 parent_route_root = parent_route_root + "/" + parent_route_parts[part_index]
-            print(parent_folder_name)
-            print(parent_route_root)
             db.execute('SELECT user_access_names FROM "materials" WHERE objectroute=%s AND objecttype=%s',(parent_route_root,"folder",))
             object_info = db.fetchone()
             user_access_names = object_info[0]
@@ -1121,8 +1123,6 @@ def delete_files():
                     parent_route_parts.pop(0)
                     parent_route_root = ""
                     parent_folder_name = parent_route_parts[len(parent_route_parts)-1]
-                    print(parent_folder_name)
-                    print(parent_route_root)
                     for part_index in range(len(parent_route_parts)-1):
                         parent_route_root = parent_route_root + "/" + parent_route_parts[part_index]
                     db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s AND objecttype=%s',(parent_route_root,parent_folder_name,"folder"))
@@ -1135,7 +1135,6 @@ def delete_files():
                     access="denied"
                 else:
                     access="granted"
-            print(access)
             if access == "denied":
                 return jsonify("denied")
             else:
@@ -1145,6 +1144,26 @@ def delete_files():
         db_conn.close()
         delete_aws_files(objectroute,name,object_type)
         return jsonify("done")
+
+
+@app.route("/settings", methods=['GET','POST'])
+def settings():
+    if request.method == "POST":
+        form = request.form.get("form-name")
+        if form == "password_form":
+            password = request.form.get("password")
+            db_info = connectdb()
+            db = db_info[0]
+            db_conn = db_info[1]
+            password = get_hashed_password(password)
+            username = session["user_id"]
+            db.execute('UPDATE "Users" SET password=%s WHERE username=%s',(password,username,))
+            db_conn.commit()
+            db.close()
+            db_conn.close()
+    return render_template("settings.html")
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 

@@ -1,0 +1,27 @@
+.center{
+    width: fit-content;
+    height: fit-content;
+    margin: auto;
+}
+.center.username{
+    color:white;
+    margin-top: 1rem;
+}
+
+.center.password{
+    color:white;
+    margin-top: 1rem;
+    fill:#40798C;
+}
+.form_text_input{
+
+}
+
+#edit_button{
+    background-color: transparent;
+    border: none;
+}
+
+#passwordsubmitbutton{
+    visibility: hidden;
+}

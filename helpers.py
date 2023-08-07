@@ -5,24 +5,13 @@ import os
 import requests
 import urllib.parse
 from flask import redirect, render_template, request, session
+from app import session
 from datetime import datetime, timezone
 from functools import wraps
 import csv
 import psycopg2
 import bcrypt
 
-def login_required(f):
-    """
-    Decorate routes to require login.
-
-    https://flask.palletsprojects.com/en/1.1.x/patterns/viewdecorators/
-    """
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if session.get("user_id") is None:
-            return redirect("/login")
-        return f(*args, **kwargs)
-    return decorated_function
 
 def login_hac_required(f):
     @wraps(f)
