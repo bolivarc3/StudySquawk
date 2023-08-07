@@ -114,13 +114,15 @@ def default_login_required():
         not getattr(app.view_functions[request.endpoint], 'is_public', False) ) :
         return render_template('intro.html', next=request.endpoint)
 
-
+def public_endpoint(function):
+    function.is_public = True
+    return function
 
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
-
 #the intro homepage for the user
 #test1
+@public_endpoint
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
@@ -232,7 +234,7 @@ def index():
         return render_template("intro.html")
     return render_template("intro.html")
 
-
+@public_endpoint
 @app.route('/login')
 def login():
     session["hacattendancetimeupdated"] =''
@@ -250,6 +252,7 @@ def login():
     )
     return redirect(request_uri)
 
+@public_endpoint
 @app.route("/login/callback")
 def callback():
     session["hacattendancetimeupdated"] =''
@@ -325,8 +328,8 @@ def callback():
     session["hacgradestimeupdated"] =''
     return redirect(url_for("studyist"))
 
-@app.route("/homepage", methods=["GET", "POST"])
 
+@app.route("/homepage", methods=["GET", "POST"])
 def studyist():
     page_identifier = "homepage"
     courses = grabclasses()
