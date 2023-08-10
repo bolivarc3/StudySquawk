@@ -20,6 +20,7 @@ async function updatehac(){
     ;
 }
 
+
 function loadposts(posts){
     length = posts.length
 
@@ -59,4 +60,55 @@ function loadposts(posts){
         postdiv.appendChild(posttitle)
 
     }
+}
+
+document.addEventListener("DOMContentLoaded", function(e){
+    character_limiting()
+})
+
+function character_limiting(){
+    var digitPeriodRegExp = new RegExp(/\/|>|\\/g);
+    let inputs = document.getElementsByClassName("limited_form")
+    for(let i = 0; i < inputs.length; i++){
+        input = inputs[i]
+        input.addEventListener('input', function(event) {
+            let result = true
+            while (result == true){
+                input = event.target
+                var splitValue = input.value.split('');
+                var charactersToFilter = 0;
+                var filteredSplitValue = splitValue.map(function(character) {
+                        let result = digitPeriodRegExp.test(character)
+                        if(result) {
+                            charactersToFilter++;
+                            return '';
+                        }
+                    
+                        return character;
+                    });
+                
+                if(!charactersToFilter) {
+                    return;
+                }
+                
+                input.value = filteredSplitValue.join('');
+                
+                /*
+                * We need to keep track of the caret position, which is the `selectionStart`
+                * property, otherwise if our caret is in the middle of the value, pressing an
+                * invalid character would send our caret to the end of the value.
+                */
+                var charactersBeforeSelectionStart = filteredSplitValue.slice(0, input.selectionStart);
+                var filteredCharactersBeforeSelectionStart = charactersBeforeSelectionStart.filter(function(character) {
+                        return !character;
+                    });
+                var totalFilteredCharactersBeforeSelectionStart = filteredCharactersBeforeSelectionStart.length;
+                var newSelectionStart = input.selectionStart - totalFilteredCharactersBeforeSelectionStart;
+                
+                input.selectionStart = newSelectionStart;
+                input.selectionEnd = input.selectionStart;
+            }
+        })
+    }
+
 }

@@ -8,30 +8,32 @@
 {% block title %}My Grades{% endblock %}
 {% block body %}
     <div class="courses_summaries_div">
-        {% for key, value in grade_summary.items() %}
-        <a href="/grade_viewer/{{key}}" style="display: contents;">
+        {% for class in class_names %}
+        <a href="/grade_viewer/{{class}}" style="display: contents;">
             <div class="course_summary_div">
                 <h2>
-                    {{key}}
+                    {{class}}
                 </h2>
                 <br>
                 <div class="course_info_div">
-                    {% for index in iterate %}
-                    <div class="assignment_grades">
-                        <h4>
-                            {{assignment_grades[key][index][2]}}:
-                        </h4>
-                        <div>
-                            {{assignment_grades[key][index][7]}}/{{assignment_grades[key][index][8]}}
+                    {% if assignment_grades|string() != "{}"|string() %}
+                        {% for index in iterate %}
+                        <div class="assignment_grades">
+                            <h4>
+                                {{assignment_grades[class][index][2]}}:
+                            </h4>
+                            <div>
+                                {{assignment_grades[class][index][7]}}/{{assignment_grades[key][index][8]}}
+                            </div>
                         </div>
-                    </div>
-                    {% endfor %}
-                    <br>
-                    <div>
-                        <h4 class="grade_text">
-                            Grade: {{value[0][3]}}
-                        </h4>
-                    </div>
+                        {% endfor %}
+                        <br>
+                        <div>
+                            <h4 class="grade_text">
+                                Grade: {{grade_summary[class]}}
+                            </h4>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </a>
