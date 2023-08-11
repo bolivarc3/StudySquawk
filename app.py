@@ -1206,6 +1206,7 @@ def confirm_email(token):
     db = db_info[0]
     db_conn = db_info[1]
     password = get_hashed_password(session["attempted_password"])
+    print(session["user_id_to_confirm"])
     db.execute('UPDATE "Users" SET is_confirmed=%s WHERE username=%s',("True",session["user_id_to_confirm"],))
     db_conn.commit()
     db.close()
@@ -1218,6 +1219,7 @@ def send_mail_confirm(username,email):
     link = url_for('confirm_email', token=token, _external=True)
     msg.html = render_template("confirm.html",link=link)
     mail.send(msg)
+    print(username)
     session["user_id_to_confirm"] = username
 
 if __name__ == '__main__':
