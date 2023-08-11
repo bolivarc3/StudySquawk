@@ -1196,7 +1196,7 @@ def confirm_email_standby():
     re
     
 
-@app.route('/confirm_email/<token>')
+@app.route('/confirm_email/<token>', methods=['GET','POST'])
 def confirm_email(token):
     try:
         email = s.loads(token, salt='email-confirm', max_age=3600)
