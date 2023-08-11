@@ -22,6 +22,10 @@ import shutil
 from zipfile import ZipFile
 import bcrypt
 from functools import wraps
+from flask_migrate import Migrate
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+
 
 #change
 app = Flask(__name__)
@@ -36,6 +40,10 @@ app.config["SESSION_PERMANENT"] = False
 app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 app.config["SESSION_PERMANENT"] = False
+
+app.config.from_pyfile('config.cfg')
+mail = Mail(app)
+s = URLSafeTimedSerializer('Thisisasecret!')
 
 ENV = os.environ.get('APPLICATION_ENV')
 if ENV == 'dev':
@@ -74,6 +82,8 @@ else:
     DEBUG_STATUS=False
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db_creation = SQLAlchemy(app)
+app.app_context().push()
+migrate = Migrate(app, db_creation)
 from models import Users, posts, images, files, replies, replyfiles, replyimages, materials
 db_creation.create_all()
 db_creation.session.commit()
@@ -182,12 +192,14 @@ def index():
                 error = "invalid email address"
                 flash("username already has been used")
                 return redirect(url_for('index'))
+            send_mail_confirm(username,email)
             password = get_hashed_password(password)
             null = "null"
-            db.execute('INSERT INTO "Users"(username, password, email, gradeappusername, gradeapppassword, google_auth) VALUES (%s, %s, %s, %s, %s, %s)',(username,password,email,null,null,"False",))
+            db.execute('INSERT INTO "Users"(username, password, email, gradeappusername, gradeapppassword, google_auth, is_confirmed) VALUES (%s, %s, %s, %s, %s, %s, %s)',(username,password,email,null,null,"False",False,))
             db_conn.commit()
             db.close()
             db_conn.close()
+            flash("Verify your email! An Email Has been sent to you!")
             return redirect("/")
 
         if form == "loginform":
@@ -208,6 +220,15 @@ def index():
             google_auth = db.fetchall()[0][0]
             db.execute('SELECT password FROM "Users" WHERE email=%s',(email,));
             db_password = db.fetchall()[0][0]
+            db.execute('SELECT is_confirmed FROM "Users" WHERE email=%s',(email,));
+            confirmation_status = db.fetchall()[0][0]
+            db.execute('SELECT username FROM "Users" WHERE email=%s',(email,));
+            username = db.fetchall()[0][0]
+            print(confirmation_status)
+            if confirmation_status == False:
+                flash("Verify your account with your Email!")
+                send_mail_confirm(username,email)
+                return redirect(url_for("index"))
             #if an account with the same email has
             if google_auth == "True":
                 #if the password is not already set to something
@@ -303,7 +324,7 @@ def callback():
         count = len(users)
         if count == 0:
             null = "null"
-            db.execute('INSERT INTO "Users"(username, password, email, gradeappusername, gradeapppassword, google_auth) VALUES (%s, %s, %s, %s, %s, %s)',(users_name,null,users_email,null,null,"True",))
+            db.execute('INSERT INTO "Users"(username, password, email, gradeappusername, gradeapppassword, google_auth, is_confirmed) VALUES (%s, %s, %s, %s, %s, %s, %s)',(users_name,null,users_email,null,null,"True",True,))
             # Send user back to homepage
             db_conn.commit()
             db.close()
@@ -1170,6 +1191,34 @@ def settings():
             db_conn.close()
     return render_template("settings.html")
 
+@app.route('/confirm')
+def confirm_email_standby():
+    re
+    
+
+@app.route('/confirm_email/<token>')
+def confirm_email(token):
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=3600)
+    except SignatureExpired:
+        return '<h1>The token is expired!</h1>'
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    password = get_hashed_password(session["attempted_password"])
+    db.execute('UPDATE "Users" SET is_confirmed=%s WHERE username=%s',("True",session["user_id_to_confirm"],))
+    db_conn.commit()
+    db.close()
+    db_conn.close()
+    return redirect(url_for('index'))
+
+def send_mail_confirm(username,email):
+    token = s.dumps(email, salt='email-confirm')
+    msg = Message('Confirm Email', sender='studysquawk@gmail.com', recipients=[email])
+    link = url_for('confirm_email', token=token, _external=True)
+    msg.html = render_template("confirm.html",link=link)
+    mail.send(msg)
+    session["user_id_to_confirm"] = username
 
 if __name__ == '__main__':
     app.run(debug=True)

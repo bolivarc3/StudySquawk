@@ -14,6 +14,9 @@ boto3 = "*"
 zipfile36 = "*"
 psycopg2 = "*"
 py-bcrypt = "*"
+flask-migrate = "*"
+flask-mail = "*"
+itsdangerous = "*"
 
 [dev-packages]
 

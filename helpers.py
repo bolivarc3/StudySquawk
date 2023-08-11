@@ -46,8 +46,6 @@ def connectdb():
     list = [cursor,conn]
     return list;
 
-
-
 def grabclasses():
     #grabs all the classes and converts it to an array
     courses = []
