@@ -1194,13 +1194,18 @@ def settings():
 
 @app.route('/confirm_email/<token>/<username>', methods=['GET','POST'])
 def confirm_email(token,username):
+    print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYYYYYYYYYYYYYYYYYYYYY")
+    password = get_hashed_password(session["attempted_password"])
     try:
+         print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYYYYYYYYYYYYYYYYYYYYY")
+    password = get_hashed_password(session["attempted_password"])
         email = s.loads(token, salt='email-confirm', max_age=3600)
     except SignatureExpired:
         return '<h1>The token is expired!</h1>'
     db_info = connectdb()
     db = db_info[0]
     db_conn = db_info[1]
+    print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYYYYYYYYYYYYYYYYYYYYY")
     password = get_hashed_password(session["attempted_password"])
     db.execute('UPDATE "Users" SET is_confirmed=%s WHERE username=%s',("True",username,))
     db_conn.commit()
