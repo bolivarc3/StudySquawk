@@ -1190,10 +1190,6 @@ def settings():
             db.close()
             db_conn.close()
     return render_template("settings.html")
-
-@app.route('/confirm')
-def confirm_email_standby():
-    re
     
 
 @app.route('/confirm_email/<token>/<username>', methods=['GET','POST'])
