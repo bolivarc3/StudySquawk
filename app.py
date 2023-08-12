@@ -1203,7 +1203,6 @@ def confirm_email(token,username):
     db = db_info[0]
     db_conn = db_info[1]
     print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYYYYYYYYYYYYYYYYYYYYY")
-    password = get_hashed_password(session["attempted_password"])
     db.execute('UPDATE "Users" SET is_confirmed=%s WHERE username=%s',("True",username,))
     db_conn.commit()
     db.close()
