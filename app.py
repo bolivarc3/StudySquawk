@@ -1194,6 +1194,7 @@ def settings():
 
 @app.route('/confirm_email/<token>/<username>', methods=['GET','POST'])
 def confirm_email(token,username):
+    print(username)
     try:
         email = s.loads(token, salt='email-confirm', max_age=3600)
     except SignatureExpired:
