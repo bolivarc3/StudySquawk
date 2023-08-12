@@ -1191,7 +1191,7 @@ def settings():
             db_conn.close()
     return render_template("settings.html")
     
-
+@public_endpoint
 @app.route('/confirm_email/<token>/<username>', methods=['GET','POST'])
 def confirm_email(token,username):
     print(username)
