@@ -1206,7 +1206,7 @@ def confirm_email(token,username):
     db_conn.commit()
     db.close()
     db_conn.close()
-    return edirect(url_for('index'))
+    return redirect(url_for('index'))
 
 def send_mail_confirm(username,email):
     token = s.dumps(email, salt='email-confirm')
