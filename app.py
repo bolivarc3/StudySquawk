@@ -256,6 +256,33 @@ def index():
     return render_template("intro.html")
 
 @public_endpoint
+@app.route('/confirm_email/<token>/<username>', methods=['GET','POST'])
+def confirm_email(token,username):
+    #checks to see if the token works, if it does, then it 
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=3600)
+    except SignatureExpired:
+        flash("Token Has Expired! Try to Login again to try another Email Confirmation!")
+        return redirect(url_for('index'))
+    #updates the database so that it is known that is a verified account
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    db.execute('UPDATE "Users" SET is_confirmed=%s WHERE username=%s',("True",username,))
+    db_conn.commit()
+    db.close()
+    db_conn.close()
+    return redirect(url_for('index'))
+
+def send_mail_confirm(username,email):
+    #grabs the token, and nessary info to make the email work, and sends
+    token = s.dumps(email, salt='email-confirm')
+    msg = Message('Confirm Email', sender='studysquawk@gmail.com', recipients=[email])
+    link = url_for('confirm_email', token=token,username=username, _external=True)
+    msg.html = render_template("confirm.html",link=link)
+    mail.send(msg)
+
+@public_endpoint
 @app.route('/login')
 def login():
     session["hacattendancetimeupdated"] =''
@@ -1190,33 +1217,6 @@ def settings():
             db.close()
             db_conn.close()
     return render_template("settings.html")
-    
-@public_endpoint
-@app.route('/confirm_email/<token>/<username>', methods=['GET','POST'])
-def confirm_email(token,username):
-    print(username)
-    try:
-        email = s.loads(token, salt='email-confirm', max_age=3600)
-    except SignatureExpired:
-        return '<h1>The token is expired!</h1>'
-    db_info = connectdb()
-    db = db_info[0]
-    db_conn = db_info[1]
-    print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYYYYYYYYYYYYYYYYYYYYY")
-    db.execute('UPDATE "Users" SET is_confirmed=%s WHERE username=%s',("True",username,))
-    db_conn.commit()
-    db.close()
-    db_conn.close()
-    return redirect(url_for('index'))
-
-def send_mail_confirm(username,email):
-    token = s.dumps(email, salt='email-confirm')
-    msg = Message('Confirm Email', sender='studysquawk@gmail.com', recipients=[email])
-    link = url_for('confirm_email', token=token,username=username, _external=True)
-    msg.html = render_template("confirm.html",link=link)
-    mail.send(msg)
-    print(username)
-    session["user_id_to_confirm"] = username
 
 if __name__ == '__main__':
     app.run(debug=True)
