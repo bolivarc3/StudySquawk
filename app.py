@@ -1196,8 +1196,8 @@ def confirm_email_standby():
     re
     
 
-@app.route('/confirm_email/<token>', methods=['GET','POST'])
-def confirm_email(token):
+@app.route('/confirm_email/<token>/<username>', methods=['GET','POST'])
+def confirm_email(token,username):
     try:
         email = s.loads(token, salt='email-confirm', max_age=3600)
     except SignatureExpired:
@@ -1206,10 +1206,7 @@ def confirm_email(token):
     db = db_info[0]
     db_conn = db_info[1]
     password = get_hashed_password(session["attempted_password"])
-    print("HELLLOOOW")
-    for i in range(48):
-        print(session["user_id_to_confirm"])
-    db.execute('UPDATE "Users" SET is_confirmed=%s WHERE username=%s',("True",session["user_id_to_confirm"],))
+    db.execute('UPDATE "Users" SET is_confirmed=%s WHERE username=%s',("True",username,))
     db_conn.commit()
     db.close()
     db_conn.close()
@@ -1218,7 +1215,7 @@ def confirm_email(token):
 def send_mail_confirm(username,email):
     token = s.dumps(email, salt='email-confirm')
     msg = Message('Confirm Email', sender='studysquawk@gmail.com', recipients=[email])
-    link = url_for('confirm_email', token=token, _external=True)
+    link = url_for('confirm_email', token=token,username=username, _external=True)
     msg.html = render_template("confirm.html",link=link)
     mail.send(msg)
     print(username)
