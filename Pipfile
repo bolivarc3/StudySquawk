@@ -18,6 +18,7 @@ flask-migrate = "*"
 flask-mail = "*"
 itsdangerous = "*"
 gunicorn = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
