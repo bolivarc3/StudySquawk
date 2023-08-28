@@ -19,6 +19,7 @@ flask-mail = "*"
 itsdangerous = "*"
 gunicorn = "*"
 python-dotenv = "*"
+oauthlib = "*"
 
 [dev-packages]
 
