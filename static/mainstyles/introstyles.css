@@ -18,11 +18,11 @@ html, body {
 }
 
 .crop {
-    height: 80%;
-    overflow: hidden;
+  height: 80%;
+  overflow: hidden;
 }
 .crop img {
-    width:50%;
+  width:50%;
 }
 
 #background_parrot_image_div{
@@ -53,6 +53,7 @@ html, body {
   bottom: 343px;
   right: 358px;
 }
+
 #introphrase h1{
   font-size: 3.5rem;
   color: white;
@@ -90,7 +91,6 @@ html, body {
   text-align:center;
 }
 
-
 #navbox {
   background: var(--core-purple-dark);
   width: fit-content;
@@ -100,7 +100,6 @@ html, body {
 #horizontal-list li {
 		display: inline;
 }
-
 
 #signupfog {
   overflow: hidden;
@@ -113,8 +112,6 @@ html, body {
   z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
   cursor: pointer; /* Add a pointer on hover */
 }
-
-
 
 #loginfog {
   overflow: hidden;
@@ -182,9 +179,7 @@ font-size:16;
 font-family: 'Teko', sans-serif;
 font-weight:800;
 }
-
 /* Signup -----------------------------------------------------------------*/
-
 
 .form-element{
   margin:auto;

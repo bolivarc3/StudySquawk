@@ -130,6 +130,7 @@ def public_endpoint(function):
 
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
+
 #the intro homepage for the user
 #test1
 @public_endpoint
