@@ -13,24 +13,25 @@
             <div class="course_summary_div">
                 <h2>
                     {{class}}
+                    
                 </h2>
                 <br>
                 <div class="course_info_div">
-                    {% if assignment_grades|string() != "{}"|string() %}
-                        {% for index in iterate %}
+                    {% if assignment_grades[class][0]|string() != "null"|string() %}
+                        {% for index in range(assignment_grades[class]|length)%}
                         <div class="assignment_grades">
                             <h4>
-                                {{assignment_grades[class][index][2]}}:
+                                {{assignment_grades[class][0][2]}}:
                             </h4>
                             <div>
-                                {{assignment_grades[class][index][7]}}/{{assignment_grades[key][index][8]}}
+                                {{assignment_grades[class][index][7]}}/{{assignment_grades[class][index][8]}}
                             </div>
                         </div>
                         {% endfor %}
                         <br>
                         <div>
                             <h4 class="grade_text">
-                                Grade: {{grade_summary[class]}}
+                                Grade: {{grade_summary[class][0][3]}}
                             </h4>
                         </div>
                     {% endif %}

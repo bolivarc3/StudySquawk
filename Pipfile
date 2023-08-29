@@ -20,6 +20,7 @@ itsdangerous = "*"
 gunicorn = "*"
 python-dotenv = "*"
 oauthlib = "*"
+redis = "*"
 
 [dev-packages]
 

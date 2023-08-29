@@ -25,6 +25,9 @@ from functools import wraps
 from flask_migrate import Migrate
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+import redis
+from datetime import timedelta
+
 
 
 #change
@@ -34,10 +37,14 @@ s3 = boto3.client('s3',
     aws_access_key_id = os.environ.get('AWS_S3_ACCESS_KEY'),
     aws_secret_access_key = os.environ.get('AWS_S3_SECRET_ACCESS_KEY'),
         )
-app.secret_key ="super secret key"
+app.secret_key = os.urandom(100)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.config["SESSION_PERMANENT"] = False
-app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_COOKIE_SECURE'] = True  # Ensure cookies are only sent over HTTPS
+app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent client-side JavaScript from accessing cookies
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
+app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_REDIS'] = redis.from_url(os.environ.get('SESSION_REDIS'))
 Session(app)
 app.config["SESSION_PERMANENT"] = False
 
@@ -849,8 +856,9 @@ def grade_viewer():
     grades_data = session["hacgrades"]
     if 'error' in grades_data:
         error = grades_data['error']
-        url = '/grade_viewer'
-        return render_template("error.html", error = error, url = url)
+        flash(error)
+        return redirect('/grade_viewer_signup')
+    print(session["hacgrades"])
     #grabs data from dictionary
     class_names = grades_data['class_names']
     #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
