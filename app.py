@@ -1,6 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify,send_file
 from flask_session import Session
-from helpers import grabclasses, checkclass, check, connectdb, time_difference, login_hac_required, update_hac, hac_executions,get_hashed_password,check_password
+from helpers import grabclasses, checkclass, check, connectdb, time_difference, login_hac_required, update_hac, hac_executions,get_hashed_password,check_password,grab_user_id
 from werkzeug.utils import secure_filename
 from sqlalchemy import *
 from flask_sqlalchemy import SQLAlchemy
@@ -43,7 +43,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config['SESSION_COOKIE_SECURE'] = True  # Ensure cookies are only sent over HTTPS
 app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent client-side JavaScript from accessing cookies
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
-app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_REDIS'] = redis.from_url(os.environ.get('SESSION_REDIS'))
 Session(app)
 app.config["SESSION_PERMANENT"] = False
@@ -124,7 +124,7 @@ def page_not_found(e):
 
 @app.before_request
 def default_login_required():
-    login_valid = 'user_id' in session
+    login_valid = 'username' in session
     if (request.endpoint and 
         'static' not in request.endpoint and 
         not login_valid and 
@@ -242,6 +242,7 @@ def index():
                 #if the password is not already set to something
                 if db_password == "null":
                     session["attempted_password"] = password
+                    flash("redirecting to the login")
                     return redirect(url_for("login"))
                 #else, continue to authenticate password
             verify_password = check_password(password,db_password)
@@ -255,7 +256,7 @@ def index():
                 flash("Password is Incorrect")
                 return render_template("intro.html")
             #set the session
-            session["user_id"] = username[0][0]
+            session["username"] = username[0][0]
             session["hacattendancetimeupdated"] =''
             session["hacgradestimeupdated"] =''
             return redirect(url_for("studyist"))
@@ -280,15 +281,18 @@ def confirm_email(token,username):
     db_conn.commit()
     db.close()
     db_conn.close()
+    flash("Email Confirmed!")
     return redirect(url_for('index'))
 
 def send_mail_confirm(username,email):
+    print("yo")
     #grabs the token, and nessary info to make the email work, and sends
     token = s.dumps(email, salt='email-confirm')
     msg = Message('Confirm Email', sender='studysquawk@gmail.com', recipients=[email])
     link = url_for('confirm_email', token=token,username=username, _external=True)
     msg.html = render_template("confirm.html",link=link)
     mail.send(msg)
+    session["user_id_to_confirm"] = username
 
 @public_endpoint
 @app.route('/login')
@@ -369,14 +373,14 @@ def callback():
         db.execute('SELECT username FROM "Users" WHERE email = %s', (users_email, ))
         users = db.fetchall()
         users_name = users[0][0]
-    session["user_id"] = users_name
+    session["username"] = users_name
     #adds the attempted password if the user doesn't already have one
     if "attempted_password" in session:
         db_info = connectdb()
         db = db_info[0]
         db_conn = db_info[1]
         password = get_hashed_password(session["attempted_password"])
-        db.execute('UPDATE "Users" SET password=%s, google_auth=%s WHERE username=%s',(password,"True",session["user_id"]))
+        db.execute('UPDATE "Users" SET password=%s, google_auth=%s WHERE username=%s',(password,"True",session["username"]))
     db_conn.commit()
     db.close()
     db_conn.close()
@@ -387,9 +391,11 @@ def callback():
 
 @app.route("/homepage", methods=["GET", "POST"])
 def studyist():
+    print("did it ")
     page_identifier = "homepage"
     courses = grabclasses()
     if request.method == "POST":
+        print("post")
         #looks in the classes db to find all of the classes
         course = request.form.get("name")
         courseavailible = checkclass(course, courses)
@@ -398,13 +404,14 @@ def studyist():
             return redirect(url_for('studyist'))
         #checks if the course requested is the same as one in the array
         return redirect(course)
-
     else:
+        print("brooo what")
         db_info = connectdb()
         db = db_info[0]
         db_conn = db_info[1]
         db.execute('SELECT * FROM "posts" ORDER BY date DESC, time DESC')
         postings = db.fetchall()
+        db_conn.close()
         #return object looking like <posts> which is an object
         #index into it and . insert what you are looking for
         course = "homepage"
@@ -419,6 +426,7 @@ def course(course):
     #grabs the classes and checks if class is a class in db
     courses = grabclasses()
     courseavailible = checkclass(course, courses)
+    userid = grab_user_id(session["username"])
 
     #if the class is not in the list, it will render an apology
     if courseavailible == False:
@@ -435,7 +443,7 @@ def course(course):
         title = str(title)
         body = request.form.get("text")
         body = str(body)
-        username = session["user_id"]
+        username = session["username"]
         now = datetime.now()
         date = now.strftime("%m/%d/%Y")
         time = now.strftime("%H:%M:%S")
@@ -473,14 +481,14 @@ def course(course):
                 if file_extension in imagefileextensions:
                     filename = secure_filename(file.filename)
                     fileupload = upload(filespath,filename,file)
-                    db.execute('INSERT INTO "images"(postid, images) VALUES (%s, %s)',(id,filename, ))
+                    db.execute('INSERT INTO "images"(postid, images,user_id) VALUES (%s, %s, %s)',(id,filename,userid,))
                     db_conn.commit()
                 else:
                     filename = secure_filename(file.filename)
                     fileupload = upload(filespath,filename,file)
-                    db.execute('INSERT INTO "files"(postid, files) VALUES (%s, %s)',(id,filename, ))
+                    db.execute('INSERT INTO "files"(postid, files,user_id) VALUES (%s, %s,%s)',(id,filename,userid,))
                     db_conn.commit()
-        db.execute('INSERT INTO "posts"(postid, course, username, title, body, time, date) VALUES(%s,%s,%s,%s,%s,%s,%s)',(id, course, username, title, body, time, date, ))            
+        db.execute('INSERT INTO "posts"(postid, course, username, title, body, time, date, user_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)',(id, course, username, title, body, time, date, userid,))            
         db_conn.commit()
         db_conn.close()
         db.close()
@@ -502,6 +510,7 @@ def post(course):
 
 @app.route('/<course>/post/<postid>', methods=["GET", "POST"])
 def viewpost(course, postid):
+    userid = grab_user_id(session["username"])
     page_identifier = course
     postid = int(postid)
 
@@ -514,7 +523,7 @@ def viewpost(course, postid):
             title = str(title)
             body = request.form.get("text")
             body = str(body)
-            username = session["user_id"]
+            username = session["username"]
             now = datetime.now()
             now = datetime.now()
             date = now.strftime("%m/%d/%Y")
@@ -531,7 +540,7 @@ def viewpost(course, postid):
             replieslength = len(repliesquery)
             id = replieslength + 1
 
-            db.execute('INSERT INTO "replies"(replyid, postid, course, username, title, body, time, date) VALUES(%s,%s, %s, %s,%s, %s, %s,%s)',(id, postid, course, username, title, body, time, date,))
+            db.execute('INSERT INTO "replies"(replyid, postid, course, username, title, body, time, date,user_id) VALUES(%s,%s, %s, %s,%s, %s, %s,%s,%s)',(id, postid, course, username, title, body, time, date,userid,))
             db_conn.commit()
             file = request.files['file']
             filedata = request.files.getlist("file")
@@ -549,13 +558,13 @@ def viewpost(course, postid):
                     if file_extension in imagefileextensions:
                         filename = secure_filename(file.filename)
                         fileupload = upload(filespath,filename,file)
-                        db.execute('INSERT INTO "replyimages"(replyid, postid, images) VALUES (%s, %s, %s)',(id,postid,filename, ))
+                        db.execute('INSERT INTO "replyimages"(replyid, postid, images,user_id) VALUES (%s, %s, %s, %s)',(id,postid,filename,userid,))
                         db_conn.commit()
 
                     else:
                         filename = secure_filename(file.filename)
                         fileupload = upload(filespath,filename,file)
-                        db.execute('INSERT INTO "replyfiles"(replyid, postid, files) VALUES (%s, %s, %s)',(id,postid,filename, ))
+                        db.execute('INSERT INTO "replyfiles"(replyid, postid, files,user_id) VALUES (%s, %s, %s, %s)',(id,postid,filename,userid))
                         db_conn.commit()
             db.close()
             db_conn.close()
@@ -595,7 +604,7 @@ def viewpost(course, postid):
 
     db.close()
     db_conn.close()
-    userid = session["user_id"]
+    userid = session["username"]
     page_identifier = "homepage"
     return render_template("viewpost.html", postid = postid, postinfo = postinfo, imagesinfo = imagesinfo, filesinfo = filesinfo, repliesinfo = repliesinfo, repliesimagesinfo = repliesimagesinfo, repliesfilesinfo = repliesfilesinfo, courses = courses, course = course, userid = userid,BUCKET_NAME = BUCKET_NAME)
 
@@ -606,6 +615,7 @@ def viewpost(course, postid):
 def resources(route):
     #saves route created and checks if peson put in a correct course
     #route to the folder
+    userid = grab_user_id(session["username"])
     currentfolderrouteurl = route
     #route to the folder
 
@@ -657,7 +667,7 @@ def resources(route):
     if request.method == "POST":
         #gathers information for database entry
         type_of_form = request.form.get("type_of_form")
-        username = session["user_id"]
+        username = session["username"]
         objectroute = route
 
         now = datetime.now()
@@ -695,7 +705,7 @@ def resources(route):
             UPLOAD_FOLDER = "static/resources/" + str(route)
             app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
             filedata = request.files.getlist("file")
-            username = session["user_id"]
+            username = session["username"]
             #makes a new upload folder if the upload folder does not exist
 
             filespath = "resources" + str(route)
@@ -713,8 +723,8 @@ def resources(route):
                         filename = secure_filename(file.filename)
                         fileupload = upload(filespath,filename,file)
 
-                        db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body,user_access_names) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
-                        ,(id,objectroute,objecttype,course,username,filename,time,date,title,body,""))
+                        db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body,user_access_names,user_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                        ,(id,objectroute,objecttype,course,username,filename,time,date,title,body,userid,""))
 
                         db_conn.commit()
                     else:
@@ -722,8 +732,8 @@ def resources(route):
                         filename = secure_filename(file.filename)
                         fileupload = upload(filespath,filename,file)
 
-                        db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body,user_access_names) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
-                        ,(id,objectroute,objecttype,course,username,filename,time,date,title,body,""))
+                        db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body,user_access_names,user_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                        ,(id,objectroute,objecttype,course,username,filename,time,date,title,body,userid,""))
 
                         db_conn.commit()
         if type_of_form == "newfolder":
@@ -732,14 +742,11 @@ def resources(route):
             foldername = str(foldername)
 
             #checks if the folder exist in the object route
-            db.execute('SELECT name FROM "materials" WHERE objectroute = %s AND objecttype= %s',(route,"folder",))
-            folders_in_route = db.fetchall()
-            count = len(folders_in_route)
-            if count != 0:
-                for index in range(len(folders_in_route)-1):
-                    if folders_in_route[0][index] == foldername:
-                        flash('Folder already exist')
-                        return redirect(request.url)
+            db.execute('SELECT name FROM "materials" WHERE objectroute = %s AND objecttype= %s AND name=%s',(route,"folder",foldername,))
+            count = len(db.fetchall())
+            if count != foldername:
+                flash('Folder already exist')
+                return redirect(request.url)
             #checks if the folder exist in the object route
 
             #grabs from the form the inputed user access names and converts into a list
@@ -747,8 +754,14 @@ def resources(route):
             user_access_names = user_access_names.split(",")
             user_access_names.append(username)
             user_access_string = ""
+            print(user_access_names)
             for user_access_name in user_access_names:
-                user_access_string = user_access_string + user_access_name + ","
+                if user_access_name=="+-" or user_access_name=="-":
+                    user_access_string = user_access_string + user_access_name + ","
+                else:
+                    if user_access_name != "":
+                        userid = grab_user_id(user_access_name)
+                        user_access_string = user_access_string + str(userid) + ","
             #grabs from the form the inputed user access names and converts into a list
 
             #if no upload folder, return error
@@ -770,11 +783,11 @@ def resources(route):
             objecttype = "folder"
 
             #enter folder information into database
-            db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body, user_access_names) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
-                        ,(id,objectroute,objecttype,course,username,foldername,time,date,"","",str(user_access_string)))
+            db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body, user_access_names,user_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                        ,(id,objectroute,objecttype,course,username,foldername,time,date,"","",str(user_access_string),userid,))
             db_conn.commit()
     #grabs the username
-    username = session["user_id"]
+    userid = str(grab_user_id(session["username"]))
     #if it is at the root path, grant everyone permission
     if len(routeparts) == 1:
         access="granted"
@@ -802,7 +815,7 @@ def resources(route):
                 user_access_names = user_access_names + username_parent
                 user_access_names = user_access_names.split(",")
             #checks if the user is in the user is in the user names
-            if username not in user_access_names:
+            if userid not in user_access_names:
                 access="denied"
             else:
                 access="granted"
@@ -810,14 +823,14 @@ def resources(route):
     db.execute('SELECT * FROM "materials" WHERE (objecttype=%s OR objecttype=%s) AND objectroute=%s',('image','file', route,))
     materialsinfo = db.fetchall()
     materialsinfocount = len(materialsinfo)
-
+    print(access)
     db.execute('SELECT * FROM "materials" WHERE objecttype=%s AND objectroute=%s',('folder', route,))
     foldersinfo = db.fetchall()
     db.execute('SELECT username FROM "Users" ORDER BY username ASC')
     db_usernames = db.fetchall()
     usernames = []
     for i in range(len(db_usernames)):
-        if db_usernames[i][0] != session["user_id"]:
+        if db_usernames[i][0] != session["username"]:
             usernames.append(db_usernames[i][0])
     db.close()
     db_conn.close()
@@ -852,13 +865,18 @@ def grade_viewer():
     if "user_id_hac" not in session_key_list:
         return redirect(url_for('grade_viewer_signup'))
     #grab information for grades
+
     update_hac()
+    if "error" in session.keys():
+        error = session["error"]
+        if error == True:
+            session["error"] = False
+            redirect(url_for("grade_viewer_signup"))
     grades_data = session["hacgrades"]
     if 'error' in grades_data:
         error = grades_data['error']
         flash(error)
         return redirect('/grade_viewer_signup')
-    print(session["hacgrades"])
     #grabs data from dictionary
     class_names = grades_data['class_names']
     #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
@@ -888,7 +906,7 @@ def grade_viewer_signup():
 @app.route('/grade_viewer/<selectedcourse>', methods=["GET","POST"])
 
 def grade_viewer_course(selectedcourse):
-    username = session["user_id"]
+    username = session["username"]
     grade_viewer_username = session["user_id_hac"]
     grade_viewer_password = session["password_hac"]
     update_hac()
@@ -1127,7 +1145,7 @@ def get_folder_zip():
 @app.route("/deletion", methods=['POST'])
 def delete_files():
     files_info = request.json["ids"]
-    username = session["user_id"]
+    username = session["username"]
     for id_number in files_info:
         db_info = connectdb()
         db = db_info[0]
@@ -1220,7 +1238,7 @@ def settings():
             db = db_info[0]
             db_conn = db_info[1]
             password = get_hashed_password(password)
-            username = session["user_id"]
+            username = session["username"]
             db.execute('UPDATE "Users" SET password=%s WHERE username=%s',(password,username,))
             db_conn.commit()
             db.close()

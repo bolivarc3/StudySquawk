@@ -19,20 +19,24 @@
                 <div class="course_info_div">
                     {% if assignment_grades[class][0]|string() != "null"|string() %}
                         {% for index in range(assignment_grades[class]|length)%}
-                        <div class="assignment_grades">
-                            <h4>
-                                {{assignment_grades[class][0][2]}}:
-                            </h4>
-                            <div>
-                                {{assignment_grades[class][index][7]}}/{{assignment_grades[class][index][8]}}
-                            </div>
-                        </div>
+                            {% if assignment_grades[class][0][2]|string() != ""|string() %}
+                                <div class="assignment_grades">
+                                    <h4>
+                                        {{assignment_grades[class][index][2]}}:
+                                    </h4>
+                                    <div>
+                                        {{assignment_grades[class][index][7]}}/{{assignment_grades[class][index][8]}}
+                                    </div>
+                                </div>
+                            {% endif %}
                         {% endfor %}
                         <br>
                         <div>
+                            {% if grade_summary[class][0]|string() != "null"|string() %}
                             <h4 class="grade_text">
-                                Grade: {{grade_summary[class][0][3]}}
+                                    Grade: {{grade_summary[class][0][3]}}
                             </h4>
+                            {% endif %}
                         </div>
                     {% endif %}
                 </div>

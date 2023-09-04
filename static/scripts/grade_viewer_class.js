@@ -226,7 +226,8 @@ function grade_average_calculator(){
 
         //Checks to see if the Grade acutally has any weight that applies to it
         var weight = parseFloat(tds[4].textContent)
-        if (weight != 0){
+        var category = tds[3].textContent
+        if (weight != 0 && category != "Practice"){
             var score = parseFloat(tds[5].textContent)
             total_score_add = parseFloat(tds[6].textContent)
             //Checks if the score is not empty or is a code letter
@@ -238,6 +239,8 @@ function grade_average_calculator(){
                 total_score_add = 0
             }
             //Adds the score to total score and adds the total availbile points
+            console.log(score)
+            console.log(total_score_add)
             total_score = total_score +  score
             total_avalible_points = total_avalible_points + total_score_add
         }

@@ -19,7 +19,7 @@ def login_hac_required(f):
         db_info = connectdb()
         db = db_info[0]
         db_conn = db_info[1]
-        username = session["user_id"]
+        username = session["username"]
         db.execute('SELECT * FROM "Users" WHERE username = %s', (username, ))
         user_info = db.fetchone()
         return f(*args, **kwargs)
@@ -76,6 +76,15 @@ def check(email):
     else:
         return("invalid")
 
+def grab_user_id(username):
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    db.execute('SELECT id FROM "Users" WHERE username = %s', (username, ))
+    user_id = db.fetchone()[0]
+    db.close()
+    db_conn.close()
+    return user_id
 
 def time_difference(postedtime,posteddate):
     now = datetime.now()
@@ -130,7 +139,7 @@ def update_hac():
     
 
 def hac_executions(runfunction):
-    username = session["user_id"]
+    username = session["username"]
     username = session["user_id_hac"]
     password = session["password_hac"]
     if runfunction == "attendance":
@@ -142,12 +151,29 @@ def attendance_update(username, password):
     attedance_request = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/attendance/" + username + "/" + password + "/")
     #converts output to a json format(dictionary)
     attendance_data = attedance_request.json()
+    if "error" in attendance_data.keys():
+        session["error"] = True
     session["hacattendance"] = attendance_data
     session["hacattendancetimeupdated"] = datetime.now(timezone.utc)
 
 def grades_update(username, password):
     grades_request = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades/" + username + "/" + password + "/")
     grades_request = grades_request.json()
+    if "error" in grades_request.keys():
+        session["error"] = True
+    class_names = list(grades_request["class_names"])
+    for course in class_names:
+        if course.find('/')!=-1:
+            new_course_name  = course.replace("/","|")
+            print(new_course_name)
+            grades_request["class_names"].remove(course)
+            grades_request["class_names"].append(new_course_name)
+            grades_request["grade_summary"][new_course_name] = grades_request["grade_summary"][course]
+            grades_request["assignment_grades"][new_course_name] = grades_request["assignment_grades"][course]
+            print(grades_request)
+            del grades_request["grade_summary"][course]
+            del grades_request["assignment_grades"][course]
+    print(grades_request)
     session["hacgrades"] = grades_request
     session["hacgradestimeupdated"] = datetime.now(timezone.utc)
 

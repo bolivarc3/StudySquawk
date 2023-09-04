@@ -38,18 +38,20 @@
             <td></td>
         </tr>
         <tbody class="Grade_Data_Table_Body">
-            {% for assignment in assignment_grades %}
-                <tr class="grade_assignment_data_row">
-                    <td class = "show-mobile-table">{{assignment[0]}}</td>
-                    <td class = "show-mobile-table">{{assignment[1]}}</td>
-                    <td>{{assignment[2]}}</td>
-                    <td>{{assignment[3]}}</td>
-                    <td  class="grade_assignment_data" id="show-mobile-table">{{assignment[6]}}</td>
-                    <td  class="grade_assignment_data">{{assignment[4]}}</td>
-                    <td  class="grade_assignment_data">{{assignment[5]}}</td>
-                    <td id="show-mobile-table">{{assignment[9]}}</td>
-                </tr>
-            {% endfor %}
+            {% if assignment_grades[0]|string() != "null"|string() %}
+                {% for assignment in assignment_grades %}
+                    <tr class="grade_assignment_data_row">
+                        <td class = "show-mobile-table">{{assignment[0]}}</td>
+                        <td class = "show-mobile-table">{{assignment[1]}}</td>
+                        <td>{{assignment[2]}}</td>
+                        <td>{{assignment[3]}}</td>
+                        <td  class="grade_assignment_data" id="show-mobile-table">{{assignment[6]}}</td>
+                        <td  class="grade_assignment_data">{{assignment[4]}}</td>
+                        <td  class="grade_assignment_data">{{assignment[5]}}</td>
+                        <td id="show-mobile-table">{{assignment[9]}}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
         </tbody>
     </table>
     <table>
