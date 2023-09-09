@@ -11,7 +11,7 @@ from functools import wraps
 import csv
 import psycopg2
 import bcrypt
-
+import json
 
 def login_hac_required(f):
     @wraps(f)
@@ -152,16 +152,23 @@ def hac_executions(runfunction):
         grades_update(username, password)
 
 def attendance_update(username, password):
-    attedance_request = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/attendance/" + username + "/" + password + "/")
+    params = {"username":username,"password":password}
+    params = json.dumps(params)
+    headers = {'Content-Type': 'application/json'}
+    attedance_request = requests.post("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/attendance",  data=params, headers=headers)
     #converts output to a json format(dictionary)
     attendance_data = attedance_request.json()
+    print(attendance_data)
     if "error" in attendance_data.keys():
         session["error"] = True
     session["hacattendance"] = attendance_data
     session["hacattendancetimeupdated"] = datetime.now(timezone.utc)
 
 def grades_update(username, password):
-    grades_request = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades/" + username + "/" + password + "/")
+    params = {"username":username,"password":password}
+    params = json.dumps(params)
+    headers = {'Content-Type': 'application/json'}
+    grades_request = requests.post("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades", data=params, headers=headers)
     grades_request = grades_request.json()
     print(grades_request)
     if "error" in grades_request.keys():

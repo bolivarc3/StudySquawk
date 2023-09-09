@@ -232,7 +232,6 @@ def index():
             confirmation_status = db.fetchall()[0][0]
             db.execute('SELECT username FROM "Users" WHERE email=%s',(email,));
             username = db.fetchall()[0][0]
-            print(confirmation_status)
             if confirmation_status == False:
                 flash("Verify your account with your Email!")
                 send_mail_confirm(username,email)
@@ -285,7 +284,6 @@ def confirm_email(token,username):
     return redirect(url_for('index'))
 
 def send_mail_confirm(username,email):
-    print("yo")
     #grabs the token, and nessary info to make the email work, and sends
     token = s.dumps(email, salt='email-confirm')
     msg = Message('Confirm Email', sender='studysquawk@gmail.com', recipients=[email])
@@ -391,11 +389,9 @@ def callback():
 
 @app.route("/homepage", methods=["GET", "POST"])
 def studyist():
-    print("did it ")
     page_identifier = "homepage"
     courses = grabclasses()
     if request.method == "POST":
-        print("post")
         #looks in the classes db to find all of the classes
         course = request.form.get("name")
         courseavailible = checkclass(course, courses)
@@ -405,7 +401,6 @@ def studyist():
         #checks if the course requested is the same as one in the array
         return redirect(course)
     else:
-        print("brooo what")
         db_info = connectdb()
         db = db_info[0]
         db_conn = db_info[1]
@@ -754,7 +749,6 @@ def resources(route):
             user_access_names = user_access_names.split(",")
             user_access_names.append(username)
             user_access_string = ""
-            print(user_access_names)
             for user_access_name in user_access_names:
                 if user_access_name=="+-" or user_access_name=="-":
                     user_access_string = user_access_string + user_access_name + ","
@@ -823,7 +817,6 @@ def resources(route):
     db.execute('SELECT * FROM "materials" WHERE (objecttype=%s OR objecttype=%s) AND objectroute=%s',('image','file', route,))
     materialsinfo = db.fetchall()
     materialsinfocount = len(materialsinfo)
-    print(access)
     db.execute('SELECT * FROM "materials" WHERE objecttype=%s AND objectroute=%s',('folder', route,))
     foldersinfo = db.fetchall()
     db.execute('SELECT username FROM "Users" ORDER BY username ASC')
@@ -868,9 +861,7 @@ def grade_viewer():
     session["error"] = False
     update_hac()
     if "error" in session.keys():
-        print("hey")
         error = session["error"]
-        print(session["error"])
         if error == True:
             session["error"] = False
             flash("Error Occured. Your username and password may be wrong!")
@@ -1247,7 +1238,6 @@ def settings():
 @app.route("/grab_course_grades", methods=["POST"])
 def grab_course_grades():
     course = request.json
-    print(course)
     grades_data = session["hacgrades"]
     assignment_grades = grades_data['assignment_grades'][course]
     return jsonify(assignment_grades)
