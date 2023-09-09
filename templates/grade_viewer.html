@@ -18,7 +18,7 @@
                 <br>
                 <div class="course_info_div">
                     {% if assignment_grades[class][0]|string() != "null"|string() %}
-                        {% for index in range(assignment_grades[class]|length)%}
+                        {% for index in range(assignment_grades[class]|length)[:5]%}
                             {% if assignment_grades[class][0][2]|string() != ""|string() %}
                                 <div class="assignment_grades">
                                     <h4>

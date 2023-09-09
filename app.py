@@ -865,19 +865,18 @@ def grade_viewer():
     if "user_id_hac" not in session_key_list:
         return redirect(url_for('grade_viewer_signup'))
     #grab information for grades
-
+    session["error"] = False
     update_hac()
     if "error" in session.keys():
+        print("hey")
         error = session["error"]
+        print(session["error"])
         if error == True:
             session["error"] = False
-            redirect(url_for("grade_viewer_signup"))
+            flash("Error Occured. Your username and password may be wrong!")
+            return redirect(url_for("grade_viewer_signup"))
+        #grabs data from dictionary
     grades_data = session["hacgrades"]
-    if 'error' in grades_data:
-        error = grades_data['error']
-        flash(error)
-        return redirect('/grade_viewer_signup')
-    #grabs data from dictionary
     class_names = grades_data['class_names']
     #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
     grade_summary = grades_data['grade_summary']
@@ -886,7 +885,7 @@ def grade_viewer():
     
     course="homepage"
     page_identifier="grade_viewer"
-    # for i in range()
+# for i in range()
     return render_template("grade_viewer.html", course=course, page_identifier=page_identifier, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades, iterate=iterate)
 
 @app.route('/grade_viewer_signup', methods=["GET","POST"])
@@ -1244,6 +1243,14 @@ def settings():
             db.close()
             db_conn.close()
     return render_template("settings.html")
+
+@app.route("/grab_course_grades", methods=["POST"])
+def grab_course_grades():
+    course = request.json
+    print(course)
+    grades_data = session["hacgrades"]
+    assignment_grades = grades_data['assignment_grades'][course]
+    return jsonify(assignment_grades)
 
 if __name__ == '__main__':
     app.run(debug=True)

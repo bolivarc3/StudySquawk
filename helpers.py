@@ -121,21 +121,25 @@ def upload(filespath,filename):
 
 
 def update_hac():
-    current_time = datetime.now(timezone.utc)
-    if session["hacattendancetimeupdated"] == '':
-        hac_executions('attendance')
-    if session["hacgradestimeupdated"] == '':
-        hac_executions('grades')
-    duration = current_time - session["hacattendancetimeupdated"]
-    duration_in_s = duration.total_seconds()  
-    minutes = divmod(duration_in_s, 60)[0]
-    if minutes > 5:
-        hac_executions('attendance')
-    duration = current_time - session["hacgradestimeupdated"]
-    duration_in_s = duration.total_seconds()  
-    minutes = divmod(duration_in_s, 60)[0]
-    if minutes > 5:
-        hac_executions('grades')
+    print("update_hacc")
+    print(session["error"])
+    if session["error"] != True:
+        current_time = datetime.now(timezone.utc)
+        if session["hacattendancetimeupdated"] == '':
+            hac_executions('attendance')
+        if session["hacgradestimeupdated"] == '':
+            hac_executions('grades')
+        if  session["error"] != True:
+            duration = current_time - session["hacattendancetimeupdated"]
+            duration_in_s = duration.total_seconds()  
+            minutes = divmod(duration_in_s, 60)[0]
+            if minutes > 5:
+                hac_executions('attendance')
+            duration = current_time - session["hacgradestimeupdated"]
+            duration_in_s = duration.total_seconds()  
+            minutes = divmod(duration_in_s, 60)[0]
+            if minutes > 5:
+                hac_executions('grades')
     
 
 def hac_executions(runfunction):
@@ -159,23 +163,26 @@ def attendance_update(username, password):
 def grades_update(username, password):
     grades_request = requests.get("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades/" + username + "/" + password + "/")
     grades_request = grades_request.json()
+    print(grades_request)
     if "error" in grades_request.keys():
         session["error"] = True
-    class_names = list(grades_request["class_names"])
-    for course in class_names:
-        if course.find('/')!=-1:
-            new_course_name  = course.replace("/","|")
-            print(new_course_name)
-            grades_request["class_names"].remove(course)
-            grades_request["class_names"].append(new_course_name)
-            grades_request["grade_summary"][new_course_name] = grades_request["grade_summary"][course]
-            grades_request["assignment_grades"][new_course_name] = grades_request["assignment_grades"][course]
-            print(grades_request)
-            del grades_request["grade_summary"][course]
-            del grades_request["assignment_grades"][course]
-    print(grades_request)
-    session["hacgrades"] = grades_request
-    session["hacgradestimeupdated"] = datetime.now(timezone.utc)
+    else:
+        print("going through it aagain")
+        class_names = list(grades_request["class_names"])
+        for course in class_names:
+            if course.find('/')!=-1:
+                new_course_name  = course.replace("/","|")
+                print(new_course_name)
+                grades_request["class_names"].remove(course)
+                grades_request["class_names"].append(new_course_name)
+                grades_request["grade_summary"][new_course_name] = grades_request["grade_summary"][course]
+                grades_request["assignment_grades"][new_course_name] = grades_request["assignment_grades"][course]
+                print(grades_request)
+                del grades_request["grade_summary"][course]
+                del grades_request["assignment_grades"][course]
+        print(grades_request)
+        session["hacgrades"] = grades_request
+        session["hacgradestimeupdated"] = datetime.now(timezone.utc)
 
 
 def get_hashed_password(plain_text_password):
