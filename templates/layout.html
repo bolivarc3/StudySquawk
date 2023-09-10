@@ -33,6 +33,7 @@
       {% endif %}
 {% endwith %}
 
+
 <input type="hidden" id="page-identifier" value="{{page_identifier}}"></input>
 <body>
 	<header class="header" id="header_for_page">
@@ -102,8 +103,16 @@
 					</script>
 			</form>
 		</div>
+		
 		{% block postbutton %}
 		{% endblock %}
+		<a href="#"
+		onclick="window.displayPreferenceModal();return false;"
+		id="termly-consent-preferences">Consent Preferences</a>
+		<br>
+		<a href="/privacy_policy">
+			Privacy Policy
+		</a>
 	</header>
 	<div class="body-container">
 		<aside class="sidebar show-desktop" id="sidebar" data-sidebar>
@@ -221,3 +230,9 @@
 		</div>
 	</div>
 </body>
+<script
+  type="text/javascript"
+  src="https://app.termly.io/embed.min.js"
+  data-auto-block="on"
+  data-website-uuid="969f5e0c-cb0a-4265-8db4-de3a44bdd18e"
+></script>

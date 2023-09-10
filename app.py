@@ -147,6 +147,8 @@ def index():
     #Get password/confirmation information
         form = request.form.get("form-name")
         if form == "signupform":
+            agreement_privacy_policy = request.form.get("privacy_policy_agreement")
+            print(agreement_privacy_policy)
             email = request.form.get("email")
             username = request.form.get("username")      
             password = request.form.get("password")
@@ -1234,6 +1236,14 @@ def settings():
             db.close()
             db_conn.close()
     return render_template("settings.html")
+@public_endpoint
+@app.route("/privacy_policy", methods=['GET','POST'])
+def privacy_policy():
+    return render_template("privacy_policy.html")
+@public_endpoint
+@app.route("/terms_and_condtitions", methods=['GET','POST'])
+def terms_and_condtitions():
+    return render_template("terms_of_service.html")
 
 @app.route("/grab_course_grades", methods=["POST"])
 def grab_course_grades():
