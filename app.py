@@ -1243,7 +1243,7 @@ def privacy_policy():
     return render_template("privacy_policy.html")
 
 @public_endpoint
-@app.route("/terms_and_condtitions", methods=['GET','POST'])
+@app.route("/terms_and_conditions", methods=['GET','POST'])
 def terms_and_condtitions():
     return render_template("terms_of_service.html")
 
