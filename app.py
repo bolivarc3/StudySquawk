@@ -741,7 +741,7 @@ def resources(route):
             #checks if the folder exist in the object route
             db.execute('SELECT name FROM "materials" WHERE objectroute = %s AND objecttype= %s AND name=%s',(route,"folder",foldername,))
             count = len(db.fetchall())
-            if count != foldername:
+            if count != 0:
                 flash('Folder already exist')
                 return redirect(request.url)
             #checks if the folder exist in the object route
