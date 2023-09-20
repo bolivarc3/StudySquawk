@@ -889,7 +889,6 @@ def grade_viewer_signup():
         gradepassword = request.form.get('gradepassword')
         session["user_id_hac"] = grade_username
         session["password_hac"] = gradepassword
-        hac_executions('attendance')
         hac_executions('grades')
         return redirect('/grade_viewer')
     #else, load the page where these peices of info must be inputted
@@ -925,7 +924,7 @@ def grade_viewer_course(selectedcourse):
 def calendar():
     course = "homepage"
     page_identifier = "attendance"
-
+    hac_executions('attendance')
     return render_template("attendance.html", course=course, page_identifier=page_identifier)
 
 @app.route('/getcourses', methods=["GET", "POST"])
