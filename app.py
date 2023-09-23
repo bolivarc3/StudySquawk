@@ -721,7 +721,7 @@ def resources(route):
                         fileupload = upload(filespath,filename,file)
 
                         db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body,user_access_names,user_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
-                        ,(id,objectroute,objecttype,course,username,filename,time,date,title,body,userid,""))
+                        ,(id,objectroute,objecttype,course,username,filename,time,date,title,body,"-",userid))
 
                         db_conn.commit()
                     else:
@@ -730,7 +730,7 @@ def resources(route):
                         fileupload = upload(filespath,filename,file)
 
                         db.execute('''INSERT INTO "materials"(resourceid, objectroute, objecttype, course, username, name, time, date, title, body,user_access_names,user_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
-                        ,(id,objectroute,objecttype,course,username,filename,time,date,title,body,userid,""))
+                        ,(id,objectroute,objecttype,course,username,filename,time,date,title,body,"-",userid))
 
                         db_conn.commit()
         if type_of_form == "newfolder":
@@ -889,6 +889,7 @@ def grade_viewer_signup():
         gradepassword = request.form.get('gradepassword')
         session["user_id_hac"] = grade_username
         session["password_hac"] = gradepassword
+        hac_executions('attendance')
         hac_executions('grades')
         return redirect('/grade_viewer')
     #else, load the page where these peices of info must be inputted
@@ -924,7 +925,7 @@ def grade_viewer_course(selectedcourse):
 def calendar():
     course = "homepage"
     page_identifier = "attendance"
-    hac_executions('attendance')
+
     return render_template("attendance.html", course=course, page_identifier=page_identifier)
 
 @app.route('/getcourses', methods=["GET", "POST"])
@@ -1136,87 +1137,131 @@ def get_folder_zip():
 @app.route("/deletion", methods=['POST'])
 def delete_files():
     files_info = request.json["ids"]
+    print(files_info)
     username = session["username"]
+    username = str(grab_user_id(username))
     for id_number in files_info:
+        print(id_number)
         db_info = connectdb()
         db = db_info[0]
         db_conn = db_info[1]
-        db.execute('SELECT objectroute,name,objecttype,user_access_names FROM "materials" WHERE id=%s',(id_number,))
+        folder_id = id_number
+        db.execute('SELECT objectroute,name,objecttype,user_access_names,user_id,course FROM "materials" WHERE id=%s',(id_number,))
         object_info = db.fetchone()
         objectroute = object_info[0]
+        print(objectroute)
         name = object_info[1]
         object_type = object_info[2]
         user_access_names = object_info[3] 
-        if object_type == "folder":
-            user_access_names_split = user_access_names.split(",")
-            if ("+-" in user_access_names_split):
-                access="granted"
-            #else, it will continue and grant access to the select users
-            else:
-                #if this symbol is within the access users, then grant the user's of the parent folder access also to this folder
-                if "-" in user_access_names_split:
-                    parent_route_parts = objectroute.split("/") 
-                    parent_route_parts.pop(0)
-                    parent_route_root = ""
-                    parent_folder_name = parent_route_parts[len(parent_route_parts)-1]
-                    for part_index in range(len(parent_route_parts)-1):
-                        parent_route_root = parent_route_root + "/" + parent_route_parts[part_index]
-                    db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s AND objecttype=%s',(parent_route_root,parent_folder_name,"folder"))
-                    username_parent = db.fetchall()
-                    username_parent = username_parent[0][0]
-                    user_access_names = user_access_names + username_parent
-                    user_access_names = user_access_names.split(",")
-                #checks if the user is in the user is in the user names
-                if username not in user_access_names:
-                    access="denied"
-                else:
-                    access="granted"
-            if access == "denied":
-                return jsonify("denied")
-            else:
-                db.execute('DELETE FROM "materials" WHERE id=%s',(id_number,))
+        creator = str(object_info[4])
+        course = str(object_info[5])
+        if username == creator:
+            print("goood")
+            access= "granted"
         else:
-            parent_route_parts = objectroute.split("/") 
-            parent_route_parts.pop(0)
-            parent_route_root = ""
-            parent_folder_name = parent_route_parts[len(parent_route_parts)-1]
-            for part_index in range(len(parent_route_parts)-1):
-                parent_route_root = parent_route_root + "/" + parent_route_parts[part_index]
-            db.execute('SELECT user_access_names FROM "materials" WHERE objectroute=%s AND objecttype=%s',(parent_route_root,"folder",))
-            object_info = db.fetchone()
-            user_access_names = object_info[0]
-            user_access_names_split = user_access_names.split(",")
-            if ("+-" in user_access_names_split):
-                access="granted"
-            #else, it will continue and grant access to the select users
-            else:
-                #if this symbol is within the access users, then grant the user's of the parent folder access also to this folder
-                if "-" in user_access_names_split:
-                    parent_route_parts = parent_route_root.split("/") 
-                    parent_route_parts.pop(0)
-                    parent_route_root = ""
-                    parent_folder_name = parent_route_parts[len(parent_route_parts)-1]
-                    for part_index in range(len(parent_route_parts)-1):
-                        parent_route_root = parent_route_root + "/" + parent_route_parts[part_index]
-                    db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s AND objecttype=%s',(parent_route_root,parent_folder_name,"folder"))
-                    username_parent = db.fetchall()
-                    username_parent = username_parent[0][0]
-                    user_access_names = user_access_names + username_parent
-                    user_access_names = user_access_names.split(",")
-                #checks if the user is in the user is in the user names
-                if username not in user_access_names:
-                    access="denied"
-                else:
+            if object_type == "folder":
+                user_access_names_split = user_access_names.split(",")
+                if ("+-" in user_access_names_split):
                     access="granted"
-            if access == "denied":
-                return jsonify("denied")
+                #else, it will continue and grant access to the select users
+                else:
+                    #if this symbol is within the access users, then grant the user's of the parent folder access also to this folder
+                    if "-" in user_access_names_split:
+                        parent_route_parts = objectroute.split("/") 
+                        parent_route_parts.pop(0)
+                        parent_route_root = ""
+                        parent_folder_name = parent_route_parts[len(parent_route_parts)-1]
+                        for part_index in range(len(parent_route_parts)-1):
+                            parent_route_root = parent_route_root + "/" + parent_route_parts[part_index]
+                        db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s AND objecttype=%s',(parent_route_root,parent_folder_name,"folder"))
+                        username_parent = db.fetchall()
+                        username_parent = username_parent[0][0]
+                        print(username_parent)
+                        user_access_names = user_access_names + username_parent
+                        user_access_names = user_access_names.split(",")
+                    #checks if the user is in the user is in the user names
+                    if username not in user_access_names:
+                        access="denied"
+                    else:
+                        access="granted"
+                if access == "denied":
+                    return jsonify("denied")
+                else:
+                    db.execute('DELETE FROM "materials" WHERE id=%s',(id_number,))
+                    delete_aws_files(objectroute,name,"file")
             else:
+                parent_route_parts = objectroute.split("/") 
+                parent_route_parts.pop(0)
+                parent_route_root = ""
+                parent_folder_name = parent_route_parts[len(parent_route_parts)-1]
+                for part_index in range(len(parent_route_parts)-1):
+                    parent_route_root = parent_route_root + "/" + parent_route_parts[part_index]
+                db.execute('SELECT user_access_names FROM "materials" WHERE objectroute=%s AND objecttype=%s',(parent_route_root,"folder",))
+                object_info = db.fetchone()
+                user_access_names = object_info[0]
+                user_access_names_split = user_access_names.split(",")
+                if ("+-" in user_access_names_split):
+                    access="granted"
+                #else, it will continue and grant access to the select users
+                else:
+                    #if this symbol is within the access users, then grant the user's of the parent folder access also to this folder
+                    if "-" in user_access_names_split:
+                        parent_route_parts = parent_route_root.split("/") 
+                        parent_route_parts.pop(0)
+                        parent_route_root = ""
+                        parent_folder_name = parent_route_parts[len(parent_route_parts)-1]
+                        for part_index in range(len(parent_route_parts)-1):
+                            parent_route_root = parent_route_root + "/" + parent_route_parts[part_index]
+                        db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s AND objecttype=%s',(parent_route_root,parent_folder_name,"folder"))
+                        username_parent = db.fetchall()
+                        username_parent = username_parent[0][0]
+                        user_access_names = user_access_names + username_parent
+                        user_access_names = user_access_names.split(",")
+                    #checks if the user is in the user is in the user names
+                    if username not in user_access_names:
+                        access="denied"
+                    else:
+                        access="granted"
+                        
+        if access == "denied":
+            return jsonify("denied")
+        else:
+            if object_type == "folder":
+                db.execute('DELETE FROM "materials" WHERE id=%s',(folder_id,))
+                delete_aws_files(objectroute,name,"folder")
+                objectroute = objectroute + "/" + name
+                db.execute('SELECT * FROM "materials" WHERE course=%s',(course,))
+                materials = db.fetchall()
+                print(materials)
+                for material in materials:
+                    father_object_route = objectroute.split("/")
+                    paths_split = material[2].split("/")
+                    path_id = material[0]
+                    file_name = material[6]
+                    print(father_object_route)
+                    print(paths_split)
+                    for index, father_part in enumerate(father_object_route):
+                        if len(paths_split) < len(father_object_route):
+                            same_parent = False
+                            break;
+                        if father_part == paths_split[index]:
+                            same_parent = True
+                        else:
+                            same_parent = False
+                            break;
+                    if same_parent == True:
+                        db.execute('DELETE FROM "materials" WHERE id=%s',(path_id,))
+                        delete_aws_files(material[2],file_name,"file")
+                        db_conn.commit()
+            else:
+                print("hello")
                 db.execute('DELETE FROM "materials" WHERE id=%s',(id_number,))
-        db_conn.commit()
-        db.close()
-        db_conn.close()
-        delete_aws_files(objectroute,name,object_type)
-        return jsonify("done")
+                delete_aws_files(objectroute,name,"file")
+                db_conn.commit()
+    db_conn.commit()
+    db.close()
+    db_conn.close()
+    return jsonify("done")
 
 
 @app.route("/settings", methods=['GET','POST'])
