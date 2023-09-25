@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function() {
     clear_changes.style.display = 'none'
     clear_changes.addEventListener('click', function(){
         //grabs the keys for the local storage to reset them
-        var course =  document.getElementById("course")
+        var course =  document.getElementById("course").textContent
         course = course.toString()
         added_rows_key = course + "_added_rows"
 
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
 function grab_changes(){
-    course =  document.getElementById("course")
+    course =  document.getElementById("course").textContent
     storage_key = course.toString()
     added_rows_storage_key = storage_key + "_added_rows"
     var rows = document.getElementsByClassName("grade_assignment_data_row")
@@ -148,7 +148,7 @@ function grab_changes(){
 }
 
 function edit_with_saved_changes(){
-    course =  document.getElementById("course")
+    course =  document.getElementById("course").textContent
     storage_key = course.toString()
     saved_data = JSON.parse(localStorage.getItem(storage_key))
     keys = Object.keys(saved_data) 
@@ -173,7 +173,7 @@ function edit_with_saved_changes(){
 }
 
 function create_added_saved_rows(){
-    course =  document.getElementById("course")
+    course =  document.getElementById("course").textContent
     course = course.toString()
     storage_key = course + "_added_rows"
     saved_data = JSON.parse(localStorage.getItem(storage_key))
@@ -404,7 +404,7 @@ function grade_average_calculator(){
 }
 
 async function grab_grades(){
-    const course =  document.getElementById("course").innerHTML
+    const course =  document.getElementById("course").textContent
     var course_name = course.toString()
     const response = await fetch('/grab_course_grades', {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
