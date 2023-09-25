@@ -129,7 +129,8 @@ def default_login_required():
         'static' not in request.endpoint and 
         not login_valid and 
         not getattr(app.view_functions[request.endpoint], 'is_public', False) ) :
-        return render_template('intro.html', next=request.endpoint)
+        flash("Login to Continue with Your Session")
+        return redirect(url_for("index"))
 
 def public_endpoint(function):
     function.is_public = True
