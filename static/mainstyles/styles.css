@@ -79,7 +79,7 @@ nav li{
 
 .form::placeholder{
     font-family: 'Teko', sans-serif;
-    color: #989898;
+    color: white;
     font-size:15;
 }
 input, select, textarea{
