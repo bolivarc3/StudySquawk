@@ -114,6 +114,7 @@ function grab_changes(){
         var data_cell_added_rows = []
         let cells = rows[row_index].getElementsByTagName("td")
         change = false
+        added_table_change = false
         for (var i = 0; i < cells.length; i++) {
             var current_cell = cells[i]
             var color = current_cell.style.backgroundColor
@@ -151,25 +152,28 @@ function edit_with_saved_changes(){
     course =  document.getElementById("course").textContent
     storage_key = course.toString()
     saved_data = JSON.parse(localStorage.getItem(storage_key))
-    keys = Object.keys(saved_data) 
-    var rows = document.getElementsByClassName("grade_assignment_data_row")
-    var assignments = {}
-    for(var row_index = 0; row_index < rows.length; row_index++){
-        var data_cell = []
-        let cells = rows[row_index].getElementsByTagName("td")
-        change = false
-        if (keys.includes(cells[2].innerHTML) == true){
-            assignment_name = cells[2].innerHTML
-            assignment_data = saved_data[assignment_name]
-            for(var i=0; i < cells.length; i++){
-                if (assignment_data[i] != "null"){
-                    cells[i].innerHTML = assignment_data[i]
-                    cells[i].style.backgroundColor= "#B51515"
+    console.log(saved_data)
+    if (saved_data != null){
+        keys = Object.keys(saved_data) 
+        var rows = document.getElementsByClassName("grade_assignment_data_row")
+        var assignments = {}
+        for(var row_index = 0; row_index < rows.length; row_index++){
+            var data_cell = []
+            let cells = rows[row_index].getElementsByTagName("td")
+            change = false
+            if (keys.includes(cells[2].innerHTML) == true){
+                assignment_name = cells[2].innerHTML
+                assignment_data = saved_data[assignment_name]
+                for(var i=0; i < cells.length; i++){
+                    if (assignment_data[i] != "null"){
+                        cells[i].innerHTML = assignment_data[i]
+                        cells[i].style.backgroundColor= "#B51515"
+                    }
                 }
             }
         }
+        create_added_saved_rows()
     }
-    create_added_saved_rows()
 }
 
 function create_added_saved_rows(){
@@ -247,6 +251,7 @@ function edit_mode(edit_button){
         grade_average_calculator()
     }
     else{
+        console.log("ther other one")
         var clear_changes = document.getElementsByClassName("clear_changes")[0]
         clear_changes.style.display = 'none'
         var add_row = document.getElementsByClassName("add_row")[0]
