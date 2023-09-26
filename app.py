@@ -862,7 +862,6 @@ def grade_viewer():
         return redirect(url_for('grade_viewer_signup'))
     #grab information for grades
     session["error"] = False
-    update_hac()
     if "error" in session.keys():
         error = session["error"]
         if error == True:
@@ -890,7 +889,6 @@ def grade_viewer_signup():
         gradepassword = request.form.get('gradepassword')
         session["user_id_hac"] = grade_username
         session["password_hac"] = gradepassword
-        hac_executions('attendance')
         hac_executions('grades')
         return redirect('/grade_viewer')
     #else, load the page where these peices of info must be inputted
@@ -902,7 +900,6 @@ def grade_viewer_course(selectedcourse):
     username = session["username"]
     grade_viewer_username = session["user_id_hac"]
     grade_viewer_password = session["password_hac"]
-    update_hac()
     grades_data = session["hacgrades"]
 
     #grabs data from dictionary

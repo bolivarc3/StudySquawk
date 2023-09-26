@@ -64,6 +64,7 @@ function loadposts(posts){
 
 document.addEventListener("DOMContentLoaded", function(e){
     character_limiting()
+    updatehac()
 })
 
 function character_limiting(){
