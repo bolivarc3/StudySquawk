@@ -97,3 +97,16 @@ def delete_aws_files(objectroute,name,object_type):
     aws_secret_access_key = os.environ.get('AWS_S3_SECRET_ACCESS_KEY'),)
         client.delete_object(Bucket=BUCKET_NAME, Key=key)
 
+def delete_aws_files_post(objectroute,name,object_type):
+    key = objectroute
+    print(key)
+    if object_type == "folder":
+        key = key + "/"
+        s3 = boto3.resource('s3',aws_access_key_id = os.environ.get('AWS_S3_ACCESS_KEY'),
+    aws_secret_access_key = os.environ.get('AWS_S3_SECRET_ACCESS_KEY'),)
+        bucket = s3.Bucket(BUCKET_NAME)
+        bucket.objects.filter(Prefix=key).delete()
+    else:
+        client = boto3.client('s3',aws_access_key_id = os.environ.get('AWS_S3_ACCESS_KEY'),
+    aws_secret_access_key = os.environ.get('AWS_S3_SECRET_ACCESS_KEY'),)
+        client.delete_object(Bucket=BUCKET_NAME, Key=key)

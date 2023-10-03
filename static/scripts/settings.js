@@ -12,3 +12,19 @@ function edit_mode(){
         submit_button.style.visibility = "hidden"
     }
 }
+
+function delete_post(post_id){
+    deletion_post(post_id)
+}
+
+async function deletion_post(post_id){
+    const response = await fetch('/delete_post', {
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify({"post_id":post_id}) // body data type must match "Content-Type" header
+    })
+    location.reload()
+}

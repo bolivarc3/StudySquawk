@@ -107,7 +107,7 @@ client = WebApplicationClient(GOOGLE_CLIENT_ID)
 UPLOAD_FOLDER = '/Studyist/userfiles'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-from aws import upload, download_file, download_folder, delete_aws_files
+from aws import upload, download_file, download_folder, delete_aws_files,delete_aws_files_post
 # Ensure responses aren't cached
 @app.after_request
 def after_request(response):
@@ -149,7 +149,6 @@ def index():
         form = request.form.get("form-name")
         if form == "signupform":
             agreement_privacy_policy = request.form.get("privacy_policy_agreement")
-            print(agreement_privacy_policy)
             email = request.form.get("email")
             username = request.form.get("username")      
             password = request.form.get("password")
@@ -1135,11 +1134,9 @@ def get_folder_zip():
 @app.route("/deletion", methods=['POST'])
 def delete_files():
     files_info = request.json["ids"]
-    print(files_info)
     username = session["username"]
     username = str(grab_user_id(username))
     for id_number in files_info:
-        print(id_number)
         db_info = connectdb()
         db = db_info[0]
         db_conn = db_info[1]
@@ -1147,14 +1144,12 @@ def delete_files():
         db.execute('SELECT objectroute,name,objecttype,user_access_names,user_id,course FROM "materials" WHERE id=%s',(id_number,))
         object_info = db.fetchone()
         objectroute = object_info[0]
-        print(objectroute)
         name = object_info[1]
         object_type = object_info[2]
         user_access_names = object_info[3] 
         creator = str(object_info[4])
         course = str(object_info[5])
         if username == creator:
-            print("goood")
             access= "granted"
         else:
             if object_type == "folder":
@@ -1174,7 +1169,6 @@ def delete_files():
                         db.execute('SELECT user_access_names FROM "materials" WHERE objectroute = %s  AND name=%s AND objecttype=%s',(parent_route_root,parent_folder_name,"folder"))
                         username_parent = db.fetchall()
                         username_parent = username_parent[0][0]
-                        print(username_parent)
                         user_access_names = user_access_names + username_parent
                         user_access_names = user_access_names.split(",")
                     #checks if the user is in the user is in the user names
@@ -1230,14 +1224,11 @@ def delete_files():
                 objectroute = objectroute + "/" + name
                 db.execute('SELECT * FROM "materials" WHERE course=%s',(course,))
                 materials = db.fetchall()
-                print(materials)
                 for material in materials:
                     father_object_route = objectroute.split("/")
                     paths_split = material[2].split("/")
                     path_id = material[0]
                     file_name = material[6]
-                    print(father_object_route)
-                    print(paths_split)
                     for index, father_part in enumerate(father_object_route):
                         if len(paths_split) < len(father_object_route):
                             same_parent = False
@@ -1252,7 +1243,6 @@ def delete_files():
                         delete_aws_files(material[2],file_name,"file")
                         db_conn.commit()
             else:
-                print("hello")
                 db.execute('DELETE FROM "materials" WHERE id=%s',(id_number,))
                 delete_aws_files(objectroute,name,"file")
                 db_conn.commit()
@@ -1277,7 +1267,15 @@ def settings():
             db_conn.commit()
             db.close()
             db_conn.close()
-    return render_template("settings.html")
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    username = session["username"]
+    user_id = grab_user_id(username)
+    db.execute('SELECT * FROM posts WHERE user_id=%s',(user_id,))
+    posts = db.fetchall()
+
+    return render_template("settings.html", posts = posts, username=username)
 
 @public_endpoint
 @app.route("/privacy_policy", methods=['GET','POST'])
@@ -1295,6 +1293,56 @@ def grab_course_grades():
     grades_data = session["hacgrades"]
     assignment_grades = grades_data['assignment_grades'][course]
     return jsonify(assignment_grades)
+
+@app.route("/delete_post",methods=["POST"])
+def delete_post():
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    postid = request.json["post_id"]
+    db.execute("SELECT images FROM images WHERE postid=%s",(postid,))
+    image_names = db.fetchall()
+    # if len(image_names) != 0:
+    #     image_names = image_names[0]
+    db.execute("SELECT files FROM files WHERE postid=%s",(postid,))
+    file_names = db.fetchall()
+    # if len(file_names) != 0:
+    #     file_names = file_names[0]
+    for image_name in image_names:
+        image_name= image_name[0]
+        print("userfiles/"+str(postid)+"/"+str(image_name))
+        delete_aws_files_post("userfiles/"+str(postid)+"/"+str(image_name),image_name,"file")
+    db.execute('DELETE FROM images WHERE postid=%s',(postid,))
+    db_conn.commit()
+    for file_name in file_names:
+        file_name = file_name[0]
+        delete_aws_files_post("userfiles/"+str(postid)+"/"+str(file_name),file_name,"file")
+    db.execute('DELETE FROM files WHERE postid=%s',(postid,))
+    db_conn.commit()
+    db.execute('DELETE FROM replies WHERE postid=%s',(postid,))
+    db.execute("SELECT images FROM replyimages WHERE postid=%s",(postid,))
+    reply_image_names = db.fetchall()
+    # if len(reply_image_names) != 0:
+    #     reply_image_names = reply_image_names[0]
+    for reply_image_name in reply_image_names:
+        reply_image_name = reply_image_name[0]
+        delete_aws_files_post("userfiles-replies/"+str(postid)+"/"+str(reply_image_name),reply_image_name,"file")
+    db.execute('DELETE FROM replyimages WHERE postid=%s',(postid,))
+    db_conn.commit()
+    db.execute("SELECT files FROM replyfiles WHERE postid=%s",(postid,))
+    reply_file_names = db.fetchall()
+    # if len(reply_file_names) != 0:
+    #     reply_file_names = reply_file_names[0]
+    for reply_file_name in reply_file_names:
+        reply_file_name = reply_file_name[0]
+        delete_aws_files_post("userfiles-replies/"+str(postid)+"/"+str(reply_file_name),reply_file_name,"file")
+    db.execute('DELETE FROM replyfiles WHERE postid=%s',(postid,))
+    db_conn.commit()
+    db.execute('DELETE FROM posts WHERE postid=%s',(postid,))
+    db_conn.commit()
+    db.close()
+    db_conn.close()
+    return jsonify("done")
 
 if __name__ == '__main__':
     app.run(debug=True)
