@@ -21,6 +21,7 @@ gunicorn = "*"
 python-dotenv = "*"
 oauthlib = "*"
 redis = "*"
+beautifulsoup4 = "*"
 
 [dev-packages]
 

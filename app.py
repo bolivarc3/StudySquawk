@@ -27,6 +27,7 @@ from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 import redis
 from datetime import timedelta
+from bs4 import BeautifulSoup
 
 
 
@@ -924,6 +925,14 @@ def calendar():
     page_identifier = "attendance"
 
     return render_template("attendance.html", course=course, page_identifier=page_identifier)
+
+@app.route('/announcements', methods=["GET","POST"])
+@public_endpoint
+def announcements():
+    html = requests.get("https://bentonvillek12.org/StudentAnnouncements/BHS").text
+    soup = BeautifulSoup(html)
+    html = soup.find('div', {'class':'container body-content'})
+    return render_template("announcements.html",html=html)
 
 @app.route('/getcourses', methods=["GET", "POST"])
 def getcoursesapi():
