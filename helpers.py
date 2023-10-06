@@ -121,8 +121,6 @@ def upload(filespath,filename):
 
 
 def update_hac():
-    print("update_hacc")
-    print(session["error"])
     if session["error"] != True:
         current_time = datetime.now(timezone.utc)
         if session["hacattendancetimeupdated"] == '':
@@ -158,7 +156,6 @@ def attendance_update(username, password):
     attedance_request = requests.post("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/attendance",  data=params, headers=headers)
     #converts output to a json format(dictionary)
     attendance_data = attedance_request.json()
-    print(attendance_data)
     if "error" in attendance_data.keys():
         session["error"] = True
     session["hacattendance"] = attendance_data
@@ -170,24 +167,19 @@ def grades_update(username, password):
     headers = {'Content-Type': 'application/json'}
     grades_request = requests.post("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades", data=params, headers=headers)
     grades_request = grades_request.json()
-    print(grades_request)
     if "error" in grades_request.keys():
         session["error"] = True
     else:
-        print("going through it aagain")
         class_names = list(grades_request["class_names"])
         for course in class_names:
             if course.find('/')!=-1:
                 new_course_name  = course.replace("/","|")
-                print(new_course_name)
                 grades_request["class_names"].remove(course)
                 grades_request["class_names"].append(new_course_name)
                 grades_request["grade_summary"][new_course_name] = grades_request["grade_summary"][course]
                 grades_request["assignment_grades"][new_course_name] = grades_request["assignment_grades"][course]
-                print(grades_request)
                 del grades_request["grade_summary"][course]
                 del grades_request["assignment_grades"][course]
-        print(grades_request)
         session["hacgrades"] = grades_request
         session["hacgradestimeupdated"] = datetime.now(timezone.utc)
 

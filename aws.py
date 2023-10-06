@@ -69,17 +69,12 @@ def download_folder(bucket, path, zip_folder_number,base_folder):
             # Calculate relative path
             rel_path_origin_folder = key['Key'].split("/")
             rel_path_origin_folder = rel_path_origin_folder[len(base_folder)-1]
-            print(rel_path_origin_folder)
             rel_path = rel_path_origin_folder + "/" + key['Key'][len(path):]
-            print(rel_path)
             # Skip paths ending in /
             if not key['Key'].endswith('/'):
                 local_file_path = os.path.join(target, rel_path)
-                # print("key:" + str(key['Key']))
-                # print("target:" + str(local_file_path))
                 # Make sure directories exist
                 local_file_dir = os.path.dirname(local_file_path)
-                print("\n")
                 assert_dir_exists(local_file_dir)
                 client.download_file(bucket, key['Key'], local_file_path)
 
@@ -99,7 +94,6 @@ def delete_aws_files(objectroute,name,object_type):
 
 def delete_aws_files_post(objectroute,name,object_type):
     key = objectroute
-    print(key)
     if object_type == "folder":
         key = key + "/"
         s3 = boto3.resource('s3',aws_access_key_id = os.environ.get('AWS_S3_ACCESS_KEY'),

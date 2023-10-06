@@ -1319,7 +1319,6 @@ def delete_post():
     #     file_names = file_names[0]
     for image_name in image_names:
         image_name= image_name[0]
-        print("userfiles/"+str(postid)+"/"+str(image_name))
         delete_aws_files_post("userfiles/"+str(postid)+"/"+str(image_name),image_name,"file")
     db.execute('DELETE FROM images WHERE postid=%s',(postid,))
     db_conn.commit()
