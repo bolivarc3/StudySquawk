@@ -46,6 +46,7 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent client-side JavaScript f
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_REDIS'] = redis.from_url(os.environ.get('SESSION_REDIS'))
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'
 Session(app)
 app.config["SESSION_PERMANENT"] = False
 
@@ -123,15 +124,15 @@ def page_not_found(e):
     url = "/homepage"
     return render_template('error.html', error = error, url = url), 404
 
-@app.before_request
-def default_login_required():
-    login_valid = 'username' in session
-    if (request.endpoint and 
-        'static' not in request.endpoint and 
-        not login_valid and 
-        not getattr(app.view_functions[request.endpoint], 'is_public', False) ) :
-        flash("Login to Continue with Your Session")
-        return redirect(url_for("index"))
+# @app.before_request
+# def default_login_required():
+#     login_valid = 'username' in session
+#     if (request.endpoint and 
+#         'static' not in request.endpoint and 
+#         not login_valid and 
+#         not getattr(app.view_functions[request.endpoint], 'is_public', False) ) :
+#         flash("Login to Continue with Your Session")
+#         return redirect(url_for("index"))
 
 def public_endpoint(function):
     function.is_public = True
@@ -392,6 +393,7 @@ def callback():
 
 @app.route("/homepage", methods=["GET", "POST"])
 def studyist():
+    print(session["username"])
     page_identifier = "homepage"
     courses = grabclasses()
     if request.method == "POST":
