@@ -49,8 +49,12 @@ app.config['SESSION_REDIS'] = redis.from_url(os.environ.get('SESSION_REDIS'))
 app.config['SESSION_COOKIE_SAMESITE'] = 'None'
 Session(app)
 app.config["SESSION_PERMANENT"] = False
-app.config['MAIL_USE_TLS'] = False 
-app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
+app.config['MAIL_PORT'] = os.environ.get('MAIL_PORT')
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL')
+app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS')
 
 app.config.from_pyfile('config.cfg')
 mail = Mail(app)
