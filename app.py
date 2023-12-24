@@ -87,7 +87,7 @@ else:
     )
     cursor = conn.cursor()
     BUCKET_NAME='studyist'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@{}:{}/{}'.format(
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://{}:{}@{}:{}/{}?sslmode=require'.format(
         os.environ.get('RDS_USERNAME'),
         os.environ.get('RDS_PASSWORD'),
         os.environ.get('RDS_HOSTNAME'),
