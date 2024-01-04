@@ -15,13 +15,14 @@ zipfile36 = "*"
 psycopg2 = "*"
 py-bcrypt = "*"
 flask-migrate = "*"
-flask-mail = "*"
 itsdangerous = "*"
 gunicorn = "*"
 python-dotenv = "*"
 oauthlib = "*"
 redis = "*"
 beautifulsoup4 = "*"
+colorama = "*"
+flask-mail = "*"
 
 [dev-packages]
 

@@ -50,11 +50,12 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'None'
 Session(app)
 app.config["SESSION_PERMANENT"] = False
 app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
-app.config['MAIL_PORT'] = os.environ.get('MAIL_PORT')
+app.config['MAIL_PORT'] = 587
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL')
-app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS')
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_SSL_VERSION'] = ssl.PROTOCOL_TLSv1_2
 mail = Mail(app)
 
 app.config.from_pyfile('config.cfg')
@@ -295,6 +296,7 @@ def confirm_email(token,username):
 
 def send_mail_confirm(username,email):
     #grabs the token, and nessary info to make the email work, and sends
+    print(email)
     token = s.dumps(email, salt='email-confirm')
     msg = Message('Confirm Email', sender='studysquawk@gmail.com', recipients=[email])
     link = url_for('confirm_email', token=token,username=username, _external=True)
