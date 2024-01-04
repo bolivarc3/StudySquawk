@@ -295,7 +295,6 @@ def confirm_email(token,username):
 
 def send_mail_confirm(username,email):
     #grabs the token, and nessary info to make the email work, and sends
-    print(email)
     token = s.dumps(email, salt='email-confirm')
     msg = Message('Confirm Email', sender='studysquawk@gmail.com', recipients=[email])
     link = url_for('confirm_email', token=token,username=username, _external=True)
