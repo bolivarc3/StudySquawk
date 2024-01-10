@@ -35,6 +35,17 @@
 .grade_text{
     font-size: 1.35rem!important;
 }
+.logout_div{
+    padding-right: 5%;
+    fill: white;
+    width: 100%;
+    display:flex;
+    justify-content: flex-end;
+}
+
+.logout_div a{
+    fill:white;
+}
 
 .assignment_grades div{
     border-radius: 1rem;

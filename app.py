@@ -899,6 +899,8 @@ def grade_viewer_signup():
         hac_executions('grades')
         return redirect('/grade_viewer')
     #else, load the page where these peices of info must be inputted
+    session["user_id_hac"] = "NULL"
+    session["password_hac"] = "NUll"
     return render_template("grade_viewer_signup.html")
 
 @app.route('/grade_viewer/<selectedcourse>', methods=["GET","POST"])
