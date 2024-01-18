@@ -2,10 +2,12 @@
 {% block head %}
 <head>
     <link href="/static/mainstyles/poststyles.css" rel="stylesheet">
+    <link href="/static/mainstyles/loader.css" rel="stylesheet">
+    <script type = "text/javascript" src = "/static/scripts/loader.js"></script>
 </head>
 {% endblock %}
 {% block body %}
-<div class = "formdiv">
+<div id="formdiv" class = "formdiv">
     <div style="text-align: center;">
         <h3>
             Please Enter the Information Below
@@ -25,9 +27,14 @@
         <br>
         <div>
             <div style = "display:flex; align-items: center;justify-content: center;">
-                <input type="submit", id = "submitbutton" value = "Submit" ></submit>
+                <input onclick="loader()" type="submit", id = "submitbutton" value = "Submit" ></submit>
             </div>
         </div>
     </form>
+</div>
+<div id="loader" style="width: fit-content;height:fit-content;margin:auto;">
+    <div class="loader">
+
+    </div>
 </div>
 {% endblock %}
