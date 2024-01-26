@@ -876,13 +876,15 @@ def grade_viewer():
             flash("Error Occured. Your username and password may be wrong!")
             return redirect(url_for("grade_viewer_signup"))
         #grabs data from dictionary
-    grades_data = session["hacgrades"]
-    class_names = grades_data['class_names']
-    #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
-    grade_summary = grades_data['grade_summary']
-    assignment_grades = grades_data['assignment_grades']
-    iterate = [1,2,3,4,5]
-    
+    if "hacgrades" in session.keys():
+        grades_data = session["hacgrades"]
+        class_names = grades_data['class_names']
+        #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
+        grade_summary = grades_data['grade_summary']
+        assignment_grades = grades_data['assignment_grades']
+        iterate = [1,2,3,4,5]
+    else:
+        return redirect("/grade_viewer_signup")
     course="homepage"
     page_identifier="grade_viewer"
 # for i in range()
@@ -1015,6 +1017,9 @@ def gethaclogin():
 
 @app.route('/update_hac', methods=['GET', 'POST'])
 def update_hac_function():
+    if "hacgrades" not in session.keys():
+        flash('Enter in a Username and Password')
+        return redirect("/grade_viewer_signup")
     update_hac()
     response = "good"
     return (response)
