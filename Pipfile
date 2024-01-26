@@ -23,6 +23,8 @@ redis = "*"
 beautifulsoup4 = "*"
 colorama = "*"
 flask-mail = "*"
+install = "*"
+google-analytics-data = "*"
 
 [dev-packages]
 
