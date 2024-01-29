@@ -1275,6 +1275,10 @@ def delete_files():
     return jsonify("done")
 
 
+@app.route("/meetings_intro", methods=['GET','POST'])
+def meetings_intro():
+    return render_template("meetingsintro.html")
+
 @app.route("/settings", methods=['GET','POST'])
 def settings():
     if request.method == "POST":

@@ -1,0 +1,29 @@
+  .login_meet{
+    /* background-color: var(--core-purple-light); */
+    background-image:  linear-gradient(#A3DDFC,#ACC2FB, #ACC2FB,#F7CFF3);;
+    background-repeat: no-repeat, no-repeat;
+    background-size: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items:center;
+    padding: 2rem;
+    width: 50%;
+    height: 70%;
+    margin: auto;
+    flex-wrap: wrap;
+}
+
+.login_meet button{
+    background-color: var(--core-purple-dark);
+    padding:1rem;
+    color: white;
+    border-color: transparent;
+    border-radius: 1rem;
+}
+
+.login_meet h1{
+    text-align: center;
+    width: 100%;
+    margin-bottom: 10rem;
+
+}
