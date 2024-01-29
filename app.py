@@ -1280,7 +1280,7 @@ def delete_files():
 
 @app.route("/meetings_intro", methods=['GET','POST'])
 def meetings_intro():
-    return redirect(url_for("join"))
+    return redirect(url_for("join", display_name = session['username'], mute_audio = 1, mute_video = 1))
     #return render_template("meetingsintro.html")
 
 users_in_room = {}
@@ -1289,12 +1289,9 @@ names_sid = {}
 
 @app.route("/join", methods=["GET"])
 def join():
-    # display_name = request.args.get('display_name')
-    # mute_audio = request.args.get('mute_audio')
-    # mute_video = request.args.get('mute_video')
-    display_name = "Testing"
-    mute_audio = 1
-    mute_video = 1
+    display_name = request.args.get('display_name')
+    mute_audio = request.args.get('mute_audio')
+    mute_video = request.args.get('mute_video')
     room_id = 1234
     session[room_id] = {"name":display_name, "mute_audio":mute_audio, "mute_video":mute_video}
     return render_template("join.html", room_id = room_id, display_name=session[room_id]["name"], mute_audio=session[room_id]["mute_audio"], mute_video=session[room_id]["mute_video"])
