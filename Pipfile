@@ -25,6 +25,9 @@ colorama = "*"
 flask-mail = "*"
 install = "*"
 google-analytics-data = "*"
+flask-socketio = "*"
+python-engineio = "*"
+python-socketio = "*"
 
 [dev-packages]
 

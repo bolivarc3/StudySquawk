@@ -1,5 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify,send_file
 from flask_session import Session
+from flask_socketio import SocketIO, emit, join_room
 from helpers import grabclasses, checkclass, check, connectdb, time_difference, login_hac_required, update_hac, hac_executions,get_hashed_password,check_password,grab_user_id
 from werkzeug.utils import secure_filename
 from sqlalchemy import *
@@ -28,6 +29,7 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 import redis
 from datetime import timedelta
 from bs4 import BeautifulSoup
+import platform
 
 
 
@@ -56,6 +58,7 @@ app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USE_TLS'] = True
 mail = Mail(app)
+socketio = SocketIO(app)
 
 app.config.from_pyfile('config.cfg')
 s = URLSafeTimedSerializer('Thisisasecret!')
@@ -1277,7 +1280,97 @@ def delete_files():
 
 @app.route("/meetings_intro", methods=['GET','POST'])
 def meetings_intro():
-    return render_template("meetingsintro.html")
+    return redirect(url_for("join"))
+    #return render_template("meetingsintro.html")
+
+users_in_room = {}
+rooms_sid = {}
+names_sid = {}
+
+@app.route("/join", methods=["GET"])
+def join():
+    # display_name = request.args.get('display_name')
+    # mute_audio = request.args.get('mute_audio')
+    # mute_video = request.args.get('mute_video')
+    display_name = "Testing"
+    mute_audio = 1
+    mute_video = 1
+    room_id = 1234
+    session[room_id] = {"name":display_name, "mute_audio":mute_audio, "mute_video":mute_video}
+    return render_template("join.html", room_id = room_id, display_name=session[room_id]["name"], mute_audio=session[room_id]["mute_audio"], mute_video=session[room_id]["mute_video"])
+
+@socketio.on("connect")
+def on_connect():
+    sid = request.sid
+    print("New socket connected ", sid)
+
+
+@socketio.on("join-room")
+def on_join_room(data):
+    sid = request.sid
+    room_id = data["room_id"]
+    display_name = session[room_id]["name"]
+
+    # register sid to the room
+    join_room(room_id)
+    rooms_sid[sid] = room_id
+    names_sid[sid] = display_name
+
+    # broadcast to others in the room
+    print("[{}] New member joined: {}<{}>".format(room_id, display_name, sid))
+    emit("user-connect", {"sid": sid, "name": display_name},
+         broadcast=True, include_self=False, room=room_id)
+
+    # add to user list maintained on server
+    if room_id not in users_in_room:
+        users_in_room[room_id] = [sid]
+        emit("user-list", {"my_id": sid})  # send own id only
+    else:
+        usrlist = {u_id: names_sid[u_id]
+                   for u_id in users_in_room[room_id]}
+        # send list of existing users to the new member
+        emit("user-list", {"list": usrlist, "my_id": sid})
+        # add new member to user list maintained on server
+        users_in_room[room_id].append(sid)
+
+    print("\nusers: ", users_in_room, "\n")
+
+
+@socketio.on("disconnect")
+def on_disconnect():
+    sid = request.sid
+    room_id = rooms_sid[sid]
+    display_name = names_sid[sid]
+
+    print("[{}] Member left: {}<{}>".format(room_id, display_name, sid))
+    emit("user-disconnect", {"sid": sid},
+         broadcast=True, include_self=False, room=room_id)
+
+    users_in_room[room_id].remove(sid)
+    if len(users_in_room[room_id]) == 0:
+        users_in_room.pop(room_id)
+
+    rooms_sid.pop(sid)
+    names_sid.pop(sid)
+
+    print("\nusers: ", users_in_room, "\n")
+
+
+@socketio.on("data")
+def on_data(data):
+    sender_sid = data['sender_id']
+    target_sid = data['target_id']
+    if sender_sid != request.sid:
+        print("[Not supposed to happen!] request.sid and sender_id don't match!!!")
+
+    if data["type"] != "new-ice-candidate":
+        print('{} message from {} to {}'.format(
+            data["type"], sender_sid, target_sid))
+    socketio.emit('data', data, room=target_sid)
+
+
+if any(platform.win32_ver()):
+    socketio.run(app, debug=True)
 
 @app.route("/settings", methods=['GET','POST'])
 def settings():
@@ -1313,7 +1406,7 @@ def privacy_policy():
 @app.route("/terms_and_conditions", methods=['GET','POST'])
 def terms_and_condtitions():
     return render_template("terms_of_service.html")
-
+#Mostly Accessed by Javascript
 @app.route("/grab_course_grades", methods=["POST"])
 def grab_course_grades():
     course = request.json
