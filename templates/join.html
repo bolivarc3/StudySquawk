@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-
+{% extends "layout.html" %}
+{% block head %}
 <head>
     <!-- icon -->
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
@@ -43,7 +44,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Chat [{{room_id}}]</title>
 </head>
-
+{% endblock %}
+{% block body %}
 <body>
     <div id="video_grid" class="video-grid"></div>
     <video id="local_vid" autoplay muted></video>
@@ -52,5 +54,5 @@
     <script src="{{url_for('static', filename='/scripts/chatroom_ui.js')}}"></script>
     <script src="{{url_for('static', filename='/scripts/chatroom_networking.js')}}"></script>
 </body>
-
+{% endblock %}
 </html>
