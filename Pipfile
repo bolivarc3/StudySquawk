@@ -28,6 +28,7 @@ google-analytics-data = "*"
 python-engineio = "*"
 python-socketio = "*"
 flask-socketio = "*"
+sendgrid = "*"
 
 [dev-packages]
 

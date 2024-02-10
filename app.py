@@ -27,9 +27,11 @@ from flask_migrate import Migrate
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 import redis
-from datetime import timedelta
+from datetime import timedelta, time
 from bs4 import BeautifulSoup
 import platform
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 
 
@@ -216,7 +218,7 @@ def index():
             send_mail_confirm(username,email)
             password = get_hashed_password(password)
             null = "null"
-            db.execute('INSERT INTO "Users"(username, password, email, gradeappusername, gradeapppassword, google_auth, is_confirmed) VALUES (%s, %s, %s, %s, %s, %s, %s)',(username,password,email,null,null,"False",False,))
+            db.execute('INSERT INTO "Users"(username, password, email, gradeappusername, gradeapppassword, google_auth, is_confirmed, auth_try_on) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',(username,password,email,null,null,"False",False,datetime.now(timezone.utc)))
             db_conn.commit()
             db.close()
             db_conn.close()
@@ -243,12 +245,17 @@ def index():
             db_password = db.fetchall()[0][0]
             db.execute('SELECT is_confirmed FROM "Users" WHERE email=%s',(email,));
             confirmation_status = db.fetchall()[0][0]
+            db.execute('SELECT auth_try_on FROM "Users" WHERE email=%s',(email,));
+            auth_try_on = db.fetchall()[0][0]
             db.execute('SELECT username FROM "Users" WHERE email=%s',(email,));
             username = db.fetchall()[0][0]
             if confirmation_status == False:
-                flash("Verify your account with your Email!")
-                send_mail_confirm(username,email)
-                return redirect(url_for("index"))
+                if auth_try_on != None:
+                    flash("Verify your account with your Email!")
+                    send_mail_confirm(username,email)
+                    return redirect(url_for("index"))
+                else:
+                    flash("Email has already been sent, check your email")
             #if an account with the same email has
             if google_auth == "True":
                 #if the password is not already set to something
@@ -273,6 +280,21 @@ def index():
             session["hacgradestimeupdated"] =''
             return redirect(url_for("studyist"))
     else:
+        db_info = connectdb()
+        db = db_info[0]
+        db_conn = db_info[1]
+        db.execute('SELECT *  FROM "Users" WHERE is_confirmed = %s',("False",))
+        users = db.fetchall()
+        for user in users:
+            if user[9] != None:
+                hours = (datetime.now(timezone.utc).hour-user[9].hour)*60
+                minute_difference = datetime.now(timezone.utc).minute - user[9].minute + hours
+                print(minute_difference)
+                if minute_difference > 10:
+                    db.execute('DELETE FROM "Users" WHERE is_confirmed = %s and id=%s',("False",user[0]))
+        db_conn.commit()
+        db.close()
+        db_conn.close()
         return render_template("intro.html")
     return render_template("intro.html")
 
@@ -299,11 +321,21 @@ def confirm_email(token,username):
 def send_mail_confirm(username,email):
     #grabs the token, and nessary info to make the email work, and sends
     token = s.dumps(email, salt='email-confirm')
-    msg = Message('Confirm Email', sender='studysquawk@gmail.com', recipients=[email])
+    # msg = Message('Confirm Email', sender='studysquawk@gmail.com', recipients=[email])
     link = url_for('confirm_email', token=token,username=username, _external=True)
-    msg.html = render_template("confirm.html",link=link)
-    mail.send(msg)
+    # msg.html = render_template("confirm.html",link=link)
+    # mail.send(msg)
     session["user_id_to_confirm"] = username
+    message = Mail(
+    from_email='studysquawk@gmail.com',
+    to_emails=email,
+    subject='Confirmation Email',
+    html_content=render_template("confirm.html",link=link))
+    try:
+        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        response = sg.send(message)
+    except Exception as e:
+        print(e.message)
 
 @public_endpoint
 @app.route('/login')
@@ -374,7 +406,7 @@ def callback():
         count = len(users)
         if count == 0:
             null = "null"
-            db.execute('INSERT INTO "Users"(username, password, email, gradeappusername, gradeapppassword, google_auth, is_confirmed) VALUES (%s, %s, %s, %s, %s, %s, %s)',(users_name,null,users_email,null,null,"True",True,))
+            db.execute('INSERT INTO "Users"(username, password, email, gradeappusername, gradeapppassword, google_auth, is_confirmed, auth_try_on) VALUES (%s, %s, %s, %s, %s, %s, %s)',(users_name,null,users_email,null,null,"True",True,True))
             # Send user back to homepage
             db_conn.commit()
             db.close()

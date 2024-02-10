@@ -11,6 +11,7 @@ class Users(db.Model):
     google_auth = db.Column(db.String(120), nullable=False)
     is_confirmed = db.Column(db.Boolean, nullable=False, default=False)
     confirmed_on = db.Column(db.DateTime, nullable=True)
+    auth_try_on = db.Column(db.DateTime, nullable=True)
 
     def verify_password(self, password):
         pwhash = bcrypt.hashpw(password, self.password)
@@ -25,6 +26,7 @@ class Users(db.Model):
         self.google_auth = google_auth
         self.is_confirmed = is_confirmed
         self.confirmed_on = confirmed_on
+        self.auth_try_on = auth_try_on
 
 #models for postings
 class posts(db.Model):
