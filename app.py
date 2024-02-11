@@ -289,7 +289,7 @@ def index():
                     minute_difference = datetime.now(timezone.utc).minute - user[9].minute + hours
                     print(minute_difference)
                     if minute_difference > 10:
-                    db.execute('DELETE FROM "Users" WHERE is_confirmed = %s and id=%s',("False",user[0]))
+                        db.execute('DELETE FROM "Users" WHERE is_confirmed = %s and id=%s',("False",user[0]))
             db_conn.commit()
             db.close()
             db_conn.close()
