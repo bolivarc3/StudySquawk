@@ -30,8 +30,6 @@ import redis
 from datetime import timedelta, time
 from bs4 import BeautifulSoup
 import platform
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
 
 
 
@@ -51,14 +49,14 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_REDIS'] = redis.from_url(os.environ.get('SESSION_REDIS'))
 app.config['SESSION_COOKIE_SAMESITE'] = 'None'
-Session(app)
 app.config["SESSION_PERMANENT"] = False
 app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER')
-app.config['MAIL_PORT'] = 587
+app.config['MAIL_PORT'] = os.environ.get('MAIL_PORT')
 app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USE_TLS'] = False
+Session(app)
 mail = Mail(app)
 socketio = SocketIO(app)
 
@@ -321,21 +319,21 @@ def confirm_email(token,username):
 def send_mail_confirm(username,email):
     #grabs the token, and nessary info to make the email work, and sends
     token = s.dumps(email, salt='email-confirm')
-    # msg = Message('Confirm Email', sender='studysquawk@gmail.com', recipients=[email])
+    msg = Message('Confirm Email', sender='studysquawk@gmail.com', recipients=[email])
     link = url_for('confirm_email', token=token,username=username, _external=True)
-    # msg.html = render_template("confirm.html",link=link)
-    # mail.send(msg)
+    msg.html = render_template("confirm.html",link=link)
+    mail.send(msg)
     session["user_id_to_confirm"] = username
-    message = Mail(
-    from_email='studysquawk@gmail.com',
-    to_emails=email,
-    subject='Confirmation Email',
-    html_content=render_template("confirm.html",link=link))
-    try:
-        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-        response = sg.send(message)
-    except Exception as e:
-        print(e.message)
+    # message = Mail(
+    # from_email='studysquawk@gmail.com',
+    # to_emails=email,
+    # subject='Confirmation Email',
+    # html_content=render_template("confirm.html",link=link))
+    # try:
+    #     sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+    #     response = sg.send(message)
+    # except Exception as e:
+        # print(e.message)
 
 @public_endpoint
 @app.route('/login')
