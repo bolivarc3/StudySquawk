@@ -35,7 +35,6 @@ import platform
 
 #change
 app = Flask(__name__)
-socketio = SocketIO(app, async_mode='geventwebsocket')
 load_dotenv()
 s3 = boto3.client('s3',
     aws_access_key_id = os.environ.get('AWS_S3_ACCESS_KEY'),
