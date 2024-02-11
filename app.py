@@ -58,6 +58,7 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False
 Session(app)
 mail = Mail(app)
+socketio = SocketIO(app)
 
 app.config.from_pyfile('config.cfg')
 s = URLSafeTimedSerializer('Thisisasecret!')
