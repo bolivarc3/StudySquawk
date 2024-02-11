@@ -276,6 +276,23 @@ def index():
             session["username"] = username[0][0]
             session["hacattendancetimeupdated"] =''
             session["hacgradestimeupdated"] =''
+
+            #Empty bots from Database
+            db_info = connectdb()
+            db = db_info[0]
+            db_conn = db_info[1]
+            db.execute('SELECT *  FROM "Users" WHERE is_confirmed = %s',("False",))
+            users = db.fetchall()
+            for user in users:
+                if user[9] != None:
+                    hours = (datetime.now(timezone.utc).hour-user[9].hour)*60
+                    minute_difference = datetime.now(timezone.utc).minute - user[9].minute + hours
+                    print(minute_difference)
+                    if minute_difference > 10:
+                    db.execute('DELETE FROM "Users" WHERE is_confirmed = %s and id=%s',("False",user[0]))
+            db_conn.commit()
+            db.close()
+            db_conn.close()
             return redirect(url_for("studyist"))
     else:
         db_info = connectdb()
