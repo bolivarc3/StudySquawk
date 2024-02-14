@@ -153,7 +153,7 @@ def attendance_update(username, password):
     params = {"username":username,"password":password}
     params = json.dumps(params)
     headers = {'Content-Type': 'application/json'}
-    attedance_request = requests.post("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/attendance",  data=params, headers=headers)
+    attedance_request = requests.post("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/attendance/"+ username +"/" +password)
     #converts output to a json format(dictionary)
     attendance_data = attedance_request.json()
     if "error" in attendance_data.keys():
@@ -165,8 +165,9 @@ def grades_update(username, password):
     params = {"username":username,"password":password}
     params = json.dumps(params)
     headers = {'Content-Type': 'application/json'}
-    grades_request = requests.post("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades", data=params, headers=headers)
+    grades_request = requests.post("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades/" + username +"/" +password)
     grades_request = grades_request.json()
+    print(grades_request)
     if "error" in grades_request.keys():
         session["error"] = True
     else:
