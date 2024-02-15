@@ -31,6 +31,7 @@ flask-socketio = "*"
 sendgrid = "*"
 gevent-websocket = "*"
 eventlet = "*"
+selenium = "*"
 
 [dev-packages]
 
