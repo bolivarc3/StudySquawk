@@ -1,6 +1,5 @@
 
 document.addEventListener("DOMContentLoaded", function(){
-    console.log("done")
     document.getElementById("x-element-login-div").addEventListener("click",function(){
         loginoff()
     })

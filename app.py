@@ -305,7 +305,6 @@ def index():
                 if user[9] != None:
                     hours = (datetime.now(timezone.utc).hour-user[9].hour)*60
                     minute_difference = datetime.now(timezone.utc).minute - user[9].minute + hours
-                    print(minute_difference)
                     if minute_difference > 10:
                         db.execute('DELETE FROM "Users" WHERE is_confirmed = %s and id=%s',("False",user[0]))
             db_conn.commit()
@@ -322,7 +321,6 @@ def index():
             if user[9] != None:
                 hours = (datetime.now(timezone.utc).hour-user[9].hour)*60
                 minute_difference = datetime.now(timezone.utc).minute - user[9].minute + hours
-                print(minute_difference)
                 if minute_difference > 10:
                     db.execute('DELETE FROM "Users" WHERE is_confirmed = %s and id=%s',("False",user[0]))
         db_conn.commit()
@@ -1083,8 +1081,6 @@ def gethaclogin():
     if "hacattendance" not in session.keys():
         update_hac()
     attendance_data = session["hacattendance"]
-    print(attendance_data)
-    print("attendacne")
     return jsonify(attendance_data)
 
 @app.route('/update_hac', methods=['GET', 'POST'])

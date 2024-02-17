@@ -152,7 +152,6 @@ function edit_with_saved_changes(){
     course =  document.getElementById("course").textContent
     storage_key = course.toString()
     saved_data = JSON.parse(localStorage.getItem(storage_key))
-    console.log(saved_data)
     if (saved_data != null){
         keys = Object.keys(saved_data) 
         var rows = document.getElementsByClassName("grade_assignment_data_row")
@@ -181,7 +180,6 @@ function create_added_saved_rows(){
     course = course.toString()
     storage_key = course + "_added_rows"
     saved_data = JSON.parse(localStorage.getItem(storage_key))
-    console.log(saved_data)
     for(var added_row_index = 0; added_row_index<saved_data.length; added_row_index++){
         const table = document.querySelector('.Grade_Data_Table_Body')
         const newrow = document.createElement('tr')
@@ -251,7 +249,6 @@ function edit_mode(edit_button){
         grade_average_calculator()
     }
     else{
-        console.log("ther other one")
         var clear_changes = document.getElementsByClassName("clear_changes")[0]
         clear_changes.style.display = 'none'
         var add_row = document.getElementsByClassName("add_row")[0]

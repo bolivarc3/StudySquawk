@@ -13,7 +13,6 @@ function checktext(){
 
 
 function showPreview(event){
-    console.log("hey")
     var length = event.target.files.length;
     if(length > 0){
         //for the amount of images 

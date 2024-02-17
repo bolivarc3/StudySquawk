@@ -51,7 +51,6 @@ function getVideoObj(element_id) {
 
 function setAudioMuteState(flag) {
     let local_stream = myVideo.srcObject;
-    console.log("setAudioMuteState: ", local_stream);
     local_stream.getAudioTracks().forEach((track) => { track.enabled = !flag; });
     // switch button icon
     document.getElementById("mute_icon").innerText = (flag) ? "mic_off" : "mic";

@@ -152,7 +152,6 @@ def update_hac():
     
 
 def hac_executions(runfunction,username,password):
-    print("running",runfunction)
     if username != "NULL" and password != "NULL":
         if session["runninggethac"] == False:
             session["runninggethac"] = True
@@ -218,7 +217,6 @@ def grades_update(username, password):
     headers = {'Content-Type': 'application/json'}
     grades_request = requests.post("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades/" + username +"/" +password)
     grades_request = grades_request.json()
-    print(grades_request)
     if "error" in grades_request.keys():
         session["error"] = True
     else:

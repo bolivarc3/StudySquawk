@@ -67,13 +67,12 @@ def hac_api_main(function,username,password):
         return {"error": error}
     #checks if login was successful
     if function == 'both':
-        print("running both")
         driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Content/Student/Assignments.aspx")
         try:
             element = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "sg-header-heading")))
         finally:
-            print("not there")
+            pass
         classnames = grabclasses(driver)
         assignmentgrades = grabassignmentgrades(driver,classnames)
         gradesum = graboverallgrades(driver,classnames)
@@ -86,7 +85,7 @@ def hac_api_main(function,username,password):
             element = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "sg-main-content")))
         finally:
-            print("not there")
+            pass
     #grabs the attendance using selenium
         attendance = grabcalendar(driver,username,password)
         return attendance
@@ -96,7 +95,7 @@ def hac_api_main(function,username,password):
             element = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "sg-header-heading")))
         finally:
-            print("not there")
+            pass
         classnames = grabclasses(driver)
         assignmentgrades = grabassignmentgrades(driver,classnames)
         gradesum = graboverallgrades(driver,classnames)

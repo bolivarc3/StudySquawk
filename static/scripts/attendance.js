@@ -53,8 +53,6 @@ document.addEventListener("DOMContentLoaded", function() {
 function main(calendar,month,year){
     const status_element = document.getElementById("status")
     status_element.innerHTML = ""
-    console.log("This is it")
-    console.log(calendar)
     var attendance_info = calendar
     var current_month_year = String(month_list[month]) + " " + String(year)
     status_element.innerHTML = current_month_year
