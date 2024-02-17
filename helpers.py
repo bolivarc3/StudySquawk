@@ -126,6 +126,8 @@ def update_hac():
     password = session["password_hac"]
     if session["error"] != True:
         current_time = datetime.now(timezone.utc)
+        if session["hacgradestimeupdated"] == '' and session["hacattendancetimeupdated"] == '':
+            hac_executions('both',username,password)
         if session["hacgradestimeupdated"] == '':
             session["hacgradestimeupdated"] = datetime.now(timezone.utc)
             hac_executions('grades',username,password)

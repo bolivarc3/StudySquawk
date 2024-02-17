@@ -1080,8 +1080,8 @@ def getfolders():
 
 @app.route('/gethacattendance', methods=['GET', 'POST'])
 def gethaclogin():
-    update_hac()
-    attendance_data = session["hacattendance"]
+    if "hacattendance" not in session.keys():
+        update_hac()
     attendance_data = session["hacattendance"]
     print(attendance_data)
     print("attendacne")
