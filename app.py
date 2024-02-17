@@ -33,17 +33,6 @@ import platform
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--disable-dev-shm-usage")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-service = Service(executable_path=os.environ.get("CHROMEDRIVER_PATH"))
-driver = webdriver.Chrome(service=service, options=chrome_options)
-driver.get("https://medium.com")
-print(driver.page_source)
-print("Finished!")
-
 
 
 
@@ -134,6 +123,11 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 from aws import upload, download_file, download_folder, delete_aws_files,delete_aws_files_post
 # Ensure responses aren't cached
+
+@app.before_request
+def make_session_permanent():
+    session.permanent = False
+
 @app.after_request
 def after_request(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
@@ -164,6 +158,14 @@ def public_endpoint(function):
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
 
+
+@socketio.on('disconnect')
+def disconnect_user():
+    logout_user()
+    session.pop('yourkey', None)
+
+def logout_user():
+    session.clear()
 #the intro homepage for the user
 #test1
 @public_endpoint
@@ -289,7 +291,9 @@ def index():
             #set the session
             session["username"] = username[0][0]
             session["hacattendancetimeupdated"] =''
-            session["hacgradestimeupdated"] =''
+            session["hacgradestimeupdated"] = ''
+            session["HacStatus"]=False
+            session["runninggethac"] = False
 
             #Empty bots from Database
             db_info = connectdb()
@@ -949,6 +953,7 @@ def grade_viewer():
         iterate = [1,2,3,4,5]
     else:
         return redirect("/grade_viewer_signup")
+    update_hac()
     course="homepage"
     page_identifier="grade_viewer"
 # for i in range()
@@ -962,7 +967,8 @@ def grade_viewer_signup():
         gradepassword = request.form.get('gradepassword')
         session["user_id_hac"] = grade_username
         session["password_hac"] = gradepassword
-        hac_executions('grades')
+        session["error"] = False
+        update_hac()
         return redirect('/grade_viewer')
     #else, load the page where these peices of info must be inputted
     session["user_id_hac"] = "NULL"
@@ -998,7 +1004,6 @@ def grade_viewer_course(selectedcourse):
 def calendar():
     course = "homepage"
     page_identifier = "attendance"
-
     return render_template("attendance.html", course=course, page_identifier=page_identifier)
 
 @app.route('/announcements', methods=["GET","POST"])
@@ -1077,6 +1082,9 @@ def getfolders():
 def gethaclogin():
     update_hac()
     attendance_data = session["hacattendance"]
+    attendance_data = session["hacattendance"]
+    print(attendance_data)
+    print("attendacne")
     return jsonify(attendance_data)
 
 @app.route('/update_hac', methods=['GET', 'POST'])
@@ -1084,7 +1092,7 @@ def update_hac_function():
     if "hacgrades" not in session.keys():
         flash('Enter in a Username and Password')
         return redirect("/grade_viewer_signup")
-    update_hac()
+    hac_executions("both")
     response = "good"
     return (response)
 

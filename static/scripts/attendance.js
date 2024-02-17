@@ -13,7 +13,7 @@ async function grab_user_info(){
     month = d.getMonth();
     year = d.getFullYear();
     calendar = attendance_info
-    main(attendance_info, month, year)
+    main(calendar, month, year)
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -53,7 +53,9 @@ document.addEventListener("DOMContentLoaded", function() {
 function main(calendar,month,year){
     const status_element = document.getElementById("status")
     status_element.innerHTML = ""
-    var attendance_info = calendar['attendance']
+    console.log("This is it")
+    console.log(calendar)
+    var attendance_info = calendar
     var current_month_year = String(month_list[month]) + " " + String(year)
     status_element.innerHTML = current_month_year
     var current_month = attendance_info[current_month_year]

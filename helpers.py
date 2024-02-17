@@ -12,6 +12,7 @@ import csv
 import psycopg2
 import bcrypt
 import json
+from hacapi import hac_api_main
 
 def login_hac_required(f):
     @wraps(f)
@@ -121,33 +122,81 @@ def upload(filespath,filename):
 
 
 def update_hac():
+    username = session["user_id_hac"]
+    password = session["password_hac"]
     if session["error"] != True:
         current_time = datetime.now(timezone.utc)
-        if session["hacattendancetimeupdated"] == '':
-            hac_executions('attendance')
         if session["hacgradestimeupdated"] == '':
-            hac_executions('grades')
+            session["hacgradestimeupdated"] = datetime.now(timezone.utc)
+            hac_executions('grades',username,password)
         if  session["error"] != True:
-            duration = current_time - session["hacattendancetimeupdated"]
-            duration_in_s = duration.total_seconds()  
-            minutes = divmod(duration_in_s, 60)[0]
-            if minutes > 5:
-                hac_executions('attendance')
             duration = current_time - session["hacgradestimeupdated"]
             duration_in_s = duration.total_seconds()  
             minutes = divmod(duration_in_s, 60)[0]
             if minutes > 5:
-                hac_executions('grades')
+                session["hacgradestimeupdated"] = datetime.now(timezone.utc)
+                hac_executions('grades',username,password)
+        if session["hacattendancetimeupdated"] == '':
+            session["hacattendancetimeupdated"] = datetime.now(timezone.utc)
+            hac_executions('attendance',username,password)
+        if  session["error"] != True:
+            duration = current_time - session["hacattendancetimeupdated"]
+            duration_in_s = duration.total_seconds()  
+            minutes = divmod(duration_in_s, 60)[0]
+            if minutes >  5:
+                session["hacattendancetimeupdated"] = datetime.now(timezone.utc)
+                hac_executions('attendance',username,password)
+        
     
 
-def hac_executions(runfunction):
-    username = session["username"]
-    username = session["user_id_hac"]
-    password = session["password_hac"]
-    if runfunction == "attendance":
-        attendance_update(username, password)
+def hac_executions(runfunction,username,password):
+    print("running",runfunction)
+    if username != "NULL" and password != "NULL":
+        if session["runninggethac"] == False:
+            session["runninggethac"] = True
+            if runfunction == "both":
+                data = hac_api_main("both",username, password)
+                session["hacattendance"] = data[3]
+                session["hacattendancetimeupdated"] = datetime.now(timezone.utc)
+                class_names = data[0]
+
+                grades_request = {"class_names":data[0],"grade_summary":data[1],"assignment_grades":data[2]}
+                for course in class_names:
+                    if course.find('/')!=-1:
+                        new_course_name  = course.replace("/","|")
+                        grades_request["class_names"].remove(course)
+                        grades_request["class_names"].append(new_course_name)
+                        grades_request["grade_summary"][new_course_name] = grades_request["grade_summary"][course]
+                        grades_request["assignment_grades"][new_course_name] = grades_request["assignment_grades"][course]
+                        del grades_request["grade_summary"][course]
+                        del grades_request["assignment_grades"][course]
+                session["hacgrades"] = grades_request
+                session["hacgradestimeupdated"] = datetime.now(timezone.utc)
+            elif runfunction == "attendance":
+                attendance_data = hac_api_main("attendance",username, password)
+                session["hacattendance"] = attendance_data
+                session["hacattendancetimeupdated"] = datetime.now(timezone.utc)
+            else:
+                grades_data = hac_api_main("grades",username, password)
+
+                class_names = grades_data[0]
+
+                grades_request = {"class_names":grades_data[0],"grade_summary":grades_data[1],"assignment_grades":grades_data[2]}
+                for course in class_names:
+                    if course.find('/')!=-1:
+                        new_course_name  = course.replace("/","|")
+                        grades_request["class_names"].remove(course)
+                        grades_request["class_names"].append(new_course_name)
+                        grades_request["grade_summary"][new_course_name] = grades_request["grade_summary"][course]
+                        grades_request["assignment_grades"][new_course_name] = grades_request["assignment_grades"][course]
+                        del grades_request["grade_summary"][course]
+                        del grades_request["assignment_grades"][course]
+                session["hacgrades"] = grades_request
+                session["hacgradestimeupdated"] = datetime.now(timezone.utc)
+            return 0
     else:
-        grades_update(username, password)
+        return 1
+    session["runninggethac"] = False
 
 def attendance_update(username, password):
     params = {"username":username,"password":password}
