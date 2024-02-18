@@ -1527,3 +1527,9 @@ def delete_post():
     db.close()
     db_conn.close()
     return jsonify("done")
+
+port = int(os.environ.get("PORT", 8080))
+bind_address = f"0.0.0.0:{port}"
+
+if __name__ == "__main__":
+    app.run(bind=bind_address)
