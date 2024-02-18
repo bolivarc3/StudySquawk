@@ -1530,4 +1530,4 @@ def delete_post():
     return jsonify("done")
 
 if __name__ == '__main__':
-    app.run()
+    socketio.run(app, debug=True,port=8443)
