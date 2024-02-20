@@ -1,6 +1,6 @@
-
+{% extends "homepage_layout.html" %}
+{% block header %}
 <link href="/static/mainstyles/introstyles.css" rel="stylesheet">
-<link href="/static/minorstyles/signuplogin.css" rel="stylesheet">
 <link rel="png" href="/static/mainstyles/Intropage_gradients/1.png">
 <link href="/static/images/nerdpic.png" rel="icon">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -15,39 +15,29 @@
 
     gtag('config', 'G-PQZ00QDJXE');
 </script>
-<!-- Javascript -->
 <script type="text/javascript" src = "static/scripts/introscript.js"></script>
+{% endblock %}
 <!-- Javascript -->
-<title>Welcome!</title>
-<!-- Navigation Bar -->
-<div id = "divtitlegrouping">
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>{{message}}</strong>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-    <div id = "titlediv">
-        <h1 id = "title"><a id = "returnhome" href = "/">StudySquawk</a></h1>
-    </div>
-    <div id = "navbox">
-        <ul id = "horizontal-list">
-            <li id="signup-item"><a onclick="signupon()"> Sign Up</a></a></li>
-            <li id="login-item"><a onclick="loginon()"> Login</a></a></li>
-        </ul>
-    </div>
+<!-- Javascript -->
+{% block title %}
+{% endblock %}
+{% block NavBar %}
+<div id = "titlediv">
+    <h1 id = "title"><a id = "returnhome" href = "/">StudySquawk</a></h1>
 </div>
+<div id = "navbox">
+    <ul id = "horizontal-list">
+        <li id="signup-item"><a onclick="signupon()"> Sign Up</a></a></li>
+        <li id="login-item"><a onclick="loginon()"> Login</a></a></li>
+    </ul>
+</div>
+{% endblock %}
 <!-- Navigation Bar -->
 
 
 <!-- Images -->
 <!-- <div class="crop"></div> -->
+{% block body %}
 <div id="introbox">
     <div id = "introphrase">
         <h1>
@@ -246,5 +236,6 @@
         </div>
     </div>
 </div>
+{% endblock %}
 <!-- Forms for signup and login -->
 

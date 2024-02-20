@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify,send_file
+from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify,send_file,Blueprint
 from flask_session import Session
 from flask_socketio import SocketIO, emit, join_room
 from helpers import grabclasses, checkclass, check, connectdb, time_difference, login_hac_required, update_hac, hac_executions,get_hashed_password,check_password,grab_user_id
@@ -32,8 +32,8 @@ from bs4 import BeautifulSoup
 import platform
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-
-
+from api import api
+# from api import api
 
 
 #change
@@ -64,9 +64,10 @@ mail = Mail(app)
 socketio = SocketIO(app)
 app.config.from_pyfile('config.cfg')
 s = URLSafeTimedSerializer('Thisisasecret!')
-
+app.config['SUBDOMAIN_MATCHING'] = True
 ENV = os.environ.get('APPLICATION_ENV')
 if ENV == 'dev':
+    app.config['SERVER_NAME'] = 'localhost:5000'
     conn = psycopg2.connect(
         host=os.environ.get('POSTGRES_DEV_HOSTNAME'),
         database=os.environ.get('POSTGRES_DEV_DB_NAME'),
@@ -123,6 +124,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 from aws import upload, download_file, download_folder, delete_aws_files,delete_aws_files_post
 # Ensure responses aren't cached
 
+app.register_blueprint(api)
+
 @app.before_request
 def make_session_permanent():
     session.permanent = False
@@ -143,6 +146,8 @@ def page_not_found(e):
 @app.before_request
 def default_login_required():
     login_valid = 'username' in session
+    if request.endpoint and request.blueprint and request.blueprint == 'api':
+        return
     if (request.endpoint and 
         'static' not in request.endpoint and 
         not login_valid and 
@@ -1528,8 +1533,5 @@ def delete_post():
     db_conn.close()
     return jsonify("done")
 
-port = int(os.environ.get("PORT", 8080))
-bind_address = f"0.0.0.0:{port}"
-
 if __name__ == "__main__":
-    app.run(bind=bind_address)
+    app.run(debug=True)

@@ -1,0 +1,126 @@
+{% extends "homepage_layout.html" %}
+{% block header %}
+<link rel="png" href="/static/mainstyles/Intropage_gradients/1.png">
+<link rel="icon" href="{{ url_for('static', filename='/images/nerdpic.png', _external=True, _scheme='http', _subdomain='api') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='mainstyles/introstyles.css', _external=True, _scheme='http', _subdomain='api') }}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PQZ00QDJXE"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-PQZ00QDJXE');
+</script>
+{% endblock %}
+{% block NavBar %}
+<div id = "titlediv">
+    <h1 id = "title"><a id = "returnhome" href = "/">Welcome to HAC API!</a></h1>
+</div>
+<div id = "navbox">
+    <ul id = "horizontal-list">
+        <li id="signup-item"><a onclick="signupon()"> Sign Up</a></a></li>
+        <li id="login-item"><a onclick="loginon()"> Login</a></a></li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block title %}
+<title>Welcome!</title>
+{% endblock %}
+
+{% block body %}
+<div id="introbox">
+    <div id = "introphrase">
+        <h1>
+            Join our educational social network, where students support each other, share knowledge, and excel together.
+        </h1>
+    </div>
+    <div id="background_parrot_image_div">
+        <div style="width: fit-content; height: fit-content;">
+            <img id="parrot_background_image" src = "{{ url_for('static', filename='images/Introparrots/Background parrot.jpg', _external=True, _scheme='http', _subdomain='api') }}">
+        </div>
+    </div>
+</div>
+
+<div class="subsection_text_div">
+    <h1 class="subsection_text" >
+        Developed by a Student, For Students
+    </h1>
+</div>
+<div class="box_system_row_div">
+    <div class="content_container">
+        <h1>
+            Community Driven
+        </h1>
+        <br>
+        <h4>
+            The Community of Students is what makes Tucusito possible. Students can post Resources from classes and also ask questions to the community.
+        </h4>
+    </div>
+    <div class="content_container">
+        <h1>
+            Learn from Past Mistakes!
+        </h1>
+        <br>
+        <h4>
+            The first rule of learning is to learn from the mistakes you make. This application helps you learn from previous student mistakes so you can be the best student you can be!
+        </h4>
+    </div>
+    <div class="content_container">
+        <h1>
+            Grade Calculating
+        </h1>
+        <br>
+        <h4>
+            Accurate and saved grade calculations with automatic and up to date grades from your grade provider
+        </h4>
+    </div>
+    <div class="content_container">
+        <h1>
+            Attendance 
+        </h1>
+        <br>
+        <h4>
+            Gives a detailed summary of your attedance in school
+        </h4>
+    </div>
+</div>
+<footer>
+    <div class="box_system_row_div">
+        <div id="social_div">
+            <h1>
+                Email
+            </h1>
+            <a href="mailto: email">
+                <h4>
+                    carlsbolivar@gmail.com
+                </h4>
+            </a>
+        </div>
+        <div id="social_div">
+            <h1>
+                Instagram
+            </h1>
+            <a href="https://www.instagram.com/carl._.bolivar/">
+                <h4>
+                    carl._.bolivar
+                </h4>
+            </a>
+        </div>
+        <div id="social_div">
+            <h1>
+                LinkedIn
+            </h1>
+            <a href="https://www.linkedin.com/in/carl-bolivar-1474921b5/">
+                <h4>
+                    Carl Bolivar
+                </h4>
+            </a>
+        </div>
+    </div>
+</footer>
+{% endblock %}
