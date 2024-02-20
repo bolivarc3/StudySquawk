@@ -40,11 +40,11 @@ def hac_api_main(function,username,password):
         return {"error":"you didnt put the username and password of the hac user. make url like -> /<insert what you want(grades,attendance,etc)>/<insert username>/<insert password>/"}
     if session["HacStatus"] == False:
         driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Account/LogOn?ReturnUrl=%2fHomeAccess%2f")
-        # try:
-        #     wait = WebDriverWait(driver, 10).until(
-        #     EC.presence_of_element_located((By.ID, "Database")))
-        # finally:
-        #     print("not there")
+        try:
+            wait = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "Database")))
+        finally:
+            print("not there")
         dropdown = Select(driver.find_element(By.ID,'Database'))
         dropdown.select_by_visible_text("Bentonville School District");
         element = driver.find_element(By.XPATH, '//input[@id="LogOnDetails_UserName"]')
