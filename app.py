@@ -281,6 +281,7 @@ def index():
                 if db_password == "null":
                     session["attempted_password"] = password
                     flash("redirecting to the login")
+                    session["runninggethac"] = False
                     return redirect(url_for("login"))
                 #else, continue to authenticate password
             verify_password = check_password(password,db_password)
