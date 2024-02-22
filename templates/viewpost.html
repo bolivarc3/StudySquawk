@@ -3,8 +3,8 @@
 {% block title %}{{ postinfo["title"] }}{% endblock %}
 {% block head %}
 <head>
-    <link href="/static/mainstyles/viewpoststyles.css" rel="stylesheet">
-    <script type = "text/javascript" src= "/static/scripts/viewpostscript.js"></script>
+    <link href="{{ url_for('static', filename='/mainstyles/viewpoststyles.css') }}" rel="stylesheet">
+    <script type = "text/javascript"></script>
 </head>
 {% endblock %}
 {% block heading %}
@@ -51,11 +51,11 @@
     </div>
     <hr class="solid">
     {% for filesinfo in filesinfo %}
-        <link href="/static/userfiles/{{ postinfo[2] }}/{{ filesinfo[3] }}">
+        <link href="{{ url_for('static', filename='/userfiles/{{ postinfo[2] }}/{{ filesinfo[3] }}') }}">
         <div id = filesdiv>
-            <a href="/static/userfiles/{{ postinfo[2] }}/{{3}}" target="_blank">
+            <a href="{{ url_for('static', filename='/userfiles/{{ postinfo[2] }}/{{3}}') }}" target="_blank">
                 <div id = "fileviewdiv">
-                    <img src = "/static/images/file.png">
+                    <img src = "{{ url_for('static', filename='/images/file.png') }}">
                     <div>
                         {{ filesinfo[3] }}
                     </div>
@@ -121,7 +121,7 @@
                 <div id = "filesdiv">
                     <a href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/userfiles-replies/{{repliesinfo[1]}}/{{ repliesfilesinfo[3] }}">
                         <div id = "fileviewdiv">
-                            <img src = "/static/images/file.png">
+                            <img src = "{{ url_for('static', filename='/images/file.png') }}">
                             <div>
                                 {{ repliesfilesinfo["files"] }}
                             </div>

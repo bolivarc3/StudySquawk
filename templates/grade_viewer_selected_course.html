@@ -1,9 +1,9 @@
 {% extends "layout.html"%}
 {% block head %}
 <head>
-    <link href="/static/mainstyles/grade_viewer_selected_course.css" rel="stylesheet">
-    <link href="/static/mainstyles/coursemain.css">
-    <script type = "text/javascript" src = "/static/scripts/grade_viewer_class.js"></script>
+    <link href="{{ url_for('static', filename='/mainstyles/grade_viewer_selected_course.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='/mainstyles/coursemain.css') }}">
+    <script type = "text/javascript" src = "{{ url_for('static', filename='/scripts/grade_viewer_class.js') }}"></script>
     <script src='https://cdn.jsdelivr.net/npm/bignumber.js@9.1.0/bignumber.min.js'></script>
 
 </head>

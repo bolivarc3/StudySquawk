@@ -32,7 +32,7 @@ from bs4 import BeautifulSoup
 import platform
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from api import api
+from api import api,www
 # from api import api
 
 
@@ -59,6 +59,9 @@ app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False
+app.config['DEFAULT_SUBDOMAIN'] = 'www'
+
+# Define a function to set the subdomain based on the configuration
 Session(app)
 mail = Mail(app)
 socketio = SocketIO(app)
@@ -85,7 +88,7 @@ if ENV == 'dev':
     BUCKET_NAME='studyist-dev'
     DEBUG_STATUS=True
 else:
-    # app.config['SERVER_NAME'] = 'https://www.studysquawk.tech'
+    app.config['SERVER_NAME'] = 'https://studysquawk.tech'
     conn = psycopg2.connect(
         host=os.environ.get('RDS_HOSTNAME'),
         database=os.environ.get('RDS_DB_NAME'),
@@ -124,27 +127,25 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 from aws import upload, download_file, download_folder, delete_aws_files,delete_aws_files_post
 # Ensure responses aren't cached
-
 app.register_blueprint(api)
-
-@app.before_request
+@www.before_request
 def make_session_permanent():
     session.permanent = False
 
-@app.after_request
+@www.after_request
 def after_request(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
     return response
 
-@app.errorhandler(404)
+@www.errorhandler(404)
 def page_not_found(e):
     error = "Page not found, return to the bright side"
     url = "/homepage"
     return render_template('error.html', error = error, url = url), 404
 
-@app.before_request
+@www.before_request
 def default_login_required():
     login_valid = 'username' in session
     if request.endpoint and request.blueprint and request.blueprint == 'api':
@@ -174,7 +175,7 @@ def logout_user():
 #the intro homepage for the user
 #test1
 @public_endpoint
-@app.route("/", methods=["GET", "POST"])
+@www.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
     #Get password/confirmation information
@@ -221,7 +222,7 @@ def index():
             if count != 0:
                 error = "invalid email address"
                 flash('email already has been used')
-                return redirect(url_for('index'))
+                return redirect(url_for('www.index'))
 
             #checks if username is already in the system | cant be 2 of same username
             # userinfocursor.execute("SELECT username FROM users WHERE username = ?", (username, ));
@@ -272,7 +273,7 @@ def index():
                 if auth_try_on != None:
                     flash("Verify your account with your Email!")
                     send_mail_confirm(username,email)
-                    return redirect(url_for("index"))
+                    return redirect(url_for("www.index"))
                 else:
                     flash("Email has already been sent, check your email")
             #if an account with the same email has
@@ -282,7 +283,7 @@ def index():
                     session["attempted_password"] = password
                     flash("redirecting to the login")
                     session["runninggethac"] = False
-                    return redirect(url_for("login"))
+                    return redirect(url_for("ww.login"))
                 #else, continue to authenticate password
             verify_password = check_password(password,db_password)
             db.execute('SELECT username FROM "Users" WHERE email=%s',(email,));
@@ -316,7 +317,7 @@ def index():
             db_conn.commit()
             db.close()
             db_conn.close()
-            return redirect(url_for("studyist"))
+            return redirect(url_for("www.studyist"))
     else:
         db_info = connectdb()
         db = db_info[0]
@@ -336,14 +337,14 @@ def index():
     return render_template("intro.html")
 
 @public_endpoint
-@app.route('/confirm_email/<token>/<username>', methods=['GET','POST'])
+@www.route('/confirm_email/<token>/<username>', methods=['GET','POST'])
 def confirm_email(token,username):
     #checks to see if the token works, if it does, then it 
     try:
         email = s.loads(token, salt='email-confirm', max_age=3600)
     except SignatureExpired:
         flash("Token Has Expired! Try to Login again to try another Email Confirmation!")
-        return redirect(url_for('index'))
+        return redirect(url_for('www.index'))
     #updates the database so that it is known that is a verified account
     db_info = connectdb()
     db = db_info[0]
@@ -353,7 +354,7 @@ def confirm_email(token,username):
     db.close()
     db_conn.close()
     flash("Email Confirmed!")
-    return redirect(url_for('index'))
+    return redirect(url_for('www.index'))
 
 def send_mail_confirm(username,email):
     #grabs the token, and nessary info to make the email work, and sends
@@ -375,7 +376,7 @@ def send_mail_confirm(username,email):
         # print(e.message)
 
 @public_endpoint
-@app.route('/login')
+@www.route('/login')
 def login():
     session["hacattendancetimeupdated"] =''
     session["hacgradestimeupdated"] =''
@@ -394,7 +395,7 @@ def login():
     return redirect(request_uri)
 
 @public_endpoint
-@app.route("/login/callback")
+@www.route("/login/callback")
 def callback():
     session["hacattendancetimeupdated"] =''
     session["hacgradestimeupdated"] =''
@@ -449,7 +450,7 @@ def callback():
             db_conn.commit()
             db.close()
             db_conn.close()
-            return redirect(url_for("studyist"))
+            return redirect(url_for("www.studyist"))
     else:
         db.execute('SELECT username FROM "Users" WHERE email = %s', (users_email, ))
         users = db.fetchall()
@@ -467,10 +468,10 @@ def callback():
     db_conn.close()
     session["hacattendancetimeupdated"] =''
     session["hacgradestimeupdated"] =''
-    return redirect(url_for("studyist"))
+    return redirect(url_for("www.studyist"))
 
 
-@app.route("/homepage", methods=["GET", "POST"])
+@www.route("/homepage", methods=["GET", "POST"])
 def studyist():
     page_identifier = "homepage"
     courses = grabclasses()
@@ -480,7 +481,7 @@ def studyist():
         courseavailible = checkclass(course, courses)
         if courseavailible == False:
             flash('Class is not availible. Select Class from Options')
-            return redirect(url_for('studyist'))
+            return redirect(url_for('www.studyist'))
         #checks if the course requested is the same as one in the array
         return redirect(course)
     else:
@@ -497,7 +498,7 @@ def studyist():
         return render_template("homepage.html", page_identifier = page_identifier, course = course, courses = courses,postings = postings)
 
 
-@app.route('/<course>', methods=["GET", "POST"])
+@www.route('/<course>', methods=["GET", "POST"])
 def course(course):
     page_identifier = course
 
@@ -570,7 +571,7 @@ def course(course):
         db_conn.commit()
         db_conn.close()
         db.close()
-        return redirect(url_for('course', course = course))
+        return redirect(url_for('www.course', course = course))
     db_info = connectdb()
     db = db_info[0]
     db_conn = db_info[1]
@@ -579,14 +580,14 @@ def course(course):
     return render_template("coursemain.html", page_identifier=page_identifier, course = course, courses = courses, postings = postings)
 
 
-@app.route('/<course>/postcreation', methods=["GET", "POST"])
+@www.route('/<course>/postcreation', methods=["GET", "POST"])
 
 def post(course):
     page_identifier= course
     return render_template("post.html", course = course, page_identifier=page_identifier)
 
 
-@app.route('/<course>/post/<postid>', methods=["GET", "POST"])
+@www.route('/<course>/post/<postid>', methods=["GET", "POST"])
 def viewpost(course, postid):
     userid = grab_user_id(session["username"])
     page_identifier = course
@@ -647,7 +648,7 @@ def viewpost(course, postid):
             db.close()
             db_conn.close()
 
-        return redirect(url_for('viewpost', page_identifier = page_identifier, course = course, postid = postid))
+        return redirect(url_for('www.viewpost', page_identifier = page_identifier, course = course, postid = postid))
 
 
     #grab all of the courses
@@ -689,7 +690,7 @@ def viewpost(course, postid):
 
 
 
-@app.route('/resources/<route>', methods=["GET", "POST"])
+@www.route('/resources/<route>', methods=["GET", "POST"])
 def resources(route):
     #saves route created and checks if peson put in a correct course
     #route to the folder
@@ -934,12 +935,12 @@ def resources(route):
     return render_template("resources.html", access = access, usernames=usernames, BUCKET_NAME= BUCKET_NAME,aws_resource_list = aws_resource_list, currentfolderrouteurl = currentfolderrouteurl, page_identifier = page_identifier, course = course, foldersinfo = foldersinfo, materialsinfo = materialsinfo, route = route,)
 
 
-@app.route('/grade_viewer', methods=["GET","POST"])
+@www.route('/grade_viewer', methods=["GET","POST"])
 @login_hac_required
 def grade_viewer():
     session_key_list = list(session.keys())
     if "user_id_hac" not in session_key_list:
-        return redirect(url_for('grade_viewer_signup'))
+        return redirect(url_for('www.grade_viewer_signup'))
     #grab information for grades
     session["error"] = False
     if "error" in session.keys():
@@ -947,7 +948,7 @@ def grade_viewer():
         if error == True:
             session["error"] = False
             flash("Error Occured. Your username and password may be wrong!")
-            return redirect(url_for("grade_viewer_signup"))
+            return redirect(url_for("www.grade_viewer_signup"))
         #grabs data from dictionary
     if "hacgrades" in session.keys():
         grades_data = session["hacgrades"]
@@ -957,14 +958,14 @@ def grade_viewer():
         assignment_grades = grades_data['assignment_grades']
         iterate = [1,2,3,4,5]
     else:
-        return redirect("/grade_viewer_signup")
+        return redirect(url_for('www.grade_viewer_signup'))
     update_hac()
     course="homepage"
     page_identifier="grade_viewer"
 # for i in range()
     return render_template("grade_viewer.html", course=course, page_identifier=page_identifier, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades, iterate=iterate)
 
-@app.route('/grade_viewer_signup', methods=["GET","POST"])
+@www.route('/grade_viewer_signup', methods=["GET","POST"])
 def grade_viewer_signup():
     #if the request is post, grab the form elements and password and grab nessasary information for hac
     if request.method == "POST":
@@ -980,8 +981,7 @@ def grade_viewer_signup():
     session["password_hac"] = "NUll"
     return render_template("grade_viewer_signup.html")
 
-@app.route('/grade_viewer/<selectedcourse>', methods=["GET","POST"])
-
+@www.route('/grade_viewer/<selectedcourse>', methods=["GET","POST"])
 def grade_viewer_course(selectedcourse):
     username = session["username"]
     grade_viewer_username = session["user_id_hac"]
@@ -1004,14 +1004,14 @@ def grade_viewer_course(selectedcourse):
         return render_template("error.html", error = error, url = url)
     # for i in range()
 
-@app.route('/Attendance', methods=["GET","POST"])
+@www.route('/Attendance', methods=["GET","POST"])
 @login_hac_required
 def calendar():
     course = "homepage"
     page_identifier = "attendance"
     return render_template("attendance.html", course=course, page_identifier=page_identifier)
 
-@app.route('/announcements', methods=["GET","POST"])
+@www.route('/announcements', methods=["GET","POST"])
 @public_endpoint
 def announcements():
     html = requests.get("https://bentonvillek12.org/StudentAnnouncements/BHS").text
@@ -1019,14 +1019,14 @@ def announcements():
     html = soup.find('div', {'class':'container body-content'})
     return render_template("announcements.html",html=html)
 
-@app.route('/getcourses', methods=["GET", "POST"])
+@www.route('/getcourses', methods=["GET", "POST"])
 def getcoursesapi():
     #grab the course lists through Javascript
     courses = jsonify(grabclasses())
     return(courses)
 
 
-@app.route('/getcourseposts', methods=["GET", "POST"])
+@www.route('/getcourseposts', methods=["GET", "POST"])
 def getcourseposts():
     #grab the posts infomation of the specific class provided
     course = request.json
@@ -1054,7 +1054,7 @@ def getcourseposts():
     postings = json.dumps(postlist, indent=4, sort_keys=True, default=str)
     return(postings)
 
-@app.route('/getresources', methods=["GET", "POST"])
+@www.route('/getresources', methods=["GET", "POST"])
 def getresources():
     course = request.json
     #grab the materials
@@ -1069,7 +1069,7 @@ def getresources():
     resources = jsonify(materialsinfo)
     return(resources)
 
-@app.route('/getfolders', methods=["GET", "POST"])
+@www.route('/getfolders', methods=["GET", "POST"])
 def getfolders():
     db_info = connectdb()
     db = db_info[0]
@@ -1083,14 +1083,14 @@ def getfolders():
     folders = jsonify(foldersinfo)
     return(folders)
 
-@app.route('/gethacattendance', methods=['GET', 'POST'])
+@www.route('/gethacattendance', methods=['GET', 'POST'])
 def gethaclogin():
     if "hacattendance" not in session.keys():
         update_hac()
     attendance_data = session["hacattendance"]
     return jsonify(attendance_data)
 
-@app.route('/update_hac', methods=['GET', 'POST'])
+@www.route('/update_hac', methods=['GET', 'POST'])
 def update_hac_function():
     if "hacgrades" not in session.keys():
         flash('Enter in a Username and Password')
@@ -1099,13 +1099,13 @@ def update_hac_function():
     response = "good"
     return (response)
 
-@app.route('/grade_save_calculations', methods=['GET','POST'])
+@www.route('/grade_save_calculations', methods=['GET','POST'])
 def grade_save_calculations():
     grade_info_change = request.json
     response = "good"
     return (response)
 
-@app.route("/zip_download_files", methods=['POST'])
+@www.route("/zip_download_files", methods=['POST'])
 def get_zip():
     #grab the files to zip
     file_elements = request.json
@@ -1170,7 +1170,7 @@ def zipdir(dirPath=None, zipFilePath=None, includeDirInZip=True):
             outFile.writestr(zipInfo, "")
     outFile.close()
 
-@app.route("/zipit", methods=['POST'])
+@www.route("/zipit", methods=['POST'])
 def zipit():
     #create the zip file
     zip_number = str(request.json)
@@ -1186,7 +1186,7 @@ def zipit():
     return jsonify(0)
     
 
-@app.route("/folder_zip_download", methods=['POST'])
+@www.route("/folder_zip_download", methods=['POST'])
 def get_folder_zip():
     #grab the json with the folder_information on which folders to download
     folder_info = request.json
@@ -1229,7 +1229,7 @@ def get_folder_zip():
     return jsonify(zip_folder_number)
 
 
-@app.route("/deletion", methods=['POST'])
+@www.route("/deletion", methods=['POST'])
 def delete_files():
     files_info = request.json["ids"]
     username = session["username"]
@@ -1350,16 +1350,16 @@ def delete_files():
     return jsonify("done")
 
 
-@app.route("/meetings_intro", methods=['GET','POST'])
+@www.route("/meetings_intro", methods=['GET','POST'])
 def meetings_intro():
-    return redirect(url_for("join", display_name = session['username'], mute_audio = 1, mute_video = 1, room_id=1234))
+    return redirect(url_for("www.join", display_name = session['username'], mute_audio = 1, mute_video = 1, room_id=1234))
     #return render_template("meetingsintro.html")
 
 users_in_room = {}
 rooms_sid = {}
 names_sid = {}
 
-@app.route("/join", methods=["GET"])
+@www.route("/join", methods=["GET"])
 def join():
     display_name = request.args.get('display_name')
     mute_audio = request.args.get('mute_audio') # 1 or 0
@@ -1445,7 +1445,7 @@ if any(platform.win32_ver()):
     socketio.run(app, debug=True)
     socketio.run(app, debug=True)
 
-@app.route("/settings", methods=['GET','POST'])
+@www.route("/settings", methods=['GET','POST'])
 def settings():
     if request.method == "POST":
         form = request.form.get("form-name")
@@ -1471,23 +1471,23 @@ def settings():
     return render_template("settings.html", posts = posts, username=username)
 
 @public_endpoint
-@app.route("/privacy_policy", methods=['GET','POST'])
+@www.route("/privacy_policy", methods=['GET','POST'])
 def privacy_policy():
     return render_template("privacy_policy.html")
 
 @public_endpoint
-@app.route("/terms_and_conditions", methods=['GET','POST'])
+@www.route("/terms_and_conditions", methods=['GET','POST'])
 def terms_and_condtitions():
     return render_template("terms_of_service.html")
 #Mostly Accessed by Javascript
-@app.route("/grab_course_grades", methods=["POST"])
+@www.route("/grab_course_grades", methods=["POST"])
 def grab_course_grades():
     course = request.json
     grades_data = session["hacgrades"]
     assignment_grades = grades_data['assignment_grades'][course]
     return jsonify(assignment_grades)
 
-@app.route("/delete_post",methods=["POST"])
+@www.route("/delete_post",methods=["POST"])
 def delete_post():
     db_info = connectdb()
     db = db_info[0]
@@ -1536,5 +1536,6 @@ def delete_post():
     db_conn.close()
     return jsonify("done")
 
+app.register_blueprint(www)
 if __name__ == "__main__":
     app.run(debug=True)

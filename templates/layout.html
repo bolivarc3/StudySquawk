@@ -3,15 +3,15 @@
 <head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"></script>
-	<script type = "text/javascript" src = "/static/scripts/script.js"></script>
+	<script type = "text/javascript" src = "{{ url_for('static', filename='/scripts/script.js') }}"></script>
 	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css"rel="stylesheet" type="text/css" />
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	<link href="/static/images/logobird.png" rel="icon">
-	<link href="/static/images/logo.jpeg">
-	<link href="/static/mainstyles/styles.css" rel="stylesheet">
-	<link HREF="/static/minorstyles/sidebar.css" rel="stylesheet">
-	<link rel="stylesheet" href = "/static/minorstyles/autoComplete.css">
-	<script type = "text/javascript" src="/static/scripts/sidebar.js" ></script>
+	<link href="{{ url_for('static', filename='/images/logobird.png') }}" rel="icon">
+	<link href="{{ url_for('static', filename='/images/logo.jpeg') }}">
+	<link href="{{ url_for('static', filename='/mainstyles/styles.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='/minorstyles/sidebar.css') }}" rel="stylesheet">
+	<link rel="stylesheet" href = "{{ url_for('static', filename='/minorstyles/autoComplete.css') }}">
+	<script type = "text/javascript" src="{{ url_for('static', filename='/scripts/sidebar.js') }}" ></script>
 	<script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.6/dist/autoComplete.min.js"></script>
 	<meta name="viewport" content="width=device-width" />
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-PQZ00QDJXE"></script>
@@ -49,7 +49,7 @@
 			<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="menu-icon"><g><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></g></svg>
 		</button>
 		<div class="top-sidebar show-mobile">
-			<a href="#" class="channel-logo"><img src="/static/images/logobird.png" alt="Channel Logo"></a>
+			<a href="#" class="channel-logo"><img src="{{ url_for('static', filename='/images/logobird.png') }}" alt="Channel Logo"></a>
 		</div>
 		<!-- searchbox -->
 		<div id = "searchbar-box">
@@ -119,7 +119,7 @@
 		<aside class="sidebar show-desktop" id="sidebar" data-sidebar>
 			<div class="middle-sidebar">
 				<div class="top-sidebar">
-					<a href="/homepage" class="channel-logo"><img src="/static/images/logobird.png" alt="Channel Logo"></a>
+					<a href="/homepage" class="channel-logo"><img src="{{ url_for('static', filename='/images/logobird.png') }}" alt="Channel Logo"></a>
 					<div class="hidden-sidebar your-channel">{{username}}</div>
 				</div>
 				<ul class="sidebar-list">

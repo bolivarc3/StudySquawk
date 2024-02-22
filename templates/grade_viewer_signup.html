@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 {% block head %}
 <head>
-    <link href="/static/mainstyles/poststyles.css" rel="stylesheet">
-    <link href="/static/mainstyles/loader.css" rel="stylesheet">
-    <script type = "text/javascript" src = "/static/scripts/loader.js"></script>
+    <link href="{{ url_for('static', filename='/mainstyles/poststyles.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='/mainstyles/loader.css') }}" rel="stylesheet">
+    <script type = "text/javascript" src = "{{ url_for('static', filename='/scripts/loader.js') }}"></script>
 </head>
 {% endblock %}
 {% block body %}

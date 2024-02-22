@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block head %}
-    <script type = "text/javascript" src="/static/scripts/attendance.js" ></script>
-    <link href="/static/mainstyles/attendance.css" rel="stylesheet">
+    <script type = "text/javascript" src="{{ url_for('static', filename='/scripts/attendance.js') }}" ></script>
+    <link href="{{ url_for('static', filename='/mainstyles/attendance.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block title %}My Calendar{% endblock %}

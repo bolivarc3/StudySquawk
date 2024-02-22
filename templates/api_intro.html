@@ -1,6 +1,6 @@
 {% extends "homepage_layout.html" %}
 {% block header %}
-<link rel="png" href="/static/mainstyles/Intropage_gradients/1.png">
+<link rel="png" href="{{ url_for('static', filename='/mainstyles/Intropage_gradients/1.png', _external=True, _scheme='http', _subdomain='api') }}">
 <link rel="icon" href="{{ url_for('static', filename='/images/nerdpic.png', _external=True, _scheme='http', _subdomain='api') }}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='mainstyles/introstyles.css', _external=True, _scheme='http', _subdomain='api') }}">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">

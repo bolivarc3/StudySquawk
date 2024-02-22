@@ -2,8 +2,8 @@
 {% block title %}Post Something!{% endblock %}
 {% block head %}
 <head>
-    <link href="/static/mainstyles/poststyles.css" rel="stylesheet">
-    <script type = "text/javascript" src = "/static/scripts/postscript.js"></script>
+    <link href="{{ url_for('static', filename='/mainstyles/poststyles.css') }}" rel="stylesheet">
+    <script type = "text/javascript" src = "{{ url_for('static', filename='/scripts/postscript.js') }}"></script>
 </head>
 {% endblock %}
 {% block heading %}
