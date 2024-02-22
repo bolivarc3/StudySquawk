@@ -61,11 +61,11 @@ app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False
 app.config['DEFAULT_SUBDOMAIN'] = 'www'
-app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Define a function to set the subdomain based on the configuration
 Session(app)
 CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 mail = Mail(app)
 socketio = SocketIO(app)
 app.config.from_pyfile('config.cfg')
