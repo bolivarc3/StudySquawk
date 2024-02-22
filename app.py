@@ -33,6 +33,7 @@ import platform
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from api import api,www
+from flask_cors import CORS
 # from api import api
 
 
@@ -63,6 +64,7 @@ app.config['DEFAULT_SUBDOMAIN'] = 'www'
 
 # Define a function to set the subdomain based on the configuration
 Session(app)
+CORS(app)
 mail = Mail(app)
 socketio = SocketIO(app)
 app.config.from_pyfile('config.cfg')
