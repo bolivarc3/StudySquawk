@@ -1541,6 +1541,13 @@ def delete_post():
     db_conn.close()
     return jsonify("done")
 
+
 app.register_blueprint(www)
+# Add www routes to the main app with modified endpoint names
+for rule in app.url_map.iter_rules():
+    if rule.endpoint.startswith('www.'):
+        endpoint_name = rule.endpoint.replace('.', '_')
+        app.add_url_rule(rule.rule, endpoint=endpoint_name, view_func=app.view_functions[rule.endpoint])
+
 if __name__ == "__main__":
     app.run(debug=True)
