@@ -88,7 +88,7 @@ if ENV == 'dev':
     BUCKET_NAME='studyist-dev'
     DEBUG_STATUS=True
 else:
-    app.config['SERVER_NAME'] = 'https://studysquawk.tech'
+    app.config['SERVER_NAME'] = 'studysquawk.tech'
     conn = psycopg2.connect(
         host=os.environ.get('RDS_HOSTNAME'),
         database=os.environ.get('RDS_DB_NAME'),
