@@ -135,7 +135,6 @@ def make_session_permanent():
 
 @app.after_request
 def after_request(response):
-    response = make_response()
     response.headers.add("Access-Control-Allow-Methods", "GET, POST")
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Expires"] = 0
