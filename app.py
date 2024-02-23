@@ -32,7 +32,7 @@ from bs4 import BeautifulSoup
 import platform
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from api import api
+from api import api,www
 from flask_cors import CORS
 # from api import api
 
@@ -150,6 +150,8 @@ def page_not_found(e):
 def default_login_required():
     login_valid = 'username' in session
     if request.endpoint and request.blueprint and request.blueprint == 'api':
+        return
+    if request.endpoint and request.blueprint and request.blueprint == 'www':
         return
     if (request.endpoint and 
         'static' not in request.endpoint and 
@@ -1537,6 +1539,8 @@ def delete_post():
     db.close()
     db_conn.close()
     return jsonify("done")
+
+app.register_blueprint(www)
 
 if __name__ == "__main__":
     app.run(debug=True)
