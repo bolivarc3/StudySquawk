@@ -1540,6 +1540,9 @@ def delete_post():
     db_conn.close()
     return jsonify("done")
 
+# Automatically add all routes from the app to the www Blueprint
+for rule in current_app.url_map.iter_rules():
+    www.add_url_rule(rule.rule, endpoint=rule.endpoint, view_func=current_app.view_functions[rule.endpoint])
 app.register_blueprint(www)
 
 if __name__ == "__main__":
