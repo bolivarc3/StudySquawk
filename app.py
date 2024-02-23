@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify,send_file,Blueprint
+from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify,send_file,Blueprint,current_app
 from flask_session import Session
 from flask_socketio import SocketIO, emit, join_room
 from helpers import grabclasses, checkclass, check, connectdb, time_difference, login_hac_required, update_hac, hac_executions,get_hashed_password,check_password,grab_user_id
@@ -1542,7 +1542,11 @@ def delete_post():
 
 # Automatically add all routes from the app to the www Blueprint
 for rule in current_app.url_map.iter_rules():
-    www.add_url_rule(rule.rule, endpoint=rule.endpoint, view_func=current_app.view_functions[rule.endpoint])
+    www_bp.add_url_rule(
+        rule.rule,
+        endpoint=rule.endpoint,
+        view_func=current_app.view_functions[rule.endpoint]
+    )
 app.register_blueprint(www)
 
 if __name__ == "__main__":
