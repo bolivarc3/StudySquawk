@@ -33,6 +33,7 @@ import platform
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from api import api
+from flask_cors import CORS
 # from api import api
 
 
