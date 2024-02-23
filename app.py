@@ -1542,7 +1542,7 @@ def delete_post():
 
 # Automatically add all routes from the app to the www Blueprint
 for rule in current_app.url_map.iter_rules():
-    www_bp.add_url_rule(
+    www.add_url_rule(
         rule.rule,
         endpoint=rule.endpoint,
         view_func=current_app.view_functions[rule.endpoint]
