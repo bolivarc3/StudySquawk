@@ -1546,13 +1546,18 @@ def sanitize_endpoint(endpoint):
     return endpoint.replace('.', '_')
 
 # Iterate over rules and add them to the Blueprint
+allowed_subdomain = 'www'
+
+# Iterate over rules and add them to the Blueprint
 for rule in current_app.url_map.iter_rules():
-    endpoint = sanitize_endpoint(rule.endpoint)
-    www.add_url_rule(
-        rule.rule,
-        endpoint=endpoint,
-        view_func=current_app.view_functions[rule.endpoint]
-    )
+    # Check if the rule belongs to the allowed subdomain
+    if rule.subdomain == allowed_subdomain:
+        endpoint = sanitize_endpoint(rule.endpoint)
+        www.add_url_rule(
+            rule.rule,
+            endpoint=endpoint,
+            view_func=current_app.view_functions[rule.endpoint]
+        )
 app.register_blueprint(www)
 
 if __name__ == "__main__":
