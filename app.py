@@ -61,6 +61,7 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False
 Session(app)
 mail = Mail(app)
+CORS(app, methods=['GET', 'POST'])
 socketio = SocketIO(app)
 app.config.from_pyfile('config.cfg')
 s = URLSafeTimedSerializer('Thisisasecret!')
@@ -133,6 +134,8 @@ def make_session_permanent():
 
 @app.after_request
 def after_request(response):
+    response = make_response()
+    response.headers.add("Access-Control-Allow-Methods", "GET, POST")
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
