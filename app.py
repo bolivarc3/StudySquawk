@@ -1541,10 +1541,16 @@ def delete_post():
     return jsonify("done")
 
 # Automatically add all routes from the app to the www Blueprint
+def sanitize_endpoint(endpoint):
+    # Replace dots with underscores in the endpoint
+    return endpoint.replace('.', '_')
+
+# Iterate over rules and add them to the Blueprint
 for rule in current_app.url_map.iter_rules():
+    endpoint = sanitize_endpoint(rule.endpoint)
     www.add_url_rule(
         rule.rule,
-        endpoint=rule.endpoint,
+        endpoint=endpoint,
         view_func=current_app.view_functions[rule.endpoint]
     )
 app.register_blueprint(www)
