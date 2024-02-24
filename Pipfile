@@ -33,6 +33,7 @@ gevent-websocket = "*"
 eventlet = "*"
 selenium = "*"
 flask-cors = "*"
+flask-login = "*"
 
 [dev-packages]
 

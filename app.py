@@ -1,5 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify,send_file,Blueprint,current_app
 from flask_session import Session
+from flask_login import current_user
 from flask_socketio import SocketIO, emit, join_room
 from helpers import grabclasses, checkclass, check, connectdb, time_difference, login_hac_required, update_hac, hac_executions,get_hashed_password,check_password,grab_user_id
 from werkzeug.utils import secure_filename
@@ -160,16 +161,16 @@ def page_not_found(e):
 @app.before_request
 def default_login_required():
     login_valid = 'username' in session
-    if request.endpoint and request.blueprint and request.blueprint == 'api':
-        return
-    if request.endpoint and request.blueprint and request.blueprint == 'www':
+    print(login_valid)
+    if request.blueprint in {'api', 'www'}:
+        print("yoooo?")
         return
     if (request.endpoint and 
         'static' not in request.endpoint and 
         not login_valid and 
         not getattr(app.view_functions[request.endpoint], 'is_public', False) ) :
         flash("Login to Continue with Your Session")
-        return redirect(url_for("index"))
+        return redirect(url_for('www.index') if request.blueprint == 'www' else 'index')
 
 def public_endpoint(function):
     function.is_public = True
@@ -236,7 +237,7 @@ def index():
             if count != 0:
                 error = "invalid email address"
                 flash('email already has been used')
-                return redirect(url_for('index'))
+                return redirect(url_for('www.index') if request.blueprint == 'www' else 'index')
 
             #checks if username is already in the system | cant be 2 of same username
             # userinfocursor.execute("SELECT username FROM users WHERE username = ?", (username, ));
@@ -248,7 +249,7 @@ def index():
             if count != 0:
                 error = "invalid email address"
                 flash("username already has been used")
-                return redirect(url_for('index'))
+                return redirect(url_for('www.index') if request.blueprint == 'www' else 'index')
             send_mail_confirm(username,email)
             password = get_hashed_password(password)
             null = "null"
@@ -257,7 +258,7 @@ def index():
             db.close()
             db_conn.close()
             flash("Verify your email! An Email Has been sent to you!")
-            return redirect("/")
+            return redirect(url_for('www.index') if request.blueprint == 'www' else 'index')
 
         if form == "loginform":
             db_info = connectdb()
@@ -287,7 +288,7 @@ def index():
                 if auth_try_on != None:
                     flash("Verify your account with your Email!")
                     send_mail_confirm(username,email)
-                    return redirect(url_for("index"))
+                    return redirect(url_for('www.index') if request.blueprint == 'www' else 'index')
                 else:
                     flash("Email has already been sent, check your email")
             #if an account with the same email has
@@ -297,7 +298,7 @@ def index():
                     session["attempted_password"] = password
                     flash("redirecting to the login")
                     session["runninggethac"] = False
-                    return redirect(url_for("login"))
+                    return redirect(url_for('www.login') if request.blueprint == 'www' else 'login')
                 #else, continue to authenticate password
             verify_password = check_password(password,db_password)
             db.execute('SELECT username FROM "Users" WHERE email=%s',(email,));
@@ -331,7 +332,7 @@ def index():
             db_conn.commit()
             db.close()
             db_conn.close()
-            return redirect(url_for("studyist"))
+            return redirect(url_for('www.studyist') if request.blueprint == 'www' else 'studyist')
     else:
         db_info = connectdb()
         db = db_info[0]
@@ -358,7 +359,7 @@ def confirm_email(token,username):
         email = s.loads(token, salt='email-confirm', max_age=3600)
     except SignatureExpired:
         flash("Token Has Expired! Try to Login again to try another Email Confirmation!")
-        return redirect(url_for('index'))
+        return redirect(url_for('www.index') if request.blueprint == 'www' else 'index')
     #updates the database so that it is known that is a verified account
     db_info = connectdb()
     db = db_info[0]
@@ -368,7 +369,7 @@ def confirm_email(token,username):
     db.close()
     db_conn.close()
     flash("Email Confirmed!")
-    return redirect(url_for('index'))
+    return redirect(url_for('www.index') if request.blueprint == 'www' else 'index')
 
 def send_mail_confirm(username,email):
     #grabs the token, and nessary info to make the email work, and sends
@@ -464,7 +465,7 @@ def callback():
             db_conn.commit()
             db.close()
             db_conn.close()
-            return redirect(url_for("studyist"))
+            redirect(url_for('www.studyist') if request.blueprint == 'www' else 'studyist')
     else:
         db.execute('SELECT username FROM "Users" WHERE email = %s', (users_email, ))
         users = db.fetchall()
@@ -482,7 +483,7 @@ def callback():
     db_conn.close()
     session["hacattendancetimeupdated"] =''
     session["hacgradestimeupdated"] =''
-    return redirect(url_for("studyist"))
+    redirect(url_for('www.studyist') if request.blueprint == 'www' else 'studyist')
 
 
 @app.route("/homepage", methods=["GET", "POST"])
@@ -495,9 +496,9 @@ def studyist():
         courseavailible = checkclass(course, courses)
         if courseavailible == False:
             flash('Class is not availible. Select Class from Options')
-            return redirect(url_for('studyist'))
+            return redirect(url_for('www.studyist') if request.blueprint == 'www' else 'studyist')
         #checks if the course requested is the same as one in the array
-        return redirect(course)
+        return redirect(url_for('www.course') if request.blueprint == 'www' else 'course')
     else:
         db_info = connectdb()
         db = db_info[0]
@@ -585,7 +586,7 @@ def course(course):
         db_conn.commit()
         db_conn.close()
         db.close()
-        return redirect(url_for('course', course = course))
+        return redirect(url_for('www.course', course = course) if request.blueprint == 'www' else url_for('index', course = course))
     db_info = connectdb()
     db = db_info[0]
     db_conn = db_info[1]
@@ -661,8 +662,7 @@ def viewpost(course, postid):
                         db_conn.commit()
             db.close()
             db_conn.close()
-
-        return redirect(url_for('viewpost', page_identifier = page_identifier, course = course, postid = postid))
+        return redirect(url_for('www.viewpost', page_identifier = page_identifier, course = course, postid = postid) if request.blueprint == 'www' else url_for('viewpost', page_identifier = page_identifier, course = course, postid = postid))
 
 
     #grab all of the courses
@@ -954,7 +954,7 @@ def resources(route):
 def grade_viewer():
     session_key_list = list(session.keys())
     if "user_id_hac" not in session_key_list:
-        return redirect(url_for('grade_viewer_signup'))
+        return redirect(url_for('www.grade_viewer_signup') if request.blueprint == 'www' else 'grade_viewer_signup')
     #grab information for grades
     session["error"] = False
     if "error" in session.keys():
@@ -962,7 +962,7 @@ def grade_viewer():
         if error == True:
             session["error"] = False
             flash("Error Occured. Your username and password may be wrong!")
-            return redirect(url_for("grade_viewer_signup"))
+            return redirect(url_for('www.grade_viewer_signup') if request.blueprint == 'www' else 'grade_viewer_signup')
         #grabs data from dictionary
     if "hacgrades" in session.keys():
         grades_data = session["hacgrades"]
@@ -972,7 +972,7 @@ def grade_viewer():
         assignment_grades = grades_data['assignment_grades']
         iterate = [1,2,3,4,5]
     else:
-        return redirect("/grade_viewer_signup")
+        return redirect(url_for('www.grade_viewer_signup') if request.blueprint == 'www' else 'grade_viewer_signup')
     update_hac()
     course="homepage"
     page_identifier="grade_viewer"
@@ -989,7 +989,7 @@ def grade_viewer_signup():
         session["password_hac"] = gradepassword
         session["error"] = False
         update_hac()
-        return redirect('/grade_viewer')
+        return redirect(url_for('www.grade_viewer') if request.blueprint == 'www' else 'grade_viewer')
     #else, load the page where these peices of info must be inputted
     session["user_id_hac"] = "NULL"
     session["password_hac"] = "NUll"
@@ -1109,7 +1109,7 @@ def gethaclogin():
 def update_hac_function():
     if "hacgrades" not in session.keys():
         flash('Enter in a Username and Password')
-        return redirect("/grade_viewer_signup")
+        return redirect(url_for('www.grade_viewer_signup') if request.blueprint == 'www' else 'grade_viewer_signup')
     hac_executions("both")
     response = "good"
     return (response)
@@ -1367,7 +1367,7 @@ def delete_files():
 
 @app.route("/meetings_intro", methods=['GET','POST'])
 def meetings_intro():
-    return redirect(url_for("join", display_name = session['username'], mute_audio = 1, mute_video = 1, room_id=1234))
+    return redirect(url_for('www.join', display_name = session['username'], mute_audio = 1, mute_video = 1, room_id=1234) if request.blueprint == 'www' else url_for('join', display_name = session['username'], mute_audio = 1, mute_video = 1, room_id=1234))
     #return render_template("meetingsintro.html")
 
 users_in_room = {}

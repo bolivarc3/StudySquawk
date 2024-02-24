@@ -160,7 +160,7 @@
                     </div>
                 </button>
             </a>
-            <form id = "signupform" action = "/" method ="POST">
+            <form id = "signupform" action = "{{ url_for('www.index', _external=True, _scheme=scheme) }}" method ="POST">
                 <input type="hidden" name="form-name" value="signupform">
                 <div class="form-element">
                     <input autocapitalize = "off" autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">
@@ -211,7 +211,7 @@
                     </div>
                 </button>
             </a>
-            <form id = loginform action="/" method="POST">
+            <form id = loginform action="{{ url_for('www.index') }}" method="POST">
             <input type="hidden" name="form-name" value="loginform">
             <div class="form-element">
                 <input autocapitalize = "off" autocomplete="off" autofocus class="form-control" name="email" placeholder=" Email" type="email">
