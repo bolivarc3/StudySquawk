@@ -131,9 +131,11 @@ from aws import upload, download_file, download_folder, delete_aws_files,delete_
 def inject_scheme():
     # Check if the request is using HTTPS
     is_https = request.is_secure or request.headers.get('X-Forwarded-Proto', 'http') == 'https'
-    
-    # Determine the scheme for URL generation
-    scheme = 'https' if is_https else 'http'
+    if ENV == 'prod':
+        # Determine the scheme for URL generation
+        scheme = 'https' 
+    else:
+        scheme = 'http'
     
     # Return a dictionary with the 'scheme' variable
     return {'scheme': scheme}
