@@ -130,7 +130,6 @@ from aws import upload, download_file, download_folder, delete_aws_files,delete_
 @app.context_processor
 def inject_scheme():
     # Check if the request is using HTTPS
-    is_https = request.is_secure or request.headers.get('X-Forwarded-Proto', 'http') == 'https'
     if ENV == 'prod':
         # Determine the scheme for URL generation
         scheme = 'https' 
