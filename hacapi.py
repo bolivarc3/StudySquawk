@@ -20,8 +20,9 @@ from app import session
 
 ENV = os.environ.get('APPLICATION_ENV')
 if ENV == 'dev':
-    options = webdriver.ChromeOptions()
-    driver = webdriver.Chrome(options=options)
+    # options = webdriver.ChromeOptions()
+    # driver = webdriver.Chrome(options=options)
+    pass
 
 if ENV == 'prod':
     chrome_options = webdriver.ChromeOptions()

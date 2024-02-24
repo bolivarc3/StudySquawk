@@ -127,7 +127,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 from aws import upload, download_file, download_folder, delete_aws_files,delete_aws_files_post
 # Ensure responses aren't cached
 
-app.register_blueprint(api)
 
 @app.before_request
 def make_session_permanent():
@@ -1541,24 +1540,25 @@ def delete_post():
     return jsonify("done")
 
 # Automatically add all routes from the app to the www Blueprint
-def sanitize_endpoint(endpoint):
-    # Replace dots with underscores in the endpoint
-    return endpoint.replace('.', '_')
 
-# Iterate over rules and add them to the Blueprint
-allowed_subdomain = 'www'
+# Dictionary to store the original endpoints
+original_endpoints = {}
 
-# Iterate over rules and add them to the Blueprint
-for rule in current_app.url_map.iter_rules():
-    # Check if the rule belongs to the allowed subdomain
-    if rule.subdomain == allowed_subdomain:
-        endpoint = sanitize_endpoint(rule.endpoint)
-        www.add_url_rule(
-            rule.rule,
-            endpoint=endpoint,
-            view_func=current_app.view_functions[rule.endpoint]
-        )
+# Iterate through the existing routes and add equivalent routes to the www blueprint
+for rule in app.url_map.iter_rules():
+    www_rule = rule.rule
+    endpoint_name = rule.endpoint.replace('.', '_')  # Replace dots with underscores
+    www.add_url_rule(www_rule, endpoint=endpoint_name, view_func=app.view_functions[rule.endpoint])
+    original_endpoints[endpoint_name] = rule.endpoint
+
+# Redirect all non-www requests to www
+# @app.before_request
+# def redirect_non_www():
+#     if "www." not in request.url and request.endpoint != 'static':
+#         url = request.url.replace("//", "//www.", 1)
+#         return redirect(url, code=301)
 app.register_blueprint(www)
+app.register_blueprint(api)
 
 if __name__ == "__main__":
     app.run(debug=True)
