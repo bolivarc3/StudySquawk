@@ -3,7 +3,7 @@
 {% block title %}{{ postinfo["title"] }}{% endblock %}
 {% block head %}
 <head>
-    <link href="{{ url_for('static', filename='/mainstyles/viewpoststyles.css', _external=True, _scheme='scheme') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='/mainstyles/viewpoststyles.css', _external=True, _scheme=scheme) }}" rel="stylesheet">
     <script type = "text/javascript"></script>
 </head>
 {% endblock %}
@@ -51,11 +51,11 @@
     </div>
     <hr class="solid">
     {% for filesinfo in filesinfo %}
-        <link href="{{ url_for('static', filename='/userfiles/{{ postinfo[2] }}/{{ filesinfo[3] }}', _external=True, _scheme='scheme') }}">
+        <link href="{{ url_for('static', filename='/userfiles/{{ postinfo[2] }}/{{ filesinfo[3] }}', _external=True, _scheme=scheme) }}">
         <div id = filesdiv>
-            <a href="{{ url_for('static', filename='/userfiles/{{ postinfo[2] }}/{{3}}', _external=True, _scheme='scheme') }}" target="_blank">
+            <a href="{{ url_for('static', filename='/userfiles/{{ postinfo[2] }}/{{3}}', _external=True, _scheme=scheme) }}" target="_blank">
                 <div id = "fileviewdiv">
-                    <img src = "{{ url_for('static', filename='/images/file.png', _external=True, _scheme='scheme') }}">
+                    <img src = "{{ url_for('static', filename='/images/file.png', _external=True, _scheme=scheme) }}">
                     <div>
                         {{ filesinfo[3] }}
                     </div>
@@ -121,7 +121,7 @@
                 <div id = "filesdiv">
                     <a href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/userfiles-replies/{{repliesinfo[1]}}/{{ repliesfilesinfo[3] }}">
                         <div id = "fileviewdiv">
-                            <img src = "{{ url_for('static', filename='/images/file.png', _external=True, _scheme='scheme') }}">
+                            <img src = "{{ url_for('static', filename='/images/file.png', _external=True, _scheme=scheme) }}">
                             <div>
                                 {{ repliesfilesinfo["files"] }}
                             </div>

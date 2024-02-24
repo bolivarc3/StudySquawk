@@ -3,8 +3,8 @@
     <script type="text/javascript" src="[path to paramquery]/jsZip-2.5.0/jszip.min.js"></script>
 
     <script src="https://kit.fontawesome.com/dc046f3b4c.js" crossorigin="anonymous"></script>
-    <script type = "text/javascript" src = "{{ url_for('static', filename='/scripts/resourcesscript.js', _external=True, _scheme='scheme') }}"></script>
-    <link href="{{ url_for('static', filename='/mainstyles/resources.css', _external=True, _scheme='scheme') }}" rel="stylesheet">
+    <script type = "text/javascript" src = "{{ url_for('static', filename='/scripts/resourcesscript.js', _external=True, _scheme=scheme) }}"></script>
+    <link href="{{ url_for('static', filename='/mainstyles/resources.css', _external=True, _scheme=scheme) }}" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip-utils/0.1.0/jszip-utils.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
@@ -224,7 +224,7 @@ https://cdn.jsdelivr.net/npm/streamsaver@2.0.6/StreamSaver.min.js
                     </h2>
                     <br>
                     <br>
-                    <a href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/{{aws_resource_list[3]}}" target="_blank"><img onerror="this.src= "{{ url_for('static', filename='/images/file.png', _external=True, _scheme='scheme') }}" src = "https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/{{aws_resource_list[3]}}"></a>
+                    <a href="https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/{{aws_resource_list[3]}}" target="_blank"><img onerror="this.src= "{{ url_for('static', filename='/images/file.png', _external=True, _scheme=scheme) }}" src = "https://{{BUCKET_NAME}}.s3.us-east-2.amazonaws.com/{{aws_resource_list[3]}}"></a>
                 </div>
             </div>
         </div>
