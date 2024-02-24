@@ -127,6 +127,17 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 from aws import upload, download_file, download_folder, delete_aws_files,delete_aws_files_post
 # Ensure responses aren't cached
 
+@app.context_processor
+def inject_scheme():
+    # Check if the request is using HTTPS
+    is_https = request.is_secure or request.headers.get('X-Forwarded-Proto', 'http') == 'https'
+    
+    # Determine the scheme for URL generation
+    scheme = 'https' if is_https else 'http'
+    
+    # Return a dictionary with the 'scheme' variable
+    return {'scheme': scheme}
+
 
 @app.before_request
 def make_session_permanent():
