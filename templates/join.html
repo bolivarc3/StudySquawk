@@ -4,7 +4,7 @@
 {% block head %}
 <head>
     <!-- icon -->
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico', _external=True, _scheme='{{scheme}}') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico', _external=True, _scheme=scheme) }}">
 
     <!-- socketio -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
@@ -29,7 +29,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!-- custom css -->
-    <link rel="stylesheet" href="{{url_for('static', filename='/minorstyles/custom.css', _external=True, _scheme='{{scheme}}')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='/minorstyles/custom.css', _external=True, _scheme=scheme)}}">
 
 
     <script type="text/javascript">
@@ -50,9 +50,9 @@
     <div id="video_grid" class="video-grid"></div>
     <video id="local_vid" autoplay muted></video>
 
-    <script src="{{url_for('static', filename='/scripts/video-manager.js', _external=True, _scheme='{{scheme}}')}}"></script>
-    <script src="{{url_for('static', filename='/scripts/chatroom_ui.js', _external=True, _scheme='{{scheme}}')}}"></script>
-    <script src="{{url_for('static', filename='/scripts/chatroom_networking.js', _external=True, _scheme='{{scheme}}')}}"></script>
+    <script src="{{url_for('static', filename='/scripts/video-manager.js', _external=True, _scheme=scheme)}}"></script>
+    <script src="{{url_for('static', filename='/scripts/chatroom_ui.js', _external=True, _scheme=scheme)}}"></script>
+    <script src="{{url_for('static', filename='/scripts/chatroom_networking.js', _external=True, _scheme=scheme)}}"></script>
 </body>
 {% endblock %}
 </html>

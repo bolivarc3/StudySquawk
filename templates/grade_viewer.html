@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block head %}
 <head>
-    <link href="{{ url_for('static', filename='/mainstyles/grade_viewer.css', _external=True, _scheme='{{scheme}}') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='/mainstyles/grade_viewer.css', _external=True, _scheme=scheme) }}" rel="stylesheet">
 </head>
 {% endblock %}
 

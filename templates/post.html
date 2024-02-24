@@ -2,8 +2,8 @@
 {% block title %}Post Something!{% endblock %}
 {% block head %}
 <head>
-    <link href="{{ url_for('static', filename='/mainstyles/poststyles.css', _external=True, _scheme='scheme') }}" rel="stylesheet">
-    <script type = "text/javascript" src = "{{ url_for('static', filename='/scripts/postscript.js', _external=True, _scheme='scheme') }}"></script>
+    <link href="{{ url_for('static', filename='/mainstyles/poststyles.css', _external=True, _scheme=scheme) }}" rel="stylesheet">
+    <script type = "text/javascript" src = "{{ url_for('static', filename='/scripts/postscript.js', _external=True, _scheme=scheme) }}"></script>
 </head>
 {% endblock %}
 {% block heading %}

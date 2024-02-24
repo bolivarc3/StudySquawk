@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block head %}
-    <script type = "text/javascript" src="{{ url_for('static', filename='/scripts/attendance.js', _external=True, _scheme='{{scheme}}') }}" ></script>
-    <link href="{{ url_for('static', filename='/mainstyles/attendance.css', _external=True, _scheme='{{scheme}}') }}" rel="stylesheet">
+    <script type = "text/javascript" src="{{ url_for('static', filename='/scripts/attendance.js', _external=True, _scheme=scheme) }}" ></script>
+    <link href="{{ url_for('static', filename='/mainstyles/attendance.css', _external=True, _scheme=scheme) }}" rel="stylesheet">
 {% endblock %}
 
 {% block title %}My Calendar{% endblock %}
