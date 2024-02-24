@@ -1548,15 +1548,12 @@ original_endpoints = {}
 for rule in app.url_map.iter_rules():
     www_rule = rule.rule
     endpoint_name = rule.endpoint.replace('.', '_')  # Replace dots with underscores
-    www.add_url_rule(www_rule, endpoint=endpoint_name, view_func=app.view_functions[rule.endpoint])
     original_endpoints[endpoint_name] = rule.endpoint
+    
+    # Add equivalent route to www blueprint with both GET and POST methods
+    www.add_url_rule(www_rule, endpoint=endpoint_name, view_func=app.view_functions[rule.endpoint], methods=['GET', 'POST'])
 
 # Redirect all non-www requests to www
-# @app.before_request
-# def redirect_non_www():
-#     if "www." not in request.url and request.endpoint != 'static':
-#         url = request.url.replace("//", "//www.", 1)
-#         return redirect(url, code=301)
 app.register_blueprint(www)
 app.register_blueprint(api)
 
