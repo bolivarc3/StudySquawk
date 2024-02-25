@@ -4,7 +4,8 @@
 {% block head %}
 <head>
     <link href="{{ url_for('static', filename='/mainstyles/viewpoststyles.css', _external=True, _scheme=scheme) }}" rel="stylesheet">
-    <script type = "text/javascript"></script>
+    <script type="text/javascript" src = "{{ url_for('static', filename='scripts/viewpostscript.js', _external=True, _scheme=scheme) }}"></script>
+    <script type="text/javascript" src = "{{ url_for('static', filename='scripts/postscript.js', _external=True, _scheme=scheme) }}"></script>
 </head>
 {% endblock %}
 {% block heading %}

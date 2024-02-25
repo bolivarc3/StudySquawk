@@ -498,7 +498,7 @@ def studyist():
             flash('Class is not availible. Select Class from Options')
             return redirect(url_for('www.studyist') if request.blueprint == 'www' else 'studyist')
         #checks if the course requested is the same as one in the array
-        return redirect(url_for('www.course') if request.blueprint == 'www' else 'course')
+        return redirect(url_for("www.course",course=course) if request.blueprint == 'www' else url_for("course",course=course))
     else:
         db_info = connectdb()
         db = db_info[0]
@@ -1110,7 +1110,7 @@ def update_hac_function():
     if "hacgrades" not in session.keys():
         flash('Enter in a Username and Password')
         return redirect(url_for('www.grade_viewer_signup') if request.blueprint == 'www' else 'grade_viewer_signup')
-    hac_executions("both")
+    update_hac()
     response = "good"
     return (response)
 
