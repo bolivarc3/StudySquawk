@@ -192,6 +192,11 @@ def gobackfirst(driver):
         #grabs html and finds the past month availibility(if there is a button for the past month)
         calendarhtml = driver.page_source.encode('utf-8').strip()
         soup = BeautifulSoup(calendarhtml)
+        try:
+            wait = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//a[@title='Go to the previous month']")))
+        finally:
+            print("not there")
         pastmonthlink = soup.find('a', {'title':'Go to the previous month'})
         pastmonthavalilbilty = pastmonthlink.find('span')
         #grabs html and finds the past month availibility(if there is a button for the past month)
