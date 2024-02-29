@@ -28,6 +28,34 @@ class Users(db.Model):
         self.confirmed_on = confirmed_on
         self.auth_try_on = auth_try_on
 
+class APIUsers(db.Model):
+    __tablename__ = 'API_Users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), nullable=False)
+    password = db.Column(db.Text, nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    gradeappusername=db.Column(db.String(120), nullable=False)
+    gradeapppassword=db.Column(db.String(120), nullable=False)
+    google_auth = db.Column(db.String(120), nullable=False)
+    is_confirmed = db.Column(db.Boolean, nullable=False, default=False)
+    confirmed_on = db.Column(db.DateTime, nullable=True)
+    auth_try_on = db.Column(db.DateTime, nullable=True)
+
+    def verify_password(self, password):
+        pwhash = bcrypt.hashpw(password, self.password)
+        return self.password == pwhash
+
+    def __init__(self,username, password, email):
+        self.username = username
+        self.password = password
+        self.email = email
+        self.gradeappusername = gradeappusername
+        self.gradeapppassword = gradeapppassword
+        self.google_auth = google_auth
+        self.is_confirmed = is_confirmed
+        self.confirmed_on = confirmed_on
+        self.auth_try_on = auth_try_on
+
 #models for postings
 class posts(db.Model):
     __tablename__ = 'posts'

@@ -34,6 +34,7 @@ eventlet = "*"
 selenium = "*"
 flask-cors = "*"
 flask-login = "*"
+alembic = "*"
 
 [dev-packages]
 

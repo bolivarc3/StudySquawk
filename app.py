@@ -35,6 +35,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from api import api,www
 from flask_cors import CORS
+from flask_migrate import Migrate
 # from api import api
 
 
@@ -108,10 +109,10 @@ else:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db_creation = SQLAlchemy(app)
 app.app_context().push()
-migrate = Migrate(app, db_creation)
 from models import Users, posts, images, files, replies, replyfiles, replyimages, materials
 db_creation.create_all()
 db_creation.session.commit()
+app.app_context().push()
 
 #needed info for google authentication
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -410,7 +411,7 @@ def login():
     return redirect(request_uri)
 
 @public_endpoint
-@app.route("/login/callback")
+@app.route("/login/callback") 
 def callback():
     session["hacattendancetimeupdated"] =''
     session["hacgradestimeupdated"] =''
@@ -1568,6 +1569,7 @@ for rule in app.url_map.iter_rules():
 # Redirect all non-www requests to www
 app.register_blueprint(www)
 app.register_blueprint(api)
+print("Registered Endpoints:", app.view_functions.keys())
 
 if __name__ == "__main__":
     app.run(debug=True)

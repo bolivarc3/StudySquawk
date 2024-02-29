@@ -1,0 +1,144 @@
+{% extends "homepage_layout.html" %}
+{% block header %}
+<link rel="png" href="{{ url_for('static', filename='mainstyles/Intropage_gradients/1.png', _external=True, _scheme=scheme) }}">
+<link rel="icon" href="{{ url_for('static', filename='images/nerdpic.png', _external=True, _scheme=scheme) }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='mainstyles/introstyles.css', _external=True, _scheme=scheme) }}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PQZ00QDJXE"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-PQZ00QDJXE');
+</script>
+<script type="text/javascript" src = "{{ url_for('static', filename='/scripts/introscript.js', _external=True, _scheme=scheme) }}"></script>
+{% endblock %}
+{% block NavBar %}
+<div id = "titlediv">
+    <h1 id = "title"><a id = "returnhome" href = "/">Welcome to HAC API!</a></h1>
+</div>
+<div id = "navbox">
+    <ul id = "horizontal-list">
+        <li id="signup-item"><a onclick="signupon()"> Sign Up</a></a></li>
+        <li id="login-item"><a onclick="loginon()"> Login</a></a></li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block title %}
+<title>Welcome!</title>
+{% endblock %}
+
+{% block body %}
+<footer>
+    <div class="box_system_row_div">
+        <div id="social_div">
+            <h1>
+                Email
+            </h1>
+            <a href="mailto: email">
+                <h4>
+                    carlsbolivar@gmail.com
+                </h4>
+            </a>
+        </div>
+        <div id="social_div">
+            <h1>
+                Instagram
+            </h1>
+            <a href="https://www.instagram.com/carl._.bolivar/">
+                <h4>
+                    carl._.bolivar
+                </h4>
+            </a>
+        </div>
+        <div id="social_div">
+            <h1>
+                LinkedIn
+            </h1>
+            <a href="https://www.linkedin.com/in/carl-bolivar-1474921b5/">
+                <h4>
+                    Carl Bolivar
+                </h4>
+            </a>
+        </div>
+    </div>
+</footer>
+
+<div id = signupfog onclick= "signupoff()">
+    <div id = form-group onclick = "signupon(); event.cancelBubble=true;">
+        <div class="mobile-form-div">
+            <div id ="exit-form">
+                <svg  onclick= "signupoff()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/></svg>
+            </div>
+            <h1>Signup</h1>
+            <form id = "signupform" action = "{{ url_for('api.api_main', _external=True, _scheme=scheme) }}" method ="POST">
+                <input type="hidden" name="form-name" value="signupform">
+                <div class="form-element">
+                    <input autocapitalize = "off" autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">
+                </div>
+                <div class="form-element">
+                    <input autocomplete="on" autofocus class="form-control" name="email" placeholder="Email" type="email">
+                </div>
+                <div class="form-element">
+                    <input autocapitalize = "off" autocomplete="off" class="form-control" name="password" placeholder="Password" type="password">
+                </div>
+                <div class="form-element">
+                    <input class="form-control" name="confirmation" placeholder="Confirmation" type="password">
+                </div>
+                <br>
+                if you Register or Login, you agree to the following:
+                <a href="/privacy_policy">
+                    Privacy Policy
+                </a>
+                and
+                <a href="/terms_and_conditions">
+                    Terms and conditions
+                </a>
+                <br>
+                <div class="form-element">
+                    <button class="btn-primary" type="submit">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id = loginfog onclick="loginoff()">
+    <div id = form-group onclick = "loginon(); event.cancelBubble=true;">
+        <div class="mobile-form-div">
+            <div id ="exit-form" onclick = "loginoff()"">
+                <div id = "x-element-login-div">
+                    <svg id="x-element-login" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 384 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/></svg>
+                </div>
+            </div>
+            <h1> Login </h1>
+            <form id = loginform action="{{ url_for('api.api_main', _external=True, _scheme=scheme) }}" method="POST">
+            <input type="hidden" name="form-name" value="loginform">
+            <div class="form-element">
+                <input autocapitalize = "off" autocomplete="off" autofocus class="form-control" name="email" placeholder=" Email" type="email">
+            </div>
+            <div class="form-element">
+                <input autocapitalize = "off" autocomplete="off" class="form-control" name="password" placeholder=" Password" type="password">
+            </div>
+            <br>
+            if you Register or Login, you agree to the following:
+            <a href="/privacy_policy">
+                Privacy Policy
+            </a>
+            and
+            <a href="/terms_and_conditions">
+                Terms and conditions
+            </a>
+            <br>
+            <div class="form-element">
+                <button class="btn-primary" type="submit">Login</button>
+            </div>
+        </form>
+        </div>
+    </div>
+{% endblock %}
