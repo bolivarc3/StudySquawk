@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 {% block head %}
 <head>
-    <link href="{{ url_for('static', filename='/mainstyles/poststyles.css', _external=True, _scheme=scheme) }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='/mainstyles/loader.css', _external=True, _scheme=scheme) }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='mainstyles/poststyles.css', _external=True, _scheme=scheme) }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='mainstyles/loader.css', _external=True, _scheme=scheme) }}" rel="stylesheet">
     <script type = "text/javascript" src = "{{ url_for('static', filename='/scripts/loader.js', _external=True, _scheme=scheme) }}"></script>
 </head>
 {% endblock %}
