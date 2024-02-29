@@ -1569,7 +1569,6 @@ for rule in app.url_map.iter_rules():
 # Redirect all non-www requests to www
 app.register_blueprint(www)
 app.register_blueprint(api)
-print("Registered Endpoints:", app.view_functions.keys())
 
 if __name__ == "__main__":
     app.run(debug=True)
