@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='scripts/script.js', _external=True, _scheme=scheme) }}"></script>
+	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css"rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link href="{{ url_for('static', filename='images/logobird.png', _external=True, _scheme=scheme) }}" rel="icon">
+	<link href="{{ url_for('static', filename='images/logo.jpeg', _external=True, _scheme=scheme) }}">
+	<link href="{{ url_for('static', filename='mainstyles/styles.css', _external=True, _scheme=scheme) }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='minorstyles/sidebar.css', _external=True, _scheme=scheme) }}" rel="stylesheet">
+	<link rel="stylesheet" href = "{{ url_for('static', filename='minorstyles/autoComplete.css', _external=True, _scheme=scheme) }}">
+	<script type = "text/javascript" src="{{ url_for('static', filename='scripts/sidebar.js', _external=True, _scheme=scheme) }}" ></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.6/dist/autoComplete.min.js"></script>
+	<link href="{{ url_for('static', filename='images/logobird.png', _external=True, _scheme=scheme) }}" rel="icon">
+	<link href="{{ url_for('static', filename='images/logo.jpeg', _external=True, _scheme=scheme) }}">
+	<link href="{{ url_for('static', filename='mainstyles/styles.css', _external=True, _scheme=scheme) }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='minorstyles/sidebar.css', _external=True, _scheme=scheme) }}" rel="stylesheet">
+	<link rel="stylesheet" href = "{{ url_for('static', filename='minorstyles/autoComplete.css', _external=True, _scheme=scheme) }}">
+	<script type = "text/javascript" src="{{ url_for('static', filename='scripts/sidebar.js', _external=True, _scheme=scheme) }}" ></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.6/dist/autoComplete.min.js"></script>
+	<meta name="viewport" content="width=device-width" />
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-PQZ00QDJXE"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-PQZ00QDJXE');
+	</script>
+	{% block head %}
+	{% endblock %}
+</head>
+
+<title> {% block title %}StudySquawk API{% endblock %}</title>
+
+{% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <strong>{{message}}</strong>
+				<span type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</span>
+        </div>
+        {% endfor %}
+      {% endif %}
+{% endwith %}
+
+
+<input type="hidden" id="page-identifier" value="{{page_identifier}}"></input>
+<body>
+	<header class="header" id="header_for_page">
+		<button class="menu-icon-btn show-desktop" data-menu-icon-btn>
+			<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="menu-icon"><g><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></g></svg>
+		</button>
+		<div class="top-sidebar show-mobile">
+			<a href="#" class="channel-logo"><img src="{{ url_for('static', filename='images/logobird.png', _external=True, _scheme=scheme) }}" alt="Channel Logo"></a>
+		</div>
+		<!-- searchbox -->
+		<!-- <div id = "searchbar-box">
+			<form action = "/homepage" method = "POST" id = "searchform">
+				<div class = "autoComplete_wrapper">
+					<input  dir="ltr" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" name = "name" class = "form" type="text" id="autoComplete" placeholder = "Look Up..">
+					<input id = "submitsearch" type = "submit">
+				</div>
+					<script>
+						document.getElementById("autoComplete").addEventListener("keyup", function(event) {
+							if (event.keyCode === 13) {
+								document.getElementById("searchform").submit();
+							}
+						});
+						var courses = getData()
+						async function getData(){
+							const response = await fetch('/getcourses')
+							var courses = await response.json()
+							return courses
+						}
+						const autoCompleteJS = new autoComplete({
+							selector: "#autoComplete",
+							data: {
+								src: courses,
+								cache: true,
+							},
+							resultsList: {
+								element: (list, data) => {
+									if (!data.results.length) {
+										// Create "No Results" message element
+										const message = document.createElement("div");
+										// Add class to the created element
+										message.setAttribute("class", "no_result");
+										// Add message text content
+										message.innerHTML = `<span>Found No Results for "${data.query}"</span>`;
+										// Append message element to the results list
+										list.prepend(message);
+									}
+								},
+								noResults: true,
+							},
+							resultItem: {
+								highlight: true
+							},
+							events: {
+								input: {
+									selection: (event) => {
+										const selection = event.detail.selection.value;
+										autoCompleteJS.input.value = selection;
+									}
+								}
+							}
+						});
+					</script>
+					<script>
+						if ( window.history.replaceState ) {
+							window.history.replaceState( null, null, window.location.href );
+						}
+					</script>
+			</form>
+		</div> -->
+		
+		{% block postbutton %}
+		{% endblock %}
+	</header>
+	<div class="body-container">
+		<aside class="sidebar show-desktop" id="sidebar" data-sidebar>
+			<div class="middle-sidebar">
+				<div class="top-sidebar">
+					<a href="/homepage" class="channel-logo"><img src="{{ url_for('static', filename='images/logobird.png', _external=True, _scheme=scheme) }}" alt="Channel Logo"></a>
+					<div class="hidden-sidebar your-channel">{{username}}</div>
+				</div>
+				<ul class="sidebar-list">
+					<li class="sidebar-list-item" id = "dashboard">
+						<a href="/dashboard" class="sidebar-link">
+							<svg viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" focusable="false" class="style-scope tp-yt-iron-icon" style="pointer-events: none; display: block; height: 100%;"><g width="24" height="24" viewBox="0 0 24 24" class="style-scope tp-yt-iron-icon"><path d="M11 3H3V13H11V3ZM21 11H13V21H21V11ZM11 15H3V21H11V15ZM13 3V9H21V3H13Z" class="style-scope tp-yt-iron-icon"></path></g></svg>
+						</a>
+					</li>
+					<li class="sidebar-list-item" id = "documentation">
+						<a href="/documentation" class="sidebar-link">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M320 464c8.8 0 16-7.2 16-16V160H256c-17.7 0-32-14.3-32-32V48H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16H320zM0 64C0 28.7 28.7 0 64 0H229.5c17 0 33.3 6.7 45.3 18.7l90.5 90.5c12 12 18.7 28.3 18.7 45.3V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64z"/></svg>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="bottom-sidebar">
+				<ul class="sidebar-list">
+				</ul>
+			</div>
+		</aside>
+		<main class="content">
+			{% block heading %}
+			{% endblock %}
+			{% block body %}
+			{% endblock %}
+
+			{% block reply %}
+			{% endblock %}
+			{% block resources %}
+			{% endblock %}	
+		</main>
+		<div id="spacer" class="show-mobile">
+	</div>
+</div>
+	<div class="body-container show-mobile">
+		<div class="middle-sidebar" bottom_bar>
+			<ul class="sidebar-list">
+				
+				<li class="sidebar-list-item" id = "grade_viewer">
+					<a href="/documentation" class="sidebar-link">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M320 464c8.8 0 16-7.2 16-16V160H256c-17.7 0-32-14.3-32-32V48H64c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16H320zM0 64C0 28.7 28.7 0 64 0H229.5c17 0 33.3 6.7 45.3 18.7l90.5 90.5c12 12 18.7 28.3 18.7 45.3V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64z"/></svg>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</body>
+<script
+  type="text/javascript"
+  src="https://app.termly.io/embed.min.js"
+  data-auto-block="on"
+  data-website-uuid="969f5e0c-cb0a-4265-8db4-de3a44bdd18e"
+></script>

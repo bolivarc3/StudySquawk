@@ -1,0 +1,266 @@
+{% extends "api/layout.html" %}
+{% block head %}
+<link rel="stylesheet" href = "{{ url_for('static', filename='mainstyles/api/documentation.css', _external=True, _scheme=scheme) }}">
+{% endblock %}
+{% block body %}
+<div id="heading_div">
+  <h1 style="color: #59C0E4;">
+    <u>
+      Welcome to Hac API!
+    </u>
+  </h1>
+</div>
+<br>
+<p>
+  A web scraper made to scrape HAC for student information currently only supports Bentonville School Dist Hacs
+  Usage for API URL
+  <br>
+  <br>
+  Url of the api is {}
+  <br>
+  <br>
+  To get to a specific function use the format below {}
+  <br>
+  <br>
+  The current functions that are availbile
+</p>
+<div id = "container_outline_box">
+  <h3 style="text-align: center;">
+    grades
+    <br>
+    attendance
+  </h3>
+</div>
+<br>
+<br>
+<h2>
+  <i>Usage for Grabbing Grade Information</i>
+</h2>
+<hr>
+<p>
+  Starter code to get grade information
+  <br>
+  <br>
+  grabbing the grades of a user
+  <br>
+  <br>
+  import requests
+  <br>
+  <br>
+  #credentials
+  username = student_username
+  password = student_password
+  <br>
+  <br>
+  #grab information for grades
+  params = {"username":username,"password":password}
+  params = json.dumps(params)
+  headers = {'Content-Type': 'application/json'}
+  grades_request = requests.post("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades", data=params, headers=headers)
+  <br>
+  <br>
+  #converts output to a json format(dictionary)
+  grades_data = grades_request.json()
+  <br>
+  <br>
+</p>
+<pre>
+  
+  <code>
+    <FONT COLOR="#ffffff"> 
+      #grabs data from dictionary
+      class_names = grades_data['class_names']
+      #returns as ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
+      grade_summary = grades_data['grade_summary']
+      assignment_grades = grades_data['assignment_grades']
+    </FONT>
+  </code>
+</pre>
+<p>
+  <br>
+  <br>
+  Using the code above, the documentation below will explain the structures of the responses
+  Structure of responses | Grades
+  <br>
+  <br>
+  using the code in Usage, the documentation below will explain the structures of the responses
+  class_names
+  <br>
+  <br>
+  returns the class names that the student is currently doing and enrolled in
+  <br>
+  <br>
+  below is stucture of what
+</p>
+<pre>
+  <code>
+    <FONT COLOR="#ffffff"> 
+      grades_data['class_names']
+    </FONT>
+  </code>
+</pre>
+<h2 style="text-align: center; color:#59C0E4;">
+  returns
+</h2>
+<pre>
+  <code>
+    <FONT COLOR="#ffffff"> 
+    ['class 1', 'class 2', 'class 3', 'class 4', 'class 5']
+  </FONT>
+</code>
+</pre>
+<hr>
+<h2>
+  <u>
+    grade_summary
+  </u>
+</h2>
+<p>
+returns dictinary with key values containing an array
+</p>
+<div style = "padding: 1rem; color: white;" id= "container_outline_box">
+    Category<br>
+    Student's Points<br>
+    Maximum Points(Maximun you can get in the class)<br>
+    Percent in the class<br>
+    Category Weight<br>
+    Category Points<br>
+</div>
+<br>
+<p>
+  first index to last index
+  <br>
+  below is stucture of what
+</p>
+<pre>
+  <code>
+    <FONT COLOR="#ffffff"> 
+    grades_data['grade_summary']
+  </FONT>
+</code>
+</pre>
+<h2 style="text-align: center; color:#59C0E4;">
+  returns
+</h2>
+
+
+<p>
+it returns a structure that is a dictionary that contains 2d arrays, like this:
+</p>
+<pre>
+  <code>
+    <FONT COLOR="#ffffff"> 
+{
+    'Class Name': [['Category', 'Student's Points', 'Maximum Points', 'Perecent in the class', 'Category weight', 'Category Points']], 
+}
+</FONT>
+</code>
+</pre>
+real life example:
+
+{
+    '414200 - 15   Personal Communication': [['Evidence of Learning', '195.0000', '200.00', '97.500%', '100.00', '97.50000']], 
+    '420003 - 10   Accelerated Biology-Integrated': [['Evidence of Learning', '548.0000', '560.00', '97.857%', '100.00', '97.85700']], 
+    '432005 - 7    Algebra II Pre-AP': [['Evidence of Learning', '460.0000', '477.00', '96.436%', '100.00', '96.43600'], ['Practice', '110.0000', '110.00', '100.000%', '0.00''0.00000']], 
+    '440021 - 21   Spanish II': [['Evidence of Learning', '322.0000', '332.00', '96.987%', '100.00', '96.98800']], 
+    '45310V - 6    Visual Art Appreciation': [['Evidence of Learning', '873.0000', '894.00', '97.651%', '100.00', '97.65100']], 
+    '493081 - 19   Family & Consumer Science': [['Evidence of Learning', '474.0000', '479.00', '98.956%', '100.00', '98.95600']], 
+    '49385D - 7    Success 1.0': [['Evidence of Learning', '267.0000', '270.00', '98.888%', '100.00', '98.88900'], ['Practice', '40.0000', '40.00', '100.000%', '0.00', '0.00000']]
+}
+
+assignment_grades
+
+returns in an array containing
+
+    Date Due
+    Date Assigned
+    Assignment Name
+    Category
+    Student Score
+    Total points Possible
+    Weight
+    Weighted Score
+    Weighted Total Points
+    Percentage on Assignment
+
+first index to last index
+
+below is stucture of what
+
+    grades_data['assignment_grades']
+
+returns
+
+it returns a structure that is a dictionary that contains 2d arrays, like this:
+
+{
+    'Class Name': [['Due Date', 'Date Assigned', 'Assignment Name', 'Category', 'Student Score', 'Total Points Possible', 'Weight', 'Weighted Score', 'Weighted Total Points', 'Percentage on Assignment' ]], 
+}
+
+real life example:
+
+{
+'410003 - 15   English I Pre-AP':
+    [['05/20/2022', '', 'TKAM ch. 20. 28-30', 'Evidence of Learning', '20.00', '20.00', '1.00', '20.00', '20.00', '100.000%'], ['05/13/2022', '', 'TKAM ch. 18-19', 'Evidence of Learning', '12.00', '12.00', '1.00', '12.00', '12.00', '100.000%'], ['05/09/2022', '', 'TKAM: Ch. 16-17', 'Evidence of Learning', '14.50', '15.00', '1.00', '14.50', '15.00', '96.667%']]
+
+'420003 - 10   Accelerated Biology-Integrated':
+    [['05/24/2022', '05/24/2022', 'Spring Final Exam', 'Evidence of Learning', 'X', '100.00', '1.00', '0.00', '100.00', '0.00%'], ['05/19/2022', '05/19/2022', 'W37Thurs:  Unit 8 Exam', 'Evidence of Learning', '88.00', '100.00', '1.00', '88.00', '100.00', '88.000%']], 
+}
+
+Usage for Grabbing Attendance
+Starter code to get attendance information
+
+import requests
+
+#credentials
+username = student_username
+password = student_password
+
+#grab information for attendance
+params = {"username":username,"password":password}
+params = json.dumps(params)
+headers = {'Content-Type': 'application/json'}
+attedance_request = requests.post("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/attendance",  data=params, headers=headers)
+
+#converts output to a json format(dictionary)
+attendance_data = attedance_request.json()
+#grabs data from dictionary
+attendance = attendance_data['attendance']
+
+using the code above, the documentation below will explain the structures of the responses
+Structure of responses | Attendance
+
+using the code in Usage, the documentation below will explain the structures of the responses
+class_names
+
+returns the class names that the student is currently doing and enrolled in
+
+below is stucture of what
+
+    attendance_data['attendance']
+
+returns
+
+it returns a structure that is a dictionary that contains a tuple to represent a calendar, like this:
+
+{
+    'Month Year': 
+    [
+        [[Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event]], <-week
+        [[Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event]], <-week
+        [[Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event]], <-week
+        [[Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event]], <-week
+        [[Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event]], <-week
+        [[Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event], [Date, Event]]  <-week
+    ]
+}
+
+real life example:
+
+{
+'April 2022': [[['', None], ['', None], ['', None], ['', None], ['', None], ['1', None], ['2', None]], [['3', None], ['4', None], ['5', '6 ABSENT'], ['6', None], ['7', None], ['8', None], ['9', None]], [['10', None], ['11', None], ['12', None], ['13', None], ['14', None], ['15', None], ['16', None]], [['17', None], ['18', None], ['19', None], ['20', None], ['21', None], ['22', None], ['23', None]], [['24', None], ['25', None], ['26', None], ['27', None], ['28', None], ['29', None], ['30', None]], [['', None], ['', None], ['', None], ['', None], ['', None], ['', None], ['', None]]]
+}
+
+if Event is equal to None that means there is no Attendance Events or Overall Events that happened that day
+
+{% endblock %}

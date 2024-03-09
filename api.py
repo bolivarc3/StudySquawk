@@ -185,7 +185,7 @@ def api_main():
             db_conn.commit()
             db.close()
             db_conn.close()
-            return redirect(url_for('api.main'))
+            return redirect(url_for('api.dashboard'))
     else:
         db_info = connectdb()
         db = db_info[0]
@@ -205,9 +205,15 @@ def api_main():
     return render_template("api/api_intro.html")
 
 
-@api.route("/homepage", methods=["POST","GET"])
-def main():
-    return render_template("api/homepage.html")
+@api.route("/dashboard", methods=["POST","GET"])
+def dashboard():
+    page_identifier = "dashboard"
+    return render_template("api/dashboard.html",page_identifier = page_identifier)
+
+@api.route("/documentation", methods=["POST","GET"])
+def documentation():
+    page_identifier = "documentation"
+    return render_template("api/documentation.html",page_identifier = page_identifier)
 
 
 @api.route('/confirm_email/<token>/<username>', methods=['GET','POST'])

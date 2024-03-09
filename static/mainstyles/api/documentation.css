@@ -1,0 +1,37 @@
+h1{
+    color: white;
+}
+
+h2{
+    color: white;
+}
+
+h3{
+    color: white;
+}
+
+#heading_div{
+    width: 100%;
+    text-align: center;
+}
+
+#container_outline_box{
+    margin: auto;
+    width: 80%;
+    height: fit-content;
+    border:1px solid white;
+}
+
+pre{
+    border-radius: 1rem;
+    background-color: #161B22;
+}
+
+code{
+    color: white;
+    text: white;
+}
+
+hr{
+    background-color: white;
+}
