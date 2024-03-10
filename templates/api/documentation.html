@@ -1,13 +1,13 @@
 {% extends "api/layout.html" %}
 {% block head %}
+<link rel="stylesheet" href = "{{ url_for('static', filename='minorstyles/prism.css', _external=True, _scheme=scheme) }}">
+<script type = "text/javascript" src = "{{ url_for('static', filename='scripts/prism.js', _external=True, _scheme=scheme) }}"></script>
 <link rel="stylesheet" href = "{{ url_for('static', filename='mainstyles/api/documentation.css', _external=True, _scheme=scheme) }}">
 {% endblock %}
 {% block body %}
 <div id="heading_div">
   <h1 style="color: #59C0E4;">
-    <u>
       Welcome to Hac API!
-    </u>
   </h1>
 </div>
 <br>
@@ -99,9 +99,9 @@
     </FONT>
   </code>
 </pre>
-<h2 style="text-align: center; color:#59C0E4;">
+<h3 style="text-align: center; color:#59C0E4;">
   returns
-</h2>
+</h3>
 <pre>
   <code>
     <FONT COLOR="#ffffff"> 
@@ -111,9 +111,7 @@
 </pre>
 <hr>
 <h2>
-  <u>
     grade_summary
-  </u>
 </h2>
 <p>
 returns dictinary with key values containing an array
@@ -139,9 +137,9 @@ returns dictinary with key values containing an array
   </FONT>
 </code>
 </pre>
-<h2 style="text-align: center; color:#59C0E4;">
+<h3 style="text-align: center; color:#59C0E4;">
   returns
-</h2>
+</h3>
 
 
 <p>
@@ -156,8 +154,14 @@ it returns a structure that is a dictionary that contains 2d arrays, like this:
 </FONT>
 </code>
 </pre>
+<p>
 real life example:
+</p>
 
+
+<pre>
+  <code>
+    <FONT COLOR="#ffffff"> 
 {
     '414200 - 15   Personal Communication': [['Evidence of Learning', '195.0000', '200.00', '97.500%', '100.00', '97.50000']], 
     '420003 - 10   Accelerated Biology-Integrated': [['Evidence of Learning', '548.0000', '560.00', '97.857%', '100.00', '97.85700']], 
@@ -167,11 +171,22 @@ real life example:
     '493081 - 19   Family & Consumer Science': [['Evidence of Learning', '474.0000', '479.00', '98.956%', '100.00', '98.95600']], 
     '49385D - 7    Success 1.0': [['Evidence of Learning', '267.0000', '270.00', '98.888%', '100.00', '98.88900'], ['Practice', '40.0000', '40.00', '100.000%', '0.00', '0.00000']]
 }
-
-assignment_grades
-
-returns in an array containing
-
+</FONT>
+</code>
+</pre>
+<br>
+<hr>
+<br>
+<h2>
+  assignment_grades
+</h2>
+<br>
+<p>
+assignment_grades returns in an array containing
+</p>
+<pre>
+  <code>
+    <FONT COLOR="#ffffff"> 
     Date Due
     Date Assigned
     Assignment Name
@@ -182,50 +197,84 @@ returns in an array containing
     Weighted Score
     Weighted Total Points
     Percentage on Assignment
-
+  </FONT>
+</code>
+</pre>
+<p>
 first index to last index
-
+<br>
+<br>
 below is stucture of what
-
+</p>
+<div id = "container_outline_box">
+  <h3>
     grades_data['assignment_grades']
+  </h3>
+</div>
+<br>
+<h3 style = "text-align: center; color: #59C0E4;">
+  returns
+</h3>
+<br>
+<p>
+  it returns a structure that is a dictionary that contains 2d arrays, like this:
+</p>
 
-returns
-
-it returns a structure that is a dictionary that contains 2d arrays, like this:
-
-{
-    'Class Name': [['Due Date', 'Date Assigned', 'Assignment Name', 'Category', 'Student Score', 'Total Points Possible', 'Weight', 'Weighted Score', 'Weighted Total Points', 'Percentage on Assignment' ]], 
-}
-
+<pre>
+  <code>
+    <FONT COLOR="#ffffff"> 
+    {
+        'Class Name': [['Due Date', 'Date Assigned', 'Assignment Name', 'Category', 'Student Score', 'Total Points Possible', 'Weight', 'Weighted Score', 'Weighted Total Points', 'Percentage on Assignment' ]], 
+    }
+    </FONT>
+  </code>
+</pre>
+<p>
 real life example:
+</p>
+<pre>
+  <code style="font-size: .5rem !important;">
+    <FONT COLOR="#ffffff"> 
+    {
+    '410003 - 15   English I Pre-AP':
+        [['05/20/2022', '', 'TKAM ch. 20. 28-30', 'Evidence of Learning', '20.00', '20.00', '1.00', '20.00', '20.00', '100.000%'], ['05/13/2022', '', 'TKAM ch. 18-19', 'Evidence of Learning', '12.00', '12.00', '1.00', '12.00', '12.00', '100.000%'], ['05/09/2022', '', 'TKAM: Ch. 16-17', 'Evidence of Learning', '14.50', '15.00', '1.00', '14.50', '15.00', '96.667%']]
 
-{
-'410003 - 15   English I Pre-AP':
-    [['05/20/2022', '', 'TKAM ch. 20. 28-30', 'Evidence of Learning', '20.00', '20.00', '1.00', '20.00', '20.00', '100.000%'], ['05/13/2022', '', 'TKAM ch. 18-19', 'Evidence of Learning', '12.00', '12.00', '1.00', '12.00', '12.00', '100.000%'], ['05/09/2022', '', 'TKAM: Ch. 16-17', 'Evidence of Learning', '14.50', '15.00', '1.00', '14.50', '15.00', '96.667%']]
+    '420003 - 10   Accelerated Biology-Integrated':
+        [['05/24/2022', '05/24/2022', 'Spring Final Exam', 'Evidence of Learning', 'X', '100.00', '1.00', '0.00', '100.00', '0.00%'], ['05/19/2022', '05/19/2022', 'W37Thurs:  Unit 8 Exam', 'Evidence of Learning', '88.00', '100.00', '1.00', '88.00', '100.00', '88.000%']], 
+    }
+    </FONT>
+  </code>
+</pre>
+<br>
+<hr>
+<br>
+<h2>
+  Usage for Grabbing Attendance
+</h2>
+<br>
+<h3>
+  Starter code to get attendance information
+</h3>
+<pre class="language-python">
+  <code>
+  import requests
 
-'420003 - 10   Accelerated Biology-Integrated':
-    [['05/24/2022', '05/24/2022', 'Spring Final Exam', 'Evidence of Learning', 'X', '100.00', '1.00', '0.00', '100.00', '0.00%'], ['05/19/2022', '05/19/2022', 'W37Thurs:  Unit 8 Exam', 'Evidence of Learning', '88.00', '100.00', '1.00', '88.00', '100.00', '88.000%']], 
-}
+  #credentials
+  username = student_username
+  password = student_password
 
-Usage for Grabbing Attendance
-Starter code to get attendance information
+  #grab information for attendance
+  params = {"username":username,"password":password}
+  params = json.dumps(params)
+  headers = {'Content-Type': 'application/json'}
+  attedance_request = requests.post("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/attendance",  data=params, headers=headers)
 
-import requests
-
-#credentials
-username = student_username
-password = student_password
-
-#grab information for attendance
-params = {"username":username,"password":password}
-params = json.dumps(params)
-headers = {'Content-Type': 'application/json'}
-attedance_request = requests.post("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/attendance",  data=params, headers=headers)
-
-#converts output to a json format(dictionary)
-attendance_data = attedance_request.json()
-#grabs data from dictionary
-attendance = attendance_data['attendance']
+  #converts output to a json format(dictionary)
+  attendance_data = attedance_request.json()
+  #grabs data from dictionary
+  attendance = attendance_data['attendance']
+  </code>
+</pre>
 
 using the code above, the documentation below will explain the structures of the responses
 Structure of responses | Attendance

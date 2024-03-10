@@ -3,7 +3,8 @@ h1{
 }
 
 h2{
-    color: white;
+    text-decoration: underline;
+    color:#59C0E4;
 }
 
 h3{
@@ -20,6 +21,7 @@ h3{
     width: 80%;
     height: fit-content;
     border:1px solid white;
+    text-align: center;
 }
 
 pre{
@@ -30,6 +32,8 @@ pre{
 code{
     color: white;
     text: white;
+    font-size: .95rem !important;
+    overflow-wrap: normal;
 }
 
 hr{
