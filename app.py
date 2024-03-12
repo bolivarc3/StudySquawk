@@ -376,7 +376,7 @@ def send_mail_confirm(username,email):
     #grabs the token, and nessary info to make the email work, and sends
     token = s.dumps(email, salt='email-confirm')
     msg = Message('Confirm Email', sender='studysquawk@gmail.com', recipients=[email])
-    link = url_for('confirm_email', token=token,username=username, _external=True)
+    link = url_for('www.confirm_email', token=token,username=username, _external=True)
     msg.html = render_template("confirm.html",link=link)
     mail.send(msg)
     session["user_id_to_confirm"] = username
