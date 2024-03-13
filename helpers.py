@@ -146,36 +146,39 @@ def update_hac():
     if session["error"] != True:
         current_time = datetime.now(timezone.utc)
         if session["hacgradestimeupdated"] == '' and session["hacattendancetimeupdated"] == '':
-            hac_executions('both',username,password)
+            hac_executions('both',False,username,password)
         if session["hacgradestimeupdated"] == '':
             session["hacgradestimeupdated"] = datetime.now(timezone.utc)
-            hac_executions('grades',username,password)
+            hac_executions('grades',False,username,password)
         if  session["error"] != True:
             duration = current_time - session["hacgradestimeupdated"]
             duration_in_s = duration.total_seconds()  
             minutes = divmod(duration_in_s, 60)[0]
             if minutes > 5:
                 session["hacgradestimeupdated"] = datetime.now(timezone.utc)
-                hac_executions('grades',username,password)
+                hac_executions('grades',False,username,password)
         if session["hacattendancetimeupdated"] == '':
             session["hacattendancetimeupdated"] = datetime.now(timezone.utc)
-            hac_executions('attendance',username,password)
+            hac_executions('attendance',False,username,password)
         if  session["error"] != True:
             duration = current_time - session["hacattendancetimeupdated"]
             duration_in_s = duration.total_seconds()  
             minutes = divmod(duration_in_s, 60)[0]
             if minutes >  5:
                 session["hacattendancetimeupdated"] = datetime.now(timezone.utc)
-                hac_executions('attendance',username,password)
+                hac_executions('attendance',False,username,password)
         
     
 
-def hac_executions(runfunction,username,password):
+def hac_executions(runfunction,api,username,password):
+    data = 0
     if username != "NULL" and password != "NULL":
-        if session["runninggethac"] == False:
-            session["runninggethac"] = True
+        if "runninggethac" in session:
+            if session["runninggethac"] == False:
+                session["runninggethac"] = True
+        if "runninggethac" in session or api == True:
             if runfunction == "both":
-                data = hac_api_main("both",username, password)
+                data = hac_api_main("both",api,username, password)
                 session["hacattendance"] = data[3]
                 session["hacattendancetimeupdated"] = datetime.now(timezone.utc)
                 class_names = data[0]
@@ -192,13 +195,14 @@ def hac_executions(runfunction,username,password):
                         del grades_request["assignment_grades"][course]
                 session["hacgrades"] = grades_request
                 session["hacgradestimeupdated"] = datetime.now(timezone.utc)
+                data = grades_request
             elif runfunction == "attendance":
-                attendance_data = hac_api_main("attendance",username, password)
+                attendance_data = hac_api_main("attendance",api,username, password)
+                data = attendance_data
                 session["hacattendance"] = attendance_data
                 session["hacattendancetimeupdated"] = datetime.now(timezone.utc)
             else:
-                grades_data = hac_api_main("grades",username, password)
-
+                grades_data = hac_api_main("grades",api,username, password)
                 class_names = grades_data[0]
 
                 grades_request = {"class_names":grades_data[0],"grade_summary":grades_data[1],"assignment_grades":grades_data[2]}
@@ -213,7 +217,8 @@ def hac_executions(runfunction,username,password):
                         del grades_request["assignment_grades"][course]
                 session["hacgrades"] = grades_request
                 session["hacgradestimeupdated"] = datetime.now(timezone.utc)
-            return 0
+                data = grades_request
+        return data
     else:
         return 1
     session["runninggethac"] = False

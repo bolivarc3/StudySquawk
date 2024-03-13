@@ -24,6 +24,7 @@ import bcrypt
 from itsdangerous.url_safe import URLSafeTimedSerializer
 from flask_mail import Mail, Message
 from flask import current_app
+from hacapi import hac_api_main
 
 api = Blueprint('api', __name__, subdomain='api')
 www = Blueprint('www', __name__, subdomain='www')
@@ -254,3 +255,22 @@ def send_mail_confirm(username,email):
     #     response = sg.send(message)
     # except Exception as e:
         # print(e.message)
+
+
+@api_public_endpoint
+@api.route('/grades/<username>/<password>', methods=['GET'])
+def grades(username,password):
+    grades = hac_executions("grades",True,username,password)
+    return grades
+
+@api_public_endpoint
+@api.route('/attendance/<username>/<password>', methods=['GET'])
+def attendance(username,password):
+    attendance = hac_executions("attendance",True,username,password)
+    return attendance
+
+@api_public_endpoint
+@api.route('/both/<username>/<password>', methods=['GET'])
+def both(username,password):
+    both = hac_executions("both",True,username,password)
+    return both

@@ -32,12 +32,14 @@ if ENV == 'prod':
     service = Service(executable_path=os.environ.get("CHROMEDRIVER_PATH"))
     driver = webdriver.Chrome(service=service, options=chrome_options)
     #login url for hac
-def hac_api_main(function,username,password):
+def hac_api_main(function,api,username,password):
     if function == "":
         return {"error":"go to https://github.com/bolivarc3/HacApi or information on usage of the api"}
     if username == '' or password == '':
         return {"error":"you didnt put the username and password of the hac user. make url like -> /<insert what you want(grades,attendance,etc)>/<insert username>/<insert password>/"}
-    if session["HacStatus"] == False:
+    if "HacStatus" not in session:
+        session["HacStatus"] = False
+    if session["HacStatus"] == False or api:
         driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Account/LogOn?ReturnUrl=%2fHomeAccess%2f")
         try:
             wait = WebDriverWait(driver, 10).until(
@@ -78,6 +80,7 @@ def hac_api_main(function,username,password):
         gradesum = graboverallgrades(driver,classnames)
         #returns in dictionary form
         attendance = grabcalendar(driver,username,password)
+        reset(api,driver)
         return classnames,gradesum,assignmentgrades,attendance
     if function == 'attendance':
         driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Content/Attendance/MonthlyView.aspx")
@@ -88,6 +91,7 @@ def hac_api_main(function,username,password):
             pass
     #grabs the attendance using selenium
         attendance = grabcalendar(driver,username,password)
+        reset(api,driver)
         return attendance
     if function == 'grades':
         driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Content/Student/Assignments.aspx")
@@ -99,9 +103,21 @@ def hac_api_main(function,username,password):
         classnames = grabclasses(driver)
         assignmentgrades = grabassignmentgrades(driver,classnames)
         gradesum = graboverallgrades(driver,classnames)
+        reset(api,driver)
         return classnames,gradesum,assignmentgrades
     #returns in a dictionary
 
+def reset(api,driver):
+    if api:
+        driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Home/WeekView")
+        try:
+            wait = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//a[@href="/HomeAccess/Account/Logoff"]')))
+        finally:
+            print("not there")
+        link = driver.find_element(By.XPATH, '//a[@href="/HomeAccess/Account/Logoff"]')
+        link.click()
+        driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Account/LogOn?ReturnUrl=%2fHomeAccess%2f")
 
 def grabclasses(driver):
     soup = BeautifulSoup(driver.page_source.encode('utf-8'))
