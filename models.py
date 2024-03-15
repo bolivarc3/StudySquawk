@@ -56,6 +56,16 @@ class APIUsers(db.Model):
         self.confirmed_on = confirmed_on
         self.auth_try_on = auth_try_on
 
+class APIUsersTokens(db.Model):
+    __tablename__ = 'API_Users_Tokens'
+    id = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.Text, nullable=False)
+    apitoken = db.Column(db.Text, nullable=False)
+
+    def __init__(self,userid, apitoken):
+        self.userid = userid
+        self.apitoken = apitoken
+
 #models for postings
 class posts(db.Model):
     __tablename__ = 'posts'
@@ -69,7 +79,7 @@ class posts(db.Model):
     date = db.Column(db.Date, nullable=False)
     user_id = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, postid, course, username, title, body, time, date):
+    def __init__(self, postid, course, username, title, body, time, date,user_id):
         self.postid = postid
         self.course = course
         self.username = username

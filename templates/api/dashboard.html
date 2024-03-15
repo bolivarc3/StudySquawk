@@ -1,4 +1,18 @@
 {% extends "api/layout.html" %}
+{% block head %}
+<link rel="stylesheet" href = "{{ url_for('static', filename='mainstyles/api/documentation.css', _external=True, _scheme=scheme) }}">
+{% endblock %}
 {% block body %}
+<h1>StudySquawk</h1>
+<h2>Create your API Token</h2>
+<p>
+</p>
+<button>
+    Create your Token
+</button>
+<div id = "TokenBox" class = "container_outline_box">
+    <h3 style="text-align: center;">
+        Token
+    </h3>
 
 {% endblock %}

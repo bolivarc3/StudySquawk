@@ -24,6 +24,18 @@ h3{
     text-align: center;
 }
 
+#TokenBox{
+    display: none;
+}
+
+.container_outline_box{
+    margin: auto;
+    width: 80%;
+    height: fit-content;
+    border:1px solid white;
+    text-align: center;
+}
+
 pre{
     border-radius: 1rem;
     background-color: #161B22;
