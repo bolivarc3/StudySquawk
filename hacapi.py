@@ -141,7 +141,7 @@ def grabassignmentgrades(driver,classes):
         if len(components) == 2:
             number = int(components[1])
             course = classes[number]
-            id = table.get('id')
+            id = table.get_attribute('id')
             rows = table.find_elements(By.CSS_SELECTOR, 'tr.sg-asp-table-data-row')
             classgrades = []
             for row in rows:
@@ -168,11 +168,11 @@ def graboverallgrades(driver,classes):
     #iterates through tables(each table is a different class)
     #checks each table to find the correct table
     for table in tables:
-        components = table.get('id').split('plnMain_rptAssigmnetsByCourse_dgCourseCategories_')
+        components = table.get_attribute('id').split('plnMain_rptAssigmnetsByCourse_dgCourseCategories_')
         if len(components) ==2:
             number = int(components[1])
             course = classes[number]
-            id = table.get('id')
+            id = table.get_attribute('id')
             rows = table.find_all('tr', class_='sg-asp-table-data-row')
             classgrades = []
             for row in rows:
