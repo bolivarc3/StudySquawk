@@ -209,7 +209,7 @@ def api_main():
         return render_template("api/api_intro.html")
     return render_template("api/api_intro.html")
 
-
+#try
 @api.route("/dashboard", methods=["POST","GET"])
 def dashboard():
     page_identifier = "dashboard"
