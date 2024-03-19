@@ -38,11 +38,7 @@ s_api = URLSafeTimedSerializer('Thisisasecret!')
 @api.before_request
 def default_login_required():
     login_valid = 'username' in session
-    print(request)
-
     if request.blueprint in {'api', 'www'}:
-        print("yoooo?")
-        print("Registered Endpoints:", api.view_functions.keys())
         if (    request.endpoint
     and 'static' not in request.endpoint
     and not login_valid
@@ -315,7 +311,7 @@ def create_token():
         flash("There is already a Token Associated with this Account")
         return redirect(url_for('api.dashboard'))
     apikey = str(generate_key())
-    db.execute('INSERT INTO "API_Users_Tokens"(userid, apitoken, date_created, usesnum) VALUES (%s, %s, %s, %s)',(username,apikey,date.today(),0))
+    db.execute('INSERT INTO "API_Users_Tokens"(userid, apitoken, date_renew, usesnum) VALUES (%s, %s, %s, %s)',(username,apikey,date.today(),0))
     db_conn.commit()
     db.close()
     db_conn.close()
@@ -325,10 +321,8 @@ def check_token(token):
     db_info = connectdb()
     db = db_info[0]
     db_conn = db_info[1]
-    print("hey")
     db.execute('SELECT * FROM "API_Users_Tokens" WHERE apitoken = %s', (token, ));
     token_results = db.fetchall()
-    print(token_results)
     if len(token_results) > 1:
         return "There is an error with this token| A Duplicate"
     elif len(token_results) == 0:
