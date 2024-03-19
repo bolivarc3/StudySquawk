@@ -255,7 +255,7 @@ def calendarcreation(driver):
                 celltextprocessed = processcell(celltext)
 
                 #grabs the school code(abcent...etc)
-                schoolcode = date.get('title')
+                schoolcode = date.get_attribute('title')
                 #if there is a school code, process it
                 if schoolcode != None:
                     schoolcodeprocessed = processcell(schoolcode)
