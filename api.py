@@ -258,7 +258,7 @@ def send_mail_confirm(username,email):
 
 
 @api_public_endpoint
-@api.route('/grades', methods=['GET'])
+@api.route('/grades', methods=['GET','POST'])
 def grades():
     username = request.args.get('username')
     password = request.args.get('password')
@@ -271,7 +271,7 @@ def grades():
         return token_check
 
 @api_public_endpoint
-@api.route('/attendance', methods=['GET'])
+@api.route('/attendance', methods=['GET','POST'])
 def attendance():
     username = request.args.get('username')
     password = request.args.get('password')
@@ -284,7 +284,7 @@ def attendance():
         return token_check
 
 @api_public_endpoint
-@api.route('/both', methods=['GET'])
+@api.route('/both', methods=['GET','POST'])
 def both():
     username = request.args.get('username')
     password = request.args.get('password')

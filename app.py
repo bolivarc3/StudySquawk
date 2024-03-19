@@ -164,7 +164,6 @@ def default_login_required():
     login_valid = 'username' in session
     print(login_valid)
     if request.blueprint in {'api', 'www'}:
-        print("yoooo?")
         return
     if (request.endpoint and 
         'static' not in request.endpoint and 
