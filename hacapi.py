@@ -230,13 +230,16 @@ def calendarcreation(driver):
         #grabs html and finds the past month availibility(if there is a button for the past month)
         calendarhtml = driver.page_source.encode('utf-8').strip()
         soup = BeautifulSoup(calendarhtml)
-        nextmonthlink = soup.find('a', {'title':'Go to the next month'})
-        nextmonthavalilbilty = nextmonthlink.find('span')
-        #grabs html and finds the past month availibility(if there is a button for the past month)
+        next_month_link = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'a[title="Go to the next month"]')))
 
-        #grabs months and weeks to loop through
-        month = soup.find('table', {'id':'plnMain_cldAttendance'})
-        weeks = month.findAll('tr')
+        # Finding the availability span within the next month link
+        next_month_availability = next_month_link.find_element(By.CSS_SELECTOR, 'span')
+
+        # Finding the table containing month data
+        month_table = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'plnMain_cldAttendance')))
+
+        # Finding all rows within the month table (representing weeks)
+        weeks = month_table.find_elements(By.TAG_NAME, 'tr')
         #grabs months and weeks to loop through
 
         #iterates through the weeks
