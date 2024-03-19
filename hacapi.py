@@ -132,7 +132,7 @@ def grabclasses(driver):
 
 def grabassignmentgrades(driver,classes):
     soup = BeautifulSoup(driver.page_source.encode('utf-8'))
-    tables = soup.findAll('table', {'class':'sg-asp-table'})
+    tables = driver.find_elements(By.CSS_SELECTOR, 'table.sg-asp-table')
     grades = {}
     #iterates through tables(each table is a different class)
     #checks each table to find the correct table
@@ -142,7 +142,7 @@ def grabassignmentgrades(driver,classes):
             number = int(components[1])
             course = classes[number]
             id = table.get('id')
-            rows = table.findAll('tr', {'class':'sg-asp-table-data-row'})
+            rows = table.find_elements(By.CSS_SELECTOR, 'tr.sg-asp-table-data-row')
             classgrades = []
             for row in rows:
                 cells = row.findAll('td')
@@ -161,7 +161,7 @@ def grabassignmentgrades(driver,classes):
 
 def graboverallgrades(driver,classes):
     soup = BeautifulSoup(driver.page_source.encode('utf-8'))
-    tables = soup.findAll('table', {'class':'sg-asp-table'})
+    tables = soup.find_all('table', class_='sg-asp-table')
     grades = {}
     overall_grades = {}
     classes = grabclasses(driver)
@@ -173,10 +173,10 @@ def graboverallgrades(driver,classes):
             number = int(components[1])
             course = classes[number]
             id = table.get('id')
-            rows = table.findAll('tr', {'class':'sg-asp-table-data-row'})
+            rows = table.find_all('tr', class_='sg-asp-table-data-row')
             classgrades = []
             for row in rows:
-                cells = row.findAll('td')
+                cells = row.find_all('td')
                 assignment = []
                 for cell in cells:
                     celltext = cell.text
@@ -213,8 +213,8 @@ def gobackfirst(driver):
             EC.presence_of_element_located((By.XPATH, "//a[@title='Go to the previous month']")))
         finally:
             print("not there")
-        pastmonthlink = soup.find('a', {'title':'Go to the previous month'})
-        pastmonthavalilbilty = pastmonthlink.find('span')
+        pastmonthlink = soup.find('a', {'title': 'Go to the previous month'})
+        pastmonthavailability = pastmonthlink.find('span')
         #grabs html and finds the past month availibility(if there is a button for the past month)
         if pastmonthavalilbilty != None:
             l = driver.find_element(By.CSS_SELECTOR,"[title*='Go to the previous month']")
