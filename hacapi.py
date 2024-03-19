@@ -245,7 +245,7 @@ def calendarcreation(driver):
         #iterates through the weeks
         usermonth = []
         for week in weeks:
-            dates = week.findAll('td')
+            dates = week.find_elements(By.TAG_NAME, 'td')
             userweek = []
 
             #iterates through specific dates
