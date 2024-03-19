@@ -32,6 +32,7 @@ if ENV == 'prod':
     driver = webdriver.Chrome(service=service, options=chrome_options)
     #login url for hac
 def hac_api_main(function,api,username,password):
+    driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Account/LogOn?ReturnUrl=%2fHomeAccess%2f")
     if function == "":
         return {"error":"go to https://github.com/bolivarc3/HacApi or information on usage of the api"}
     if username == '' or password == '':
