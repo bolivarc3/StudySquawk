@@ -145,7 +145,7 @@ def grabassignmentgrades(driver,classes):
             rows = table.find_elements(By.CSS_SELECTOR, 'tr.sg-asp-table-data-row')
             classgrades = []
             for row in rows:
-                cells = row.findAll('td')
+                cells = row.find_elements(By.TAG_NAME, 'td')
                 assignment = []
                 for cell in cells:
                     celltext = cell.text
