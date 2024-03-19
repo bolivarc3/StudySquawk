@@ -121,7 +121,7 @@ def reset(api,driver):
 
 def grabclasses(driver):
     soup = BeautifulSoup(driver.page_source.encode('utf-8'))
-    classes = soup.findAll('a', {'class':'sg-header-heading'})
+    classes = soup.find_all('a', class_='sg-header-heading')
     courses = []
     #grabs all classes and add them into a list/array
     for course in classes:
