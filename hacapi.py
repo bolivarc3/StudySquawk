@@ -137,7 +137,7 @@ def grabassignmentgrades(driver,classes):
     #iterates through tables(each table is a different class)
     #checks each table to find the correct table
     for table in tables:
-        components = table.get('id').split("plnMain_rptAssigmnetsByCourse_dgCourseAssignments_")
+        components = table.get_attribute('id').split('plnMain_rptAssigmnetsByCourse_dgCourseCategories_')
         if len(components) == 2:
             number = int(components[1])
             course = classes[number]
