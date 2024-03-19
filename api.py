@@ -262,8 +262,11 @@ def send_mail_confirm(username,email):
 
 
 @api_public_endpoint
-@api.route('/grades/<token>/<username>/<password>', methods=['GET'])
-def grades(username,password,token):
+@api.route('/grades', methods=['GET'])
+def grades():
+    username = request.args.get('username')
+    password = request.args.get('password')
+    token = request.args.get('token')
     token_check = check_token(token)
     if token_check == "0":
         grades = hac_executions("grades",True,username,password)
@@ -272,8 +275,11 @@ def grades(username,password,token):
         return token_check
 
 @api_public_endpoint
-@api.route('/attendance/<token>/<username>/<password>', methods=['GET'])
-def attendance(username,password,token):
+@api.route('/attendance', methods=['GET'])
+def attendance():
+    username = request.args.get('username')
+    password = request.args.get('password')
+    token = request.args.get('token')
     token_check = check_token(token)
     if token_check ==  "0":
         attendance = hac_executions("attendance",True,username,password)
@@ -282,8 +288,11 @@ def attendance(username,password,token):
         return token_check
 
 @api_public_endpoint
-@api.route('/both/<token>/<username>/<password>', methods=['GET'])
-def both(username,password,token):
+@api.route('/both', methods=['GET'])
+def both():
+    username = request.args.get('username')
+    password = request.args.get('password')
+    token = request.args.get('token')
     token_check = check_token(token)
     if token_check == "0":
         both = hac_executions("both",True,username,password)

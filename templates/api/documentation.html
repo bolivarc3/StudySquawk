@@ -29,6 +29,8 @@
     grades
     <br>
     attendance
+    <br>
+    both
   </h3>
 </div>
 <br>
@@ -53,10 +55,10 @@
   <br>
   <br>
   #grab information for grades
-  params = {"username":username,"password":password}
+  params = {"username":username,"password":password, "token":token}
   params = json.dumps(params)
   headers = {'Content-Type': 'application/json'}
-  grades_request = requests.post("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/grades", data=params, headers=headers)
+  grades_request = requests.post("https://api.studysquawk.tech/grades", data=params, headers=headers)
   <br>
   <br>
   #converts output to a json format(dictionary)
@@ -264,10 +266,10 @@ real life example:
   password = student_password
 
   #grab information for attendance
-  params = {"username":username,"password":password}
+  params = {"username":username,"password":password, "token":token}
   params = json.dumps(params)
   headers = {'Content-Type': 'application/json'}
-  attedance_request = requests.post("https://2o5vn3b0m9.execute-api.us-east-1.amazonaws.com/attendance",  data=params, headers=headers)
+  attedance_request = requests.post("https://api.studysquawk.tech/attendance",  data=params, headers=headers)
 
   #converts output to a json format(dictionary)
   attendance_data = attedance_request.json()
@@ -289,7 +291,9 @@ below is stucture of what
 </p>
 
 <div id = "container_outline_box">
-  attendance_data['attendance']
+  <h3>
+    attendance_data['attendance']
+  </h3>
 </div>
 
 <h3 style = "text-align: center; color: #59C0E4;">
@@ -340,5 +344,38 @@ below is stucture of what
 <p>
   if Event is equal to None that means there is no Attendance Events or Overall Events that happened that day
 </p>
+
+<h2>
+  Usage for Grabbing Both
+</h2>
+<br>
+<h3>
+  Starter code to getting both the attendance and the grade information
+</h3>
+<pre class="language-python">
+  <code>
+  import requests
+
+  #credentials
+  username = student_username
+  password = student_password
+
+  #grab information for attendance
+  params = {"username":username,"password":password, "token":token}
+  params = json.dumps(params)
+  headers = {'Content-Type': 'application/json'}
+  attedance_request = requests.post("https://api.studysquawk.tech/both",  data=params, headers=headers)
+
+  #converts output to a json format(dictionary)
+  attendance_data = attedance_request.json()
+  #grabs data from dictionary
+  attendance = attendance_data['attendance']
+  </code>
+</pre>
+
+<p>
+Using the Code above, you will get the same keys and responses of both Attendance and the Grades. Access them with the same keys and the same way. The Both Function, just return both of the information in one package.
+</p>
+
 
 {% endblock %}
