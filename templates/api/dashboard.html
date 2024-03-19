@@ -7,12 +7,14 @@
 <h2>Create your API Token</h2>
 <p>
 </p>
-<button>
-    Create your Token
-</button>
+<form id = "signupform" action = "{{ url_for('api.create_token', _external=True, _scheme=scheme) }}" method ="POST">
+    <div class="form-element">
+        <button class="btn-primary" type="submit">Click Here for a Token</button>
+    </div>
+</form>
 <div id = "TokenBox" class = "container_outline_box">
     <h3 style="text-align: center;">
         Token
     </h3>
-
+</div>
 {% endblock %}

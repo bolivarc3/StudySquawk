@@ -1,0 +1,22 @@
+
+{% extends "api/layout.html" %}
+{% block body %}
+<div style="width: fit-content;height: fit-content;margin: auto;">
+    <h1>
+        This is your Token
+    </h1>
+    <div id = "TokenBox" class = "container_outline_box">
+        <h2 style="font-size: 20rem;">
+            {{apikey}}
+        </h2>
+    </div>
+    <h3>
+        Save this Token!!!!
+    </h3>
+    <form action = "{{ url_for('api.dashboard', _external=True, _scheme=scheme) }}" method ="POST">
+        <div class="form-element">
+            <button class="btn-primary" type="submit">Click Here to go to Dashboard</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

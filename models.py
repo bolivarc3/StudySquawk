@@ -61,10 +61,14 @@ class APIUsersTokens(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     userid = db.Column(db.Text, nullable=False)
     apitoken = db.Column(db.Text, nullable=False)
+    date_renew = db.Column(db.Date, nullable=False)
+    usesnum = db.Column(db.Integer, nullable=False)
 
-    def __init__(self,userid, apitoken):
+    def __init__(self,userid, apitoken, date_created, usesnum):
         self.userid = userid
         self.apitoken = apitoken
+        self.date_renew = date_renew
+        self.usesnum = usesnum
 
 #models for postings
 class posts(db.Model):

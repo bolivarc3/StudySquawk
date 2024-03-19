@@ -25,6 +25,10 @@ from itsdangerous.url_safe import URLSafeTimedSerializer
 from flask_mail import Mail, Message
 from flask import current_app
 from hacapi import hac_api_main
+from uuid import uuid4
+import binascii
+
+from datetime import date
 
 api = Blueprint('api', __name__, subdomain='api')
 www = Blueprint('www', __name__, subdomain='www')
@@ -258,19 +262,83 @@ def send_mail_confirm(username,email):
 
 
 @api_public_endpoint
-@api.route('/grades/<username>/<password>', methods=['GET'])
-def grades(username,password):
-    grades = hac_executions("grades",True,username,password)
-    return grades
+@api.route('/grades/<token>/<username>/<password>', methods=['GET'])
+def grades(username,password,token):
+    token_check = check_token(token)
+    if token_check == "0":
+        grades = hac_executions("grades",True,username,password)
+        return grades
+    else:
+        return token_check
 
 @api_public_endpoint
-@api.route('/attendance/<username>/<password>', methods=['GET'])
-def attendance(username,password):
-    attendance = hac_executions("attendance",True,username,password)
-    return attendance
+@api.route('/attendance/<token>/<username>/<password>', methods=['GET'])
+def attendance(username,password,token):
+    token_check = check_token(token)
+    if token_check ==  "0":
+        attendance = hac_executions("attendance",True,username,password)
+        return attendance
+    else:
+        return token_check
 
 @api_public_endpoint
-@api.route('/both/<username>/<password>', methods=['GET'])
-def both(username,password):
-    both = hac_executions("both",True,username,password)
-    return both
+@api.route('/both/<token>/<username>/<password>', methods=['GET'])
+def both(username,password,token):
+    token_check = check_token(token)
+    if token_check == "0":
+        both = hac_executions("both",True,username,password)
+        return both
+    else:
+        return token_check
+
+
+@api.route('/create_token', methods=["POST"])
+def create_token():
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    #seperate list into db objects
+    username = session["username"]
+    #checks if email is already in the system | cant be 2 of the same email
+    db.execute('SELECT * FROM "API_Users_Tokens" WHERE userid = %s', (username, ));
+    usernames = db.fetchall()
+    if len(usernames) >= 1:
+        flash("There is already a Token Associated with this Account")
+        return redirect(url_for('api.dashboard'))
+    apikey = str(generate_key())
+    db.execute('INSERT INTO "API_Users_Tokens"(userid, apitoken, date_created, usesnum) VALUES (%s, %s, %s, %s)',(username,apikey,date.today(),0))
+    db_conn.commit()
+    db.close()
+    db_conn.close()
+    return render_template("api/apicode_display.html",apikey=apikey)
+    
+def check_token(token):
+    db_info = connectdb()
+    db = db_info[0]
+    db_conn = db_info[1]
+    print("hey")
+    db.execute('SELECT * FROM "API_Users_Tokens" WHERE apitoken = %s', (token, ));
+    token_results = db.fetchall()
+    print(token_results)
+    if len(token_results) > 1:
+        return "There is an error with this token| A Duplicate"
+    elif len(token_results) == 0:
+        return "This Token does not exist, Please create a new API Key through https://api.studysquawk.tech/dashboard"
+    elif int(token_results[0][4]) > 500:
+        return "You have exceeded your limit in StudySquawk API Use"
+    else:
+        db.execute('SELECT date_renew FROM "API_Users_Tokens" WHERE apitoken = %s', (token, ));
+        daterenw = db.fetchone()[0]
+        date_compare = (date.today() - daterenw).days
+        if date_compare > 31:
+            db.execute('UPDATE "API_Users_Tokens" SET usesnum = 0 WHERE apitoken = %s', (token, ))
+            db_conn.commit()
+        db.execute('UPDATE "API_Users_Tokens" SET usesnum = usesnum+1 WHERE apitoken = %s', (token, ))
+        db_conn.commit()
+        db.close()
+        db_conn.close()
+        return "0"
+    return "0"
+
+def generate_key():
+    return binascii.hexlify(os.urandom(20)).decode()
