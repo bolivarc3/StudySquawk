@@ -220,7 +220,7 @@ def documentation():
     page_identifier = "documentation"
     return render_template("api/documentation.html",page_identifier = page_identifier)
 
-
+@api_public_endpoint
 @api.route('/confirm_email/<token>/<username>', methods=['GET','POST'])
 def confirm_email(token,username):
     #checks to see if the token works, if it does, then it 
