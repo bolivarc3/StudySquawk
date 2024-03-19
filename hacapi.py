@@ -22,6 +22,8 @@ ENV = os.environ.get('APPLICATION_ENV')
 if ENV == 'dev':
     options = webdriver.ChromeOptions()
     driver = webdriver.Chrome(options=options)
+    pass
+
 if ENV == 'prod':
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--headless")
@@ -32,7 +34,6 @@ if ENV == 'prod':
     driver = webdriver.Chrome(service=service, options=chrome_options)
     #login url for hac
 def hac_api_main(function,api,username,password):
-    driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Account/LogOn?ReturnUrl=%2fHomeAccess%2f")
     if function == "":
         return {"error":"go to https://github.com/bolivarc3/HacApi or information on usage of the api"}
     if username == '' or password == '':
@@ -121,7 +122,7 @@ def reset(api,driver):
 
 def grabclasses(driver):
     soup = BeautifulSoup(driver.page_source.encode('utf-8'))
-    classes = soup.find_all('a', class_='sg-header-heading')
+    classes = soup.findAll('a', {'class':'sg-header-heading'})
     courses = []
     #grabs all classes and add them into a list/array
     for course in classes:
@@ -132,20 +133,20 @@ def grabclasses(driver):
 
 def grabassignmentgrades(driver,classes):
     soup = BeautifulSoup(driver.page_source.encode('utf-8'))
-    tables = driver.find_elements(By.CSS_SELECTOR, 'table.sg-asp-table')
+    tables = soup.findAll('table', {'class':'sg-asp-table'})
     grades = {}
     #iterates through tables(each table is a different class)
     #checks each table to find the correct table
     for table in tables:
-        components = table.get_attribute('id').split('plnMain_rptAssigmnetsByCourse_dgCourseCategories_')
+        components = table.get('id').split("plnMain_rptAssigmnetsByCourse_dgCourseAssignments_")
         if len(components) == 2:
             number = int(components[1])
             course = classes[number]
-            id = table.get_attribute('id')
-            rows = table.find_elements(By.CSS_SELECTOR, 'tr.sg-asp-table-data-row')
+            id = table.get('id')
+            rows = table.findAll('tr', {'class':'sg-asp-table-data-row'})
             classgrades = []
             for row in rows:
-                cells = row.find_elements(By.TAG_NAME, 'td')
+                cells = row.findAll('td')
                 assignment = []
                 for cell in cells:
                     celltext = cell.text
@@ -161,22 +162,22 @@ def grabassignmentgrades(driver,classes):
 
 def graboverallgrades(driver,classes):
     soup = BeautifulSoup(driver.page_source.encode('utf-8'))
-    tables = soup.find_all('table', class_='sg-asp-table')
+    tables = soup.findAll('table', {'class':'sg-asp-table'})
     grades = {}
     overall_grades = {}
     classes = grabclasses(driver)
     #iterates through tables(each table is a different class)
     #checks each table to find the correct table
     for table in tables:
-        components = table.get_attribute('id').split('plnMain_rptAssigmnetsByCourse_dgCourseCategories_')
+        components = table.get('id').split('plnMain_rptAssigmnetsByCourse_dgCourseCategories_')
         if len(components) ==2:
             number = int(components[1])
             course = classes[number]
-            id = table.get_attribute('id')
-            rows = table.find_all('tr', class_='sg-asp-table-data-row')
+            id = table.get('id')
+            rows = table.findAll('tr', {'class':'sg-asp-table-data-row'})
             classgrades = []
             for row in rows:
-                cells = row.find_all('td')
+                cells = row.findAll('td')
                 assignment = []
                 for cell in cells:
                     celltext = cell.text
@@ -213,8 +214,8 @@ def gobackfirst(driver):
             EC.presence_of_element_located((By.XPATH, "//a[@title='Go to the previous month']")))
         finally:
             print("not there")
-        pastmonthlink = soup.find('a', {'title': 'Go to the previous month'})
-        pastmonthavailability = pastmonthlink.find('span')
+        pastmonthlink = soup.find('a', {'title':'Go to the previous month'})
+        pastmonthavalilbilty = pastmonthlink.find('span')
         #grabs html and finds the past month availibility(if there is a button for the past month)
         if pastmonthavalilbilty != None:
             l = driver.find_element(By.CSS_SELECTOR,"[title*='Go to the previous month']")
@@ -230,22 +231,19 @@ def calendarcreation(driver):
         #grabs html and finds the past month availibility(if there is a button for the past month)
         calendarhtml = driver.page_source.encode('utf-8').strip()
         soup = BeautifulSoup(calendarhtml)
-        next_month_link = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'a[title="Go to the next month"]')))
+        nextmonthlink = soup.find('a', {'title':'Go to the next month'})
+        nextmonthavalilbilty = nextmonthlink.find('span')
+        #grabs html and finds the past month availibility(if there is a button for the past month)
 
-        # Finding the availability span within the next month link
-        next_month_availability = next_month_link.find_element(By.CSS_SELECTOR, 'span')
-
-        # Finding the table containing month data
-        month_table = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'plnMain_cldAttendance')))
-
-        # Finding all rows within the month table (representing weeks)
-        weeks = month_table.find_elements(By.TAG_NAME, 'tr')
+        #grabs months and weeks to loop through
+        month = soup.find('table', {'id':'plnMain_cldAttendance'})
+        weeks = month.findAll('tr')
         #grabs months and weeks to loop through
 
         #iterates through the weeks
         usermonth = []
         for week in weeks:
-            dates = week.find_elements(By.TAG_NAME, 'td')
+            dates = week.findAll('td')
             userweek = []
 
             #iterates through specific dates
@@ -255,7 +253,7 @@ def calendarcreation(driver):
                 celltextprocessed = processcell(celltext)
 
                 #grabs the school code(abcent...etc)
-                schoolcode = date.get_attribute('title')
+                schoolcode = date.get('title')
                 #if there is a school code, process it
                 if schoolcode != None:
                     schoolcodeprocessed = processcell(schoolcode)
