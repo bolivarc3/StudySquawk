@@ -211,6 +211,7 @@ def dashboard():
     page_identifier = "dashboard"
     return render_template("api/dashboard.html",page_identifier = page_identifier)
 
+@api_public_endpoint
 @api.route("/documentation", methods=["POST","GET"])
 def documentation():
     page_identifier = "documentation"
