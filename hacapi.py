@@ -15,13 +15,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import WebDriverException, TimeoutException
 import os
 from app import session
 
 ENV = os.environ.get('APPLICATION_ENV')
 if ENV == 'dev':
-    options = webdriver.ChromeOptions()
-    driver = webdriver.Chrome(options=options)
+    # options = webdriver.ChromeOptions()
+    # driver = webdriver.Chrome(options=options)
     pass
 
 if ENV == 'prod':
@@ -41,12 +42,17 @@ def hac_api_main(function,api,username,password):
     if "HacStatus" not in session:
         session["HacStatus"] = False
     if session["HacStatus"] == False or api:
-        driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Account/LogOn?ReturnUrl=%2fHomeAccess%2f")
         try:
+            driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Account/LogOn?ReturnUrl=%2fHomeAccess%2f")
             wait = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "Database")))
+        except TimeoutException:
+            # If WebDriverWait times out, handle it here
+            return "Timeout: Element not found within specified time"
+        except WebDriverException as e:
+            return {"error":"An error occurred:" + str(e)}
         finally:
-            print("not there")
+            print("It has been Run")
         dropdown = Select(driver.find_element(By.ID,'Database'))
         dropdown.select_by_visible_text("Bentonville School District");
         element = driver.find_element(By.XPATH, '//input[@id="LogOnDetails_UserName"]')
