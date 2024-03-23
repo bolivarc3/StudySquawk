@@ -115,8 +115,8 @@ def hac_api_main(function,api,username,password):
 
 def reset(api,driver):
     if api:
-        driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Home/WeekView")
         try:
+            driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Home/WeekView")
             wait = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, '//a[@href="/HomeAccess/Account/Logoff"]')))
         finally:
