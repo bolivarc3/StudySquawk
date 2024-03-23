@@ -46,7 +46,7 @@ def hac_api_main(function,api,username,password):
             wait = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "Database")))
         except TimeoutException:
-            # If WebDriverWait times out, handle it here
+            reset(api,driver)
             return "Timeout: Element not found within specified time"
         except WebDriverException as e:
             return {"error":"An error occurred:" + str(e)}
