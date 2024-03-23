@@ -67,7 +67,7 @@ def hac_api_main(function,api,username,password):
     session["HacStatus"] = True
     #Grab __RequestVerifcationToken(token needed to login)
     #checks if login was successful
-    soup = BeautifulSoup(driver.page_source.encode('utf-8'))
+    soup = BeautifulSoup(driver.page_source.encode('utf-8'), features='html.parser', suppress_warnings=True)
     validation = soup.find('div', {'class':'validation-summary-errors'})
     if validation != None:
         error = validation.find('span')
@@ -120,13 +120,13 @@ def reset(api,driver):
             wait = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, '//a[@href="/HomeAccess/Account/Logoff"]')))
         finally:
-            print("not there")
+            pass
         link = driver.find_element(By.XPATH, '//a[@href="/HomeAccess/Account/Logoff"]')
         link.click()
         driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Account/LogOn?ReturnUrl=%2fHomeAccess%2f")
 
 def grabclasses(driver):
-    soup = BeautifulSoup(driver.page_source.encode('utf-8'))
+    soup = BeautifulSoup(driver.page_source.encode('utf-8'), features='html.parser', suppress_warnings=True)
     classes = soup.findAll('a', {'class':'sg-header-heading'})
     courses = []
     #grabs all classes and add them into a list/array
@@ -137,7 +137,7 @@ def grabclasses(driver):
     return (courses)
 
 def grabassignmentgrades(driver,classes):
-    soup = BeautifulSoup(driver.page_source.encode('utf-8'))
+    soup = BeautifulSoup(driver.page_source.encode('utf-8'), features='html.parser', suppress_warnings=True)
     tables = soup.findAll('table', {'class':'sg-asp-table'})
     grades = {}
     #iterates through tables(each table is a different class)
@@ -166,7 +166,7 @@ def grabassignmentgrades(driver,classes):
     return(grades)
 
 def graboverallgrades(driver,classes):
-    soup = BeautifulSoup(driver.page_source.encode('utf-8'))
+    soup = BeautifulSoup(driver.page_source.encode('utf-8'), features='html.parser', suppress_warnings=True)
     tables = soup.findAll('table', {'class':'sg-asp-table'})
     grades = {}
     overall_grades = {}
@@ -213,12 +213,12 @@ def gobackfirst(driver):
     while pastmonthavalilbilty != None:
         #grabs html and finds the past month availibility(if there is a button for the past month)
         calendarhtml = driver.page_source.encode('utf-8').strip()
-        soup = BeautifulSoup(calendarhtml)
+        soup = BeautifulSoup(calendarhtml, features='html.parser', suppress_warnings=True)
         try:
             wait = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//a[@title='Go to the previous month']")))
         finally:
-            print("not there")
+            pass
         pastmonthlink = soup.find('a', {'title':'Go to the previous month'})
         pastmonthavalilbilty = pastmonthlink.find('span')
         #grabs html and finds the past month availibility(if there is a button for the past month)
@@ -235,7 +235,7 @@ def calendarcreation(driver):
     while nextmonthavalilbilty != None:
         #grabs html and finds the past month availibility(if there is a button for the past month)
         calendarhtml = driver.page_source.encode('utf-8').strip()
-        soup = BeautifulSoup(calendarhtml)
+        soup = BeautifulSoup(calendarhtml, features='html.parser', suppress_warnings=True)
         nextmonthlink = soup.find('a', {'title':'Go to the next month'})
         nextmonthavalilbilty = nextmonthlink.find('span')
         #grabs html and finds the past month availibility(if there is a button for the past month)
