@@ -162,15 +162,25 @@ def page_not_found(e):
 @app.before_request
 def default_login_required():
     login_valid = 'username' in session
-    print(login_valid)
     if request.blueprint in {'api', 'www'}:
-        return
+        if (request.endpoint and 
+        'static' not in request.endpoint and 
+        not login_valid and 
+        not getattr(app.view_functions[request.endpoint], 'is_public', False) ) :
+            flash("Login to Continue with Your Session")
+            if request.blueprint == "api":
+                return redirect(url_for('api.api_main'))
+            else:
+                return redirect(url_for('www.index') if request.blueprint == 'www' else 'index')
     if (request.endpoint and 
         'static' not in request.endpoint and 
         not login_valid and 
         not getattr(app.view_functions[request.endpoint], 'is_public', False) ) :
-        flash("Login to Continue with Your Session")
-        return redirect(url_for('www.index') if request.blueprint == 'www' else 'index')
+            flash("Login to Continue with Your Session")
+            if request.blueprint == "api":
+                return redirect(url_for('api.api_main'))
+            else:
+                return redirect(url_for('www.index') if request.blueprint == 'www' else 'index')
 
 def public_endpoint(function):
     function.is_public = True
@@ -1027,7 +1037,6 @@ def calendar():
     return render_template("attendance.html", course=course, page_identifier=page_identifier)
 
 @app.route('/announcements', methods=["GET","POST"])
-@public_endpoint
 def announcements():
     html = requests.get("https://bentonvillek12.org/StudentAnnouncements/BHS").text
     soup = BeautifulSoup(html)

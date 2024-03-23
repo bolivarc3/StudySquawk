@@ -35,17 +35,15 @@ www = Blueprint('www', __name__, subdomain='www')
 
 s_api = URLSafeTimedSerializer('Thisisasecret!')
 
-@api.before_request
-def default_login_required():
-    login_valid = 'username' in session
-    if request.blueprint in {'api', 'www'}:
-        if (    request.endpoint
-    and 'static' not in request.endpoint
-    and not login_valid
-    and request.endpoint in current_app.view_functions
-    and not getattr(current_app.view_functions[request.endpoint], 'is_public', False) ) :
-            flash("Login to Continue with Your Session")
-            return redirect(url_for('api.api_main'))
+# @api.before_request
+# def default_login_required():
+#     login_valid = 'username' in session
+#     if (request.endpoint and 
+#     'static' not in request.endpoint and 
+#     not login_valid and 
+#     not getattr(current_app.view_functions[request.endpoint], 'is_public', False) ) :
+#         flash("Login to Continue with Your Session")
+#         return redirect(url_for('api.api_main'))
 
 def api_public_endpoint(function):
     function.is_public = True
@@ -211,7 +209,6 @@ def dashboard():
     page_identifier = "dashboard"
     return render_template("api/dashboard.html",page_identifier = page_identifier)
 
-@api_public_endpoint
 @api.route("/documentation", methods=["POST","GET"])
 def documentation():
     page_identifier = "documentation"
