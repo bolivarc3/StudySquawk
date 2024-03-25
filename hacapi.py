@@ -34,6 +34,7 @@ if ENV == 'prod':
     driver = webdriver.Chrome(service=service, options=chrome_options)
     #login url for hac
 def hac_api_main(function,api,username,password):
+    reset(api,driver)
     if function == "":
         return {"error":"go to https://github.com/bolivarc3/HacApi or information on usage of the api"}
     if username == '' or password == '':
@@ -114,16 +115,15 @@ def hac_api_main(function,api,username,password):
     #returns in a dictionary
 
 def reset(api,driver):
-    if api:
-        try:
-            driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Home/WeekView")
-            wait = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '//a[@href="/HomeAccess/Account/Logoff"]')))
-        finally:
-            pass
-        link = driver.find_element(By.XPATH, '//a[@href="/HomeAccess/Account/Logoff"]')
-        link.click()
-        driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Account/LogOn?ReturnUrl=%2fHomeAccess%2f")
+    try:
+        driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Home/WeekView")
+        wait = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, '//a[@href="/HomeAccess/Account/Logoff"]')))
+    finally:
+        pass
+    link = driver.find_element(By.XPATH, '//a[@href="/HomeAccess/Account/Logoff"]')
+    link.click()
+    driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Account/LogOn?ReturnUrl=%2fHomeAccess%2f")
 
 def grabclasses(driver):
     soup = BeautifulSoup(driver.page_source.encode('utf-8'), features='html.parser')
