@@ -42,7 +42,7 @@ def hac_api_main(function,api,username,password):
         session["HacStatus"] = False
 
     if session["HacStatus"] == False or api:
-        selenium_elements = driver.find_element(By.CSS_SELECTOR,"#Database")  # Check for elements with IDs or classes containing "selenium"
+        selenium_elements = driver.find_element(By.ID,"Database")  # Check for elements with IDs or classes containing "selenium"
         if not selenium_elements:
             reset(api,driver)
         try:
