@@ -42,16 +42,13 @@ def hac_api_main(function,api,username,password):
         session["HacStatus"] = False
 
     if session["HacStatus"] == False or api:
-        selenium_elements = driver.find_element(By.ID,"Database")  # Check for elements with IDs or classes containing "selenium"
-        if not selenium_elements:
-            reset(api,driver)
         try:
             driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Account/LogOn?ReturnUrl=%2fHomeAccess%2f")
             wait = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "Database")))
         except TimeoutException:
             reset(api,driver)
-            return "Timeout: Element not found within specified time"
+            print("Element with ID 'Database' not found within the timeout.")
         except WebDriverException as e:
             return {"error":"An error occurred:" + str(e)}
         finally:
