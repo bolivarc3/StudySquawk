@@ -34,14 +34,18 @@ if ENV == 'prod':
     driver = webdriver.Chrome(service=service, options=chrome_options)
     #login url for hac
 def hac_api_main(function,api,username,password):
-    reset(api,driver)
+    selenium_elements = driver.presence_of_element_located((By.ID, "Database")  # Check for elements with IDs or classes containing "selenium"
     if function == "":
         return {"error":"go to https://github.com/bolivarc3/HacApi or information on usage of the api"}
     if username == '' or password == '':
         return {"error":"you didnt put the username and password of the hac user. make url like -> /<insert what you want(grades,attendance,etc)>/<insert username>/<insert password>/"}
     if "HacStatus" not in session:
         session["HacStatus"] = False
+
     if session["HacStatus"] == False or api:
+        selenium_elements = driver.find_element(By.CSS_SELECTOR,"#Database")  # Check for elements with IDs or classes containing "selenium"
+        if not selenium_elements:
+            reset(api,driver)
         try:
             driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Account/LogOn?ReturnUrl=%2fHomeAccess%2f")
             wait = WebDriverWait(driver, 10).until(
