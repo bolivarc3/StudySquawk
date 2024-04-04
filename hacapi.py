@@ -40,6 +40,7 @@ def hac_api_main(function,api,username,password):
         return {"error":"you didnt put the username and password of the hac user. make url like -> /<insert what you want(grades,attendance,etc)>/<insert username>/<insert password>/"}
     if "HacStatus" not in session:
         session["HacStatus"] = False
+
     if session["HacStatus"] == False or api:
         try:
             driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Account/LogOn?ReturnUrl=%2fHomeAccess%2f")
@@ -47,7 +48,7 @@ def hac_api_main(function,api,username,password):
             EC.presence_of_element_located((By.ID, "Database")))
         except TimeoutException:
             reset(api,driver)
-            return "Timeout: Element not found within specified time"
+            print("Element with ID 'Database' not found within the timeout.")
         except WebDriverException as e:
             return {"error":"An error occurred:" + str(e)}
         finally:
