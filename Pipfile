@@ -35,6 +35,8 @@ selenium = "*"
 flask-cors = "*"
 flask-login = "*"
 alembic = "*"
+aiohttp = "*"
+asyncio = "*"
 
 [dev-packages]
 

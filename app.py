@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify,send_file,Blueprint,current_app
+from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify,send_file,Blueprint,current_app,get_flashed_messages
 from flask_session import Session
 from flask_login import current_user
 from flask_socketio import SocketIO, emit, join_room
@@ -64,6 +64,8 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False
 Session(app)
 mail = Mail(app)
+# login_manager = LoginManager(app)
+# from helpers import User
 CORS(app, methods=['GET', 'POST'])
 socketio = SocketIO(app)
 app.config.from_pyfile('config.cfg')
@@ -128,6 +130,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 from aws import upload, download_file, download_folder, delete_aws_files,delete_aws_files_post
 # Ensure responses aren't cached
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @app.context_processor
 def inject_scheme():
@@ -197,6 +201,10 @@ def disconnect_user():
 
 def logout_user():
     session.clear()
+
+# @login_manager.user_loader
+# def load_user(user_id):
+#     return User(user_id)
 #the intro homepage for the user
 #test1
 @public_endpoint
@@ -962,18 +970,22 @@ def resources(route):
 @app.route('/grade_viewer', methods=["GET","POST"])
 @login_hac_required
 def grade_viewer():
-    session_key_list = list(session.keys())
-    if "user_id_hac" not in session_key_list:
+    session_key_list = session.keys()
+    print("Grade_viewer keys")
+    print(session_key_list)
+    if "user_id_hac" not in session.keys():
         return redirect(url_for('www.grade_viewer_signup') if request.blueprint == 'www' else 'grade_viewer_signup')
     #grab information for grades
     session["error"] = False
     if "error" in session.keys():
         error = session["error"]
         if error == True:
+            print("There is an error....")
             session["error"] = False
             flash("Error Occured. Your username and password may be wrong!")
             return redirect(url_for('www.grade_viewer_signup') if request.blueprint == 'www' else 'grade_viewer_signup')
         #grabs data from dictionary
+    print(session.keys())
     if "hacgrades" in session.keys():
         grades_data = session["hacgrades"]
         class_names = grades_data['class_names']
@@ -982,28 +994,36 @@ def grade_viewer():
         assignment_grades = grades_data['assignment_grades']
         iterate = [1,2,3,4,5]
     else:
+        print("It did this")
+        update_hac()
         return redirect(url_for('www.grade_viewer_signup') if request.blueprint == 'www' else 'grade_viewer_signup')
-    update_hac()
     course="homepage"
     page_identifier="grade_viewer"
-# for i in range()
     return render_template("grade_viewer.html", course=course, page_identifier=page_identifier, class_names=class_names, grade_summary=grade_summary, assignment_grades=assignment_grades, iterate=iterate)
 
 @app.route('/grade_viewer_signup', methods=["GET","POST"])
 def grade_viewer_signup():
+    
     #if the request is post, grab the form elements and password and grab nessasary information for hac
     if request.method == "POST":
         grade_username = request.form.get('gradeusername')
         gradepassword = request.form.get('gradepassword')
         session["user_id_hac"] = grade_username
         session["password_hac"] = gradepassword
+        session.pop('hacgradestimeupdated', None)
+        session.pop('hacattendancetimeupdated', None)
         session["error"] = False
         update_hac()
         return redirect(url_for('www.grade_viewer') if request.blueprint == 'www' else 'grade_viewer')
-    #else, load the page where these peices of info must be inputted
-    session["user_id_hac"] = "NULL"
-    session["password_hac"] = "NUll"
-    return render_template("grade_viewer_signup.html")
+    else:
+        #else, load the page where these peices of info must be inputted
+        session.pop('password_hac', None)
+        session.pop('user_id_hac', None)
+        session.pop('hacgrades', None)
+        session.pop('hacattendance', None)
+        session.pop('hacgradestimeupdated', None)
+        session.pop('hacattendancetimeupdated', None)
+        return render_template("grade_viewer_signup.html")
 
 @app.route('/grade_viewer/<selectedcourse>', methods=["GET","POST"])
 

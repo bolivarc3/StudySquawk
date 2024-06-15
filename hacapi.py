@@ -18,6 +18,8 @@ from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import WebDriverException, TimeoutException
 import os
 from app import session
+import asyncio
+import aiohttp
 
 ENV = os.environ.get('APPLICATION_ENV')
 if ENV == 'dev':
@@ -33,15 +35,20 @@ if ENV == 'prod':
     service = Service(executable_path=os.environ.get("CHROMEDRIVER_PATH"))
     driver = webdriver.Chrome(service=service, options=chrome_options)
     #login url for hac
-def hac_api_main(function,api,username,password):
+
+
+
+async def hac_api_main(function,api,username,password):
+    print("It is running the api")
     if function == "":
         return {"error":"go to https://github.com/bolivarc3/HacApi or information on usage of the api"}
     if username == '' or password == '':
         return {"error":"you didnt put the username and password of the hac user. make url like -> /<insert what you want(grades,attendance,etc)>/<insert username>/<insert password>/"}
-    if "HacStatus" not in session:
+    if "HacStatus" not in session or session["HacStatus"] == True:
         session["HacStatus"] = False
 
     if session["HacStatus"] == False or api:
+        print("is it doing it?")
         try:
             driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Account/LogOn?ReturnUrl=%2fHomeAccess%2f")
             wait = WebDriverWait(driver, 10).until(
@@ -64,15 +71,18 @@ def hac_api_main(function,api,username,password):
         anotherelement = driver.find_element(By.ID,"LogOnDetails_Password")
         anotherelement.send_keys(password)
         anotherelement.send_keys(Keys.ENTER)
-        url = 'https://hac20.esp.k12.ar.us/HomeAccess20/Account/LogOn?ReturnUrl=%2fHomeAccess20%2f'
+
+    url = 'https://hac20.esp.k12.ar.us/HomeAccess20/Account/LogOn?ReturnUrl=%2fHomeAccess20%2f'
     session["HacStatus"] = True
     #Grab __RequestVerifcationToken(token needed to login)
     #checks if login was successful
     soup = BeautifulSoup(driver.page_source.encode('utf-8'), features='html.parser')
     validation = soup.find('div', {'class':'validation-summary-errors'})
-    if validation != None:
+    if validation:
         error = validation.find('span')
         error = error.text
+        session["HacStatus"] = False
+        session["error"] = True
         return {"error": error}
     #checks if login was successful
     if function == 'both':
@@ -83,11 +93,12 @@ def hac_api_main(function,api,username,password):
         finally:
             pass
         classnames = grabclasses(driver)
-        assignmentgrades = grabassignmentgrades(driver,classnames)
-        gradesum = graboverallgrades(driver,classnames)
+        assignmentgrades = await grabassignmentgrades(driver,classnames)
+        gradesum = await graboverallgrades(driver,classnames)
         #returns in dictionary form
-        attendance = grabcalendar(driver,username,password)
+        attendance = await grabcalendar(driver,username,password)
         reset(api,driver)
+        session["HacStatus"] = False
         return classnames,gradesum,assignmentgrades,attendance
     if function == 'attendance':
         driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Content/Attendance/MonthlyView.aspx")
@@ -99,6 +110,7 @@ def hac_api_main(function,api,username,password):
     #grabs the attendance using selenium
         attendance = grabcalendar(driver,username,password)
         reset(api,driver)
+        session["HacStatus"] = False
         return attendance
     if function == 'grades':
         driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Content/Student/Assignments.aspx")
@@ -108,9 +120,11 @@ def hac_api_main(function,api,username,password):
         finally:
             pass
         classnames = grabclasses(driver)
-        assignmentgrades = grabassignmentgrades(driver,classnames)
-        gradesum = graboverallgrades(driver,classnames)
-        reset(api,driver)
+        assignmentgrades = await grabassignmentgrades(driver,classnames)
+        gradesum = await graboverallgrades(driver,classnames)
+        driver.quit()
+        # reset(api,driver)
+        session["HacStatus"] = False
         return classnames,gradesum,assignmentgrades
     #returns in a dictionary
 
@@ -125,6 +139,9 @@ def reset(api,driver):
     link.click()
     driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Account/LogOn?ReturnUrl=%2fHomeAccess%2f")
 
+async def fetch_page_source(driver):
+    return driver.page_source.encode('utf-8')
+
 def grabclasses(driver):
     soup = BeautifulSoup(driver.page_source.encode('utf-8'), features='html.parser')
     classes = soup.findAll('a', {'class':'sg-header-heading'})
@@ -136,19 +153,24 @@ def grabclasses(driver):
         courses.append(text)
     return (courses)
 
-def grabassignmentgrades(driver,classes):
-    soup = BeautifulSoup(driver.page_source.encode('utf-8'), features='html.parser')
-    tables = soup.findAll('table', {'class':'sg-asp-table'})
+
+async def grabassignmentgrades(driver, classes):
+    # Fetch the page source asynchronously
+    page_source = await fetch_page_source(driver)
+
+    # Parse the HTML using BeautifulSoup
+    soup = BeautifulSoup(page_source, features='html.parser')
+    tables = soup.findAll('table', {'class': 'sg-asp-table'})
     grades = {}
-    #iterates through tables(each table is a different class)
-    #checks each table to find the correct table
+
+    # Iterate through tables (each table is a different class)
     for table in tables:
         components = table.get('id').split("plnMain_rptAssigmnetsByCourse_dgCourseAssignments_")
         if len(components) == 2:
             number = int(components[1])
             course = classes[number]
             id = table.get('id')
-            rows = table.findAll('tr', {'class':'sg-asp-table-data-row'})
+            rows = table.findAll('tr', {'class': 'sg-asp-table-data-row'})
             classgrades = []
             for row in rows:
                 cells = row.findAll('td')
@@ -160,26 +182,36 @@ def grabassignmentgrades(driver,classes):
                 classgrades.append(assignment)
             current_class = classes[number]
             grades[current_class] = classgrades
+
+    # Fill in missing class grades with "null"
     for class_name in classes:
         if class_name not in grades.keys():
             grades[class_name] = ["null"]
-    return(grades)
 
-def graboverallgrades(driver,classes):
-    soup = BeautifulSoup(driver.page_source.encode('utf-8'), features='html.parser')
-    tables = soup.findAll('table', {'class':'sg-asp-table'})
+    return grades
+
+async def graboverallgrades(driver, classes):
+    # Fetch the page source asynchronously
+    page_source = await fetch_page_source(driver)
+
+    # Parse the HTML using BeautifulSoup
+    soup = BeautifulSoup(page_source, features='html.parser')
+    tables = soup.findAll('table', {'class': 'sg-asp-table'})
     grades = {}
     overall_grades = {}
-    classes = grabclasses(driver)
-    #iterates through tables(each table is a different class)
-    #checks each table to find the correct table
+
+    # Get classes if not provided
+    if not classes:
+        classes = grabclasses(driver)
+
+    # Iterate through tables (each table is a different class)
     for table in tables:
         components = table.get('id').split('plnMain_rptAssigmnetsByCourse_dgCourseCategories_')
-        if len(components) ==2:
+        if len(components) == 2:
             number = int(components[1])
             course = classes[number]
             id = table.get('id')
-            rows = table.findAll('tr', {'class':'sg-asp-table-data-row'})
+            rows = table.findAll('tr', {'class': 'sg-asp-table-data-row'})
             classgrades = []
             for row in rows:
                 cells = row.findAll('td')
@@ -191,12 +223,15 @@ def graboverallgrades(driver,classes):
                 classgrades.append(assignment)
             current_class = classes[number]
             grades[current_class] = classgrades
+
+    # Fill in missing class grades with "null"
     for class_name in classes:
         if class_name not in grades.keys():
             grades[class_name] = ["null"]
-    return (grades)
 
-def grabcalendar(driver, username, password):
+    return grades
+
+async def grabcalendar(driver, username, password):
     driver.get("https://hac23.esp.k12.ar.us/HomeAccess/Content/Attendance/MonthlyView.aspx")
     driver.maximize_window();
 

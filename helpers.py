@@ -13,6 +13,18 @@ import psycopg2
 import bcrypt
 import json
 from hacapi import hac_api_main
+import asyncio
+import aiohttp
+
+# class User(UserMixin):
+#     def __init__(self, id,username,password):
+#         self.id = id
+#         self.username = username
+#         self.password = password
+#         self.webdriver
+    
+
+
 
 def login_hac_required(f):
     @wraps(f)
@@ -143,7 +155,11 @@ def upload(filespath,filename):
 def update_hac():
     username = session["user_id_hac"]
     password = session["password_hac"]
+    if "hacgradestimeupdated" not in session.keys():
+        session["hacgradestimeupdated"] = ''
+        session["hacattendancetimeupdated"] = ''
     if session["error"] != True:
+        print("1st")
         current_time = datetime.now(timezone.utc)
         if session["hacgradestimeupdated"] == '' and session["hacattendancetimeupdated"] == '':
             hac_executions('both',False,username,password)
@@ -171,6 +187,7 @@ def update_hac():
     
 
 def hac_executions(runfunction,api,username,password):
+    print("It is running this function")
     data = 0
     if username != "NULL" and password != "NULL":
         if "runninggethac" in session:
@@ -178,7 +195,9 @@ def hac_executions(runfunction,api,username,password):
                 session["runninggethac"] = True
         if "runninggethac" in session or api == True:
             if runfunction == "both":
-                data = hac_api_main("both",api,username, password)
+                data = asyncio.run(hac_api_main("both",api,username, password))
+                if session["error"] == True:
+                    return session["error"]
                 session["hacattendance"] = data[3]
                 session["hacattendancetimeupdated"] = datetime.now(timezone.utc)
                 class_names = data[0]
@@ -197,12 +216,16 @@ def hac_executions(runfunction,api,username,password):
                 session["hacgradestimeupdated"] = datetime.now(timezone.utc)
                 data = grades_request
             elif runfunction == "attendance":
-                attendance_data = hac_api_main("attendance",api,username, password)
+                attendance_data = asyncio.run(hac_api_main("attendance",api,username, password))
+                if session["error"] == True:
+                    return session["error"]
                 data = attendance_data
                 session["hacattendance"] = attendance_data
                 session["hacattendancetimeupdated"] = datetime.now(timezone.utc)
             else:
-                grades_data = hac_api_main("grades",api,username, password)
+                grades_data = asyncio.run(hac_api_main("grades",api,username, password))
+                if session["error"] == True:
+                    return session["error"]
                 class_names = grades_data[0]
 
                 grades_request = {"class_names":grades_data[0],"grade_summary":grades_data[1],"assignment_grades":grades_data[2]}
