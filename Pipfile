@@ -23,7 +23,6 @@ redis = "*"
 beautifulsoup4 = "*"
 colorama = "*"
 flask-mail = "*"
-install = "*"
 google-analytics-data = "*"
 python-engineio = "*"
 python-socketio = "*"
@@ -41,4 +40,4 @@ asyncio = "*"
 [dev-packages]
 
 [requires]
-python_version = "3.10"
+python_version = "3.12"
