@@ -324,7 +324,7 @@ def check_token(token):
     if len(token_results) > 1:
         return "There is an error with this token| A Duplicate"
     elif len(token_results) == 0:
-        return "This Token does not exist, Please create a new API Key through https://api.studysquawk.tech/dashboard"
+        return "This Token does not exist, Please create a new API Key through https://api.studyist.herokuapp.com//dashboard"
     elif int(token_results[0][4]) > 500:
         return "You have exceeded your limit in StudySquawk API Use"
     else:
